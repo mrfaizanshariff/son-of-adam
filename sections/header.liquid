@@ -1,0 +1,483 @@
+{% comment %}
+  SON OF ADAM - Premium Header
+  Features: Centered logo, sticky navigation, search, account, cart
+{% endcomment %}
+
+<div class="header-wrapper full-width">
+  <header class="header {% if section.settings.sticky_header %}header--sticky{% endif %}" role="banner">
+    <div class="header__container">
+      {%- comment -%} Mobile Menu Toggle {%- endcomment -%}
+      <button type="button" class="header__menu-toggle header__mobile-only" aria-label="Open menu" aria-expanded="false">
+        <span class="header__menu-icon"></span>
+        <span class="header__menu-icon"></span>
+        <span class="header__menu-icon"></span>
+      </button>
+
+      <nav class="header__desktop-only" role="navigation">
+      <ul class="header__menu">
+        {% for link in section.settings.menu.links %}
+          <li class="header__menu-item">
+            <a href="{{ link.url }}" class="header__menu-link">
+              {{ link.title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+      {%- comment -%} Logo - Centered {%- endcomment -%}
+      <div class="header__logo">
+        <a href="{{ routes.root_url }}" class="header__logo-link">
+          {% if section.settings.logo != blank %}
+            <img
+              src="{{ section.settings.logo | image_url: width: 300 }}"
+              alt="{{ shop.name }}"
+              width="{{ section.settings.logo.width }}"
+              height="{{ section.settings.logo.height }}"
+              loading="eager"
+              class="header__logo-image"
+              style="--logo-height-desktop: {{ section.settings.logo_height_desktop }}px; --logo-height-mobile: {{ section.settings.logo_height_mobile }}px;"
+            >
+          {% else %}
+            <span class="header__logo-text">{{ shop.name }}</span>
+          {% endif %}
+        </a>
+      </div>
+
+      {%- comment -%} Header Actions {%- endcomment -%}
+      <div class="header__actions">
+        {%- comment -%} Search Icon {%- endcomment -%}
+        {% if section.settings.enable_search %}
+          <a href="{{ routes.search_url }}" class="header__action" aria-label="Search">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {% endif %}
+
+        {%- comment -%} Account Icon {%- endcomment -%}
+        {% if shop.customer_accounts_enabled %}
+          <a href="{{ routes.account_url }}" class="header__action" aria-label="Account">
+            {{ 'icon-account.svg' | inline_asset_content }}
+          </a>
+        {% endif %}
+
+        {%- comment -%} Cart Icon {%- endcomment -%}
+        <a href="{{ routes.cart_url }}" class="header__action header__cart" aria-label="Cart">
+          {{ 'icon-cart.svg' | inline_asset_content }}
+          <span class="header__cart-count" data-cart-count style="{% if cart.item_count == 0 %}display: none;{% endif %}">{{ cart.item_count }}</span>
+        </a>
+      </div>
+    </div>
+
+    {%- comment -%} Desktop Navigation - Below Logo {%- endcomment -%}
+    
+
+    {%- comment -%} Mobile Menu {%- endcomment -%}
+    <div class="header__mobile-menu header__mobile-only">
+      <nav class="header__mobile-nav" role="navigation">
+        <ul class="header__mobile-menu-list">
+          {% for link in section.settings.menu.links %}
+            <li class="header__mobile-menu-item">
+              <a href="{{ link.url }}" class="header__mobile-menu-link">
+                {{ link.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+</div>
+
+{% stylesheet %}
+  /* Full Width Wrapper */
+  .header-wrapper {
+    width: 100%;
+    grid-column: 1 / -1;
+  }
+  
+  .header {
+    background-color: var(--color-white);
+    border-bottom: 1px solid rgba(99, 99, 99, 0.1);
+    position: relative;
+    z-index: var(--z-sticky);
+    width: 100%;
+  }
+  
+  .header--sticky {
+    position: sticky;
+    top: 0;
+  }
+  
+  .header__container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+  }
+  
+  /* Logo - Centered */
+  .header__logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .header__logo-link {
+    display: block;
+    text-decoration: none;
+  }
+  
+  .header__logo-image {
+    max-height: var(--logo-height-desktop, 40px);
+    width: auto;
+  }
+  
+  .header__logo-text {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--color-oxford-blue);
+    letter-spacing: 0.05em;
+  }
+  
+  /* Desktop Navigation - Below Logo */
+  .header__nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--page-margin);
+    border-top: 1px solid rgba(99, 99, 99, 0.1);
+  }
+  
+  .header__menu {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .header__menu-item {
+    margin: 0;
+  }
+  
+  .header__menu-link {
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-oxford-blue);
+    text-decoration: none;
+    padding: 8px 0;
+    position: relative;
+    transition: color var(--transition-fast);
+  }
+  
+  .header__menu-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-harvest-gold);
+    transition: width var(--transition-base);
+  }
+  
+  .header__menu-link:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  .header__menu-link:hover::after {
+    width: 100%;
+  }
+  
+  /* Header Actions */
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-left: auto;
+  }
+  
+  .header__action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-oxford-blue);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    position: relative;
+  }
+  
+  .header__action:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  .header__action svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .header__cart-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--color-harvest-gold);
+    color: var(--color-oxford-blue);
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+  
+  /* Mobile Menu Toggle */
+  .header__menu-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .header__menu-icon {
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-oxford-blue);
+    transition: all var(--transition-fast);
+  }
+  
+  .header__menu-toggle:hover .header__menu-icon {
+    background-color: var(--color-harvest-gold);
+  }
+  
+  /* Mobile Menu */
+  .header__mobile-menu {
+    display: none;
+    background-color: var(--color-white);
+    border-top: 1px solid rgba(99, 99, 99, 0.1);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .header__mobile-menu.is-open {
+    display: block;
+    max-height: 500px;
+  }
+  
+  /* Hamburger to X Animation */
+  .header__menu-toggle.is-active .header__menu-icon:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  
+  .header__menu-toggle.is-active .header__menu-icon:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .header__menu-toggle.is-active .header__menu-icon:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+  
+  .header__mobile-nav {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: var(--spacing-md) var(--page-margin);
+  }
+  
+  .header__mobile-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .header__mobile-menu-item {
+    border-bottom: 1px solid rgba(99, 99, 99, 0.1);
+  }
+  
+  .header__mobile-menu-link {
+    display: block;
+    font-family: var(--font-header);
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-oxford-blue);
+    text-decoration: none;
+    padding: var(--spacing-sm) 0;
+    transition: color var(--transition-fast);
+  }
+  
+  .header__mobile-menu-link:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  /* Visibility Classes */
+  .header__mobile-only {
+    display: none;
+  }
+  
+  .header__desktop-only {
+    display: flex;
+  }
+  
+  /* Responsive */
+  @media (max-width: 1023px) {
+    .header__mobile-only {
+      display: flex;
+    }
+    
+    .header__desktop-only {
+      display: none;
+    }
+    
+    .header__container {
+      height: 60px;
+    }
+    
+    .header__logo-text {
+      font-size: 20px;
+    }
+    
+    .header__logo-image {
+      max-height: var(--logo-height-mobile, 32px);
+    }
+
+    .header__actions {
+      gap:0px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  // Mobile menu toggle with accessibility improvements
+  const menuToggle = document.querySelector('.header__menu-toggle');
+  const mobileMenu = document.querySelector('.header__mobile-menu');
+  const body = document.body;
+  
+  if (menuToggle && mobileMenu) {
+    // Store focusable elements
+    const focusableElements = mobileMenu.querySelectorAll('a[href], button:not([disabled])');
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+    
+    menuToggle.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('is-open');
+      menuToggle.classList.toggle('is-active', isOpen);
+      menuToggle.setAttribute('aria-expanded', isOpen);
+      
+      // Prevent body scroll when menu is open
+      if (isOpen) {
+        body.style.overflow = 'hidden';
+        // Focus first menu item
+        setTimeout(() => firstFocusable?.focus(), 100);
+      } else {
+        body.style.overflow = '';
+        // Return focus to toggle button
+        menuToggle.focus();
+      }
+    });
+    
+    // Close menu on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('is-open')) {
+        mobileMenu.classList.remove('is-open');
+        menuToggle.classList.remove('is-active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        body.style.overflow = '';
+        menuToggle.focus();
+      }
+    });
+    
+    // Focus trap
+    mobileMenu.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab' && mobileMenu.classList.contains('is-open')) {
+        if (e.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable?.focus();
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable?.focus();
+          }
+        }
+      }
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo Image",
+      "info": "Recommended: 300px wide"
+    },
+    {
+      "type": "range",
+      "id": "logo_height_desktop",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo Height (Desktop)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "logo_height_mobile",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo Height (Mobile)",
+      "default": 32
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Enable Sticky Header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_search",
+      "label": "Enable Search",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

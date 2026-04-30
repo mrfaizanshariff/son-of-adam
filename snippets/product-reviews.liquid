@@ -1,0 +1,602 @@
+{% comment %}
+  SON OF ADAM - Dynamic Product Reviews Section
+  Supports Shopify native reviews and third-party app integration
+  
+  Parameters:
+  - product: Product object (required)
+  - show_form: Boolean to show review form (default: true)
+{% endcomment %}
+
+{%- liquid
+  assign show_form = show_form | default: true
+  assign reviews_count = product.metafields.reviews.rating_count | default: 0
+  assign average_rating = product.metafields.reviews.rating | default: 0
+-%}
+{%- if reviews_count > 0 -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "AggregateRating",
+    "ratingValue": "{{ average_rating }}",
+    "reviewCount": "{{ reviews_count }}",
+    "itemReviewed": {
+      "@type": "Product",
+      "name": "{{ product.title | escape }}",
+      "image": "{{ product.featured_image | image_url: width: 1200 }}",
+      "url": "{{ shop.url }}{{ product.url }}"
+    }
+  }
+  </script>
+{%- endif -%}
+
+<div class="product-reviews" id="product-reviews" data-product-id="{{ product.id }}">
+  <div class="product-reviews__container">
+    
+    {%- comment -%} Reviews Header {%- endcomment -%}
+    <div class="product-reviews__header">
+      <h2 class="product-reviews__title">{{ 'products.reviews.title' | t }}</h2>
+      
+      {%- if reviews_count > 0 -%}
+        <div class="product-reviews__summary">
+          <div class="product-reviews__rating">
+            {% render 'star-rating', rating: average_rating, count: reviews_count %}
+          </div>
+          <p class="product-reviews__count">{{ 'products.reviews.count' | t: count: reviews_count }}</p>
+        </div>
+      {%- else -%}
+        <p class="product-reviews__no-reviews">{{ 'products.reviews.no_reviews' | t }}</p>
+      {%- endif -%}
+      
+      {%- if show_form -%}
+        <button type="button" class="btn btn-secondary product-reviews__write-btn" data-toggle-review-form>
+          {{ 'products.reviews.write_button' | t }}
+        </button>
+      {%- endif -%}
+    </div>
+    
+    {%- comment -%} Review Form {%- endcomment -%}
+    {%- if show_form -%}
+      <div class="product-reviews__form-wrapper" id="review-form" style="display: none;">
+        <h3 class="product-reviews__form-title">{{ 'products.reviews.form_title' | t }}</h3>
+        
+        <form class="product-reviews__form" data-review-form>
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          
+          {%- comment -%} Honeypot field for spam prevention {%- endcomment -%}
+          <input type="text" name="contact_email" id="contact_email" class="product-reviews__honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+          
+          <div class="product-reviews__form-group">
+            <label for="review-rating" class="product-reviews__label">{{ 'products.reviews.rating_label' | t }}</label>
+            <div class="product-reviews__star-input" data-star-input>
+              {% for i in (1..5) %}
+                <button type="button" class="product-reviews__star-btn" data-rating="{{ i }}" aria-label="{{ i }} stars">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                </button>
+              {% endfor %}
+            </div>
+            <input type="hidden" name="rating" id="review-rating" required>
+          </div>
+          
+          <div class="product-reviews__form-group">
+            <label for="review-title" class="product-reviews__label">{{ 'products.reviews.title_label' | t }}</label>
+            <input type="text" id="review-title" name="title" class="product-reviews__input" required maxlength="100">
+          </div>
+          
+          <div class="product-reviews__form-group">
+            <label for="review-body" class="product-reviews__label">{{ 'products.reviews.body_label' | t }}</label>
+            <textarea id="review-body" name="body" class="product-reviews__textarea" required rows="5" maxlength="1000"></textarea>
+          </div>
+          
+          <div class="product-reviews__form-row">
+            <div class="product-reviews__form-group">
+              <label for="review-name" class="product-reviews__label">{{ 'products.reviews.name_label' | t }}</label>
+              <input type="text" id="review-name" name="author" class="product-reviews__input" required maxlength="50">
+            </div>
+            
+            <div class="product-reviews__form-group">
+              <label for="review-email" class="product-reviews__label">{{ 'products.reviews.email_label' | t }}</label>
+              <input type="email" id="review-email" name="email" class="product-reviews__input" required>
+            </div>
+          </div>
+          
+          <div class="product-reviews__form-actions">
+            <button type="button" class="btn btn-secondary" data-cancel-review>{{ 'products.reviews.cancel' | t }}</button>
+            <button type="submit" class="btn btn-primary">{{ 'products.reviews.submit' | t }}</button>
+          </div>
+          
+          <div class="product-reviews__form-message" data-form-message style="display: none;"></div>
+        </form>
+      </div>
+    {%- endif -%}
+    
+    {%- comment -%} Reviews List {%- endcomment -%}
+    <div class="product-reviews__list" data-reviews-list>
+      {%- comment -%} App Block Placeholder for Third-Party Review Apps {%- endcomment -%}
+      <div id="shopify-product-reviews" data-id="{{ product.id }}">
+        {{ product.metafields.spr.reviews }}
+      </div>
+      
+      {%- comment -%} Native Reviews Display {%- endcomment -%}
+      {%- if product.metafields.reviews.reviews -%}
+        {%- for review in product.metafields.reviews.reviews -%}
+          <div class="product-review">
+            <div class="product-review__header">
+              <div class="product-review__rating">
+                {% render 'star-rating', rating: review.rating, show_count: false %}
+              </div>
+              <h4 class="product-review__title">{{ review.title | escape }}</h4>
+            </div>
+            
+            <div class="product-review__body">
+              <p>{{ review.body | escape }}</p>
+            </div>
+            
+            <div class="product-review__footer">
+              <span class="product-review__author">{{ review.author | escape }}</span>
+              <span class="product-review__date">{{ review.created_at | date: "%B %d, %Y" }}</span>
+            </div>
+            
+            {%- if review.verified_buyer -%}
+              <span class="product-review__badge">Verified Buyer</span>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+      
+      {%- comment -%} Empty State {%- endcomment -%}
+      {%- if reviews_count == 0 -%}
+        <div class="product-reviews__empty">
+          <p>{{ 'products.reviews.empty_state' | t }}</p>
+        </div>
+      {%- endif -%}
+    </div>
+    
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-reviews {
+    padding: 80px 0;
+    background: var(--color-sea-salt);
+  }
+  
+  .product-reviews__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  
+  .product-reviews__header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--color-dim-grey);
+  }
+  
+  .product-reviews__title {
+    font-family: var(--font-header);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-oxford-blue);
+    margin: 0 0 24px;
+  }
+  
+  .product-reviews__summary {
+    margin-bottom: 24px;
+  }
+  
+  .product-reviews__rating {
+    margin-bottom: 8px;
+  }
+  
+  .product-reviews__count {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+    margin: 0;
+  }
+  
+  .product-reviews__no-reviews {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--color-dim-grey);
+    margin: 0 0 24px;
+  }
+  
+  .product-reviews__write-btn {
+    margin-top: 16px;
+  }
+  
+  /* Review Form */
+  .product-reviews__form-wrapper {
+    background: white;
+    padding: 32px;
+    margin-bottom: 48px;
+    border: 1px solid var(--color-dim-grey);
+  }
+  
+  .product-reviews__form-title {
+    font-family: var(--font-header);
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-oxford-blue);
+    margin: 0 0 24px;
+  }
+  
+  .product-reviews__form-group {
+    margin-bottom: 24px;
+  }
+  
+  .product-reviews__label {
+    display: block;
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-oxford-blue);
+    margin-bottom: 8px;
+  }
+  
+  .product-reviews__input,
+  .product-reviews__textarea {
+    width: 100%;
+    padding: 12px 16px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    border: 1px solid var(--color-dim-grey);
+    background: white;
+    transition: border-color var(--transition-fast);
+  }
+  
+  .product-reviews__input:focus,
+  .product-reviews__textarea:focus {
+    outline: none;
+    border-color: var(--color-oxford-blue);
+  }
+  
+  .product-reviews__textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .product-reviews__star-input {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .product-reviews__star-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--color-dim-grey);
+    transition: color var(--transition-fast);
+  }
+  
+  .product-reviews__star-btn:hover,
+  .product-reviews__star-btn.active {
+    color: var(--color-harvest-gold);
+  }
+  
+  .product-reviews__star-btn svg {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .product-reviews__star-btn.active svg {
+    fill: var(--color-harvest-gold);
+  }
+  
+  .product-reviews__form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .product-reviews__form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+  
+  .product-reviews__form-message {
+    margin-top: 16px;
+    padding: 12px 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    border-radius: 0;
+  }
+  
+  .product-reviews__form-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .product-reviews__form-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  /* Reviews List */
+  .product-reviews__list {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  .product-review {
+    background: white;
+    padding: 32px;
+    border: 1px solid var(--color-dim-grey);
+    position: relative;
+  }
+  
+  .product-review__header {
+    margin-bottom: 16px;
+  }
+  
+  .product-review__rating {
+    margin-bottom: 8px;
+  }
+  
+  .product-review__title {
+    font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-oxford-blue);
+    margin: 0;
+  }
+  
+  .product-review__body {
+    margin-bottom: 16px;
+  }
+  
+  .product-review__body p {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-oxford-blue);
+    margin: 0;
+  }
+  
+  .product-review__footer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+  }
+  
+  .product-review__author {
+    font-weight: 600;
+  }
+  
+  .product-review__badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--color-oxford-blue);
+    color: var(--color-silver);
+    font-family: var(--font-header);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+  }
+  
+  .product-reviews__empty {
+    text-align: center;
+    padding: 48px 24px;
+    background: white;
+    border: 1px solid var(--color-dim-grey);
+  }
+  
+  .product-reviews__empty p {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--color-dim-grey);
+    margin: 0;
+  }
+  
+  /* Mobile Adjustments */
+  @media (max-width: 767px) {
+    .product-reviews {
+      padding: 60px 0;
+    }
+    
+    .product-reviews__title {
+      font-size: 24px;
+    }
+    
+    .product-reviews__form-wrapper {
+      padding: 24px;
+    }
+    
+    /* Honeypot field - hidden from users but visible to bots */
+    .product-reviews__honeypot {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .product-reviews__form-row {
+      grid-template-columns: 1fr;
+    }
+    
+    .product-review {
+      padding: 24px;
+    }
+    
+    .product-review__badge {
+      position: static;
+      display: inline-block;
+      margin-top: 16px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.addEventListener('DOMContentLoaded', function() {
+    const reviewForm = document.querySelector('[data-review-form]');
+    const toggleFormBtn = document.querySelector('[data-toggle-review-form]');
+    const cancelBtn = document.querySelector('[data-cancel-review]');
+    const formWrapper = document.querySelector('.product-reviews__form-wrapper');
+    const starInput = document.querySelector('[data-star-input]');
+    const ratingInput = document.getElementById('review-rating');
+    const formMessage = document.querySelector('[data-form-message]');
+    
+    // Toggle review form
+    if (toggleFormBtn && formWrapper) {
+      toggleFormBtn.addEventListener('click', function() {
+        formWrapper.style.display = 'block';
+        formWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    
+    if (cancelBtn && formWrapper) {
+      cancelBtn.addEventListener('click', function() {
+        formWrapper.style.display = 'none';
+        reviewForm.reset();
+        resetStars();
+      });
+    }
+    
+    // Star rating input
+    if (starInput) {
+      const starButtons = starInput.querySelectorAll('.product-reviews__star-btn');
+      
+      starButtons.forEach((btn, index) => {
+        btn.addEventListener('click', function() {
+          const rating = this.dataset.rating;
+          ratingInput.value = rating;
+          
+          // Update star display
+          starButtons.forEach((star, i) => {
+            if (i < rating) {
+              star.classList.add('active');
+            } else {
+              star.classList.remove('active');
+            }
+          });
+        });
+        
+        // Hover effect
+        btn.addEventListener('mouseenter', function() {
+          const rating = this.dataset.rating;
+          starButtons.forEach((star, i) => {
+            if (i < rating) {
+              star.style.color = 'var(--color-harvest-gold)';
+            } else {
+              star.style.color = 'var(--color-dim-grey)';
+            }
+          });
+        });
+      });
+      
+      starInput.addEventListener('mouseleave', function() {
+        const currentRating = ratingInput.value;
+        starButtons.forEach((star, i) => {
+          if (i < currentRating) {
+            star.style.color = 'var(--color-harvest-gold)';
+          } else {
+            star.style.color = 'var(--color-dim-grey)';
+          }
+        });
+      });
+    }
+    
+    function resetStars() {
+      if (starInput) {
+        const starButtons = starInput.querySelectorAll('.product-reviews__star-btn');
+        starButtons.forEach(star => {
+          star.classList.remove('active');
+          star.style.color = 'var(--color-dim-grey)';
+        });
+        ratingInput.value = '';
+      }
+    }
+    
+    // Form submission
+    if (reviewForm) {
+      reviewForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(reviewForm);
+        const data = Object.fromEntries(formData);
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(data.email)) {
+          showMessage('Please enter a valid email address', 'error');
+          return;
+        }
+        
+        // Check honeypot field
+        if (data.contact_email) {
+          // Bot detected - silently fail
+          console.log('Spam detected');
+          return;
+        }
+        
+        // Validate rating
+        if (!data.rating) {
+          showMessage('Please select a rating', 'error');
+          return;
+        }
+        
+        // Show loading state
+        const submitBtn = reviewForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        try {
+          // This would integrate with your review system
+          // For now, we'll simulate a successful submission
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          showMessage('Thank you for your review! It will be published after moderation.', 'success');
+          reviewForm.reset();
+          resetStars();
+          
+          // Hide form after 3 seconds
+          setTimeout(() => {
+            formWrapper.style.display = 'none';
+          }, 3000);
+          
+        } catch (error) {
+          showMessage('Failed to submit review. Please try again.', 'error');
+        } finally {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
+      });
+    }
+    
+    function showMessage(message, type) {
+      if (formMessage) {
+        formMessage.textContent = message;
+        formMessage.className = 'product-reviews__form-message ' + type;
+        formMessage.style.display = 'block';
+        
+        setTimeout(() => {
+          formMessage.style.display = 'none';
+        }, 5000);
+      }
+    }
+  });
+{% endjavascript %}

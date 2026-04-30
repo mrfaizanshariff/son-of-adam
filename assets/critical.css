@@ -1,0 +1,579 @@
+/**
+ * SON OF ADAM - Critical CSS
+ * This file is included on every page for optimal performance
+ */
+
+/* ============================================
+   CSS RESET
+   ============================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  min-height: 100svh;
+}
+
+html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
+  overflow: hidden;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+input,
+textarea,
+select {
+  border-radius: var(--button-border-radius);
+}
+
+select {
+  background-color: var(--color-background);
+  color: currentcolor;
+}
+
+dialog {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+p:empty {
+  display: none;
+}
+
+:is(p, h1, h2, h3, h4, h5, h6):first-child,
+:empty:first-child + :where(p, h1, h2, h3, h4, h5, h6) {
+  margin-block-start: 0;
+}
+
+:is(p, h1, h2, h3, h4, h5, h6):last-child,
+:where(p, h1, h2, h3, h4, h5, h6) + :has(+ :empty:last-child) {
+  margin-block-end: 0;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-loose);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   TYPOGRAPHY SCALE
+   ============================================ */
+
+/* Hero Title - Mixed Font (First letter Old London, rest Flama Condensed) */
+.hero-title,
+h1.display,
+h1 {
+  font-family: var(--font-header);
+  font-size: var(--font-size-hero);
+  line-height: var(--line-height-tight);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.hero-title::first-letter,
+h1.display::first-letter,
+h1::first-letter {
+  font-family: var(--font-display);
+  font-size: 1.2em;
+  font-weight: 400;
+  margin-right: 0.05em;
+}
+
+/* Section Title - Mixed Font (First letter Old London, rest Flama Condensed) */
+.section-title,
+h2 {
+  font-family: var(--font-header);
+  font-size: var(--font-size-section-title);
+  line-height: var(--line-height-normal);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.section-title::first-letter,
+h2::first-letter {
+  font-family: var(--font-display);
+  font-size: 1.3em;
+  font-weight: 400;
+  margin-right: 0.05em;
+}
+
+/* Subheading - Mixed Font (First letter Old London, rest Flama Condensed) */
+.subheading,
+h3 {
+  font-family: var(--font-header);
+  font-size: var(--font-size-subheading);
+  line-height: var(--line-height-relaxed);
+  font-weight: 600;
+}
+
+.subheading::first-letter,
+h3::first-letter {
+  font-family: var(--font-display);
+  font-size: 1.2em;
+  font-weight: 400;
+  margin-right: 0.05em;
+}
+
+/* H4, H5, H6 - Also get mixed font treatment */
+h4,
+h5,
+h6 {
+  font-family: var(--font-header);
+  font-weight: 600;
+}
+
+h4::first-letter,
+h5::first-letter,
+h6::first-letter {
+  font-family: var(--font-display);
+  font-size: 1.2em;
+  font-weight: 400;
+  margin-right: 0.05em;
+}
+
+/* Body Text */
+.body-text,
+p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-loose);
+  font-weight: 400;
+}
+
+/* Small Text */
+.small-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Caption/Label */
+.caption,
+.label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-relaxed);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
+/* Base Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-header);
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  padding: 16px 32px;
+  border: none;
+  border-radius: var(--button-border-radius);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+/* Primary CTA Button */
+.btn-primary {
+  background-color: var(--color-harvest-gold);
+  color: var(--color-oxford-blue);
+}
+
+.btn-primary:hover {
+  background-color: #C4A735;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(214, 185, 61, 0.3);
+}
+
+/* Secondary CTA Button */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-oxford-blue);
+  border: 1px solid var(--color-oxford-blue);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-oxford-blue);
+  color: var(--color-white);
+}
+
+/* Secondary Button on Dark Background */
+.btn-secondary--dark {
+  color: var(--color-white);
+  border-color: var(--color-white);
+}
+
+.btn-secondary--dark:hover {
+  background-color: var(--color-white);
+  color: var(--color-oxford-blue);
+}
+
+/* Button Sizes */
+.btn--small {
+  padding: 12px 24px;
+  font-size: 12px;
+}
+
+.btn--large {
+  padding: 20px 40px;
+  font-size: 16px;
+}
+
+.btn--full {
+  width: 100%;
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-harvest-gold);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Text Alignment */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Text Colors */
+.text-primary {
+  color: var(--color-harvest-gold);
+}
+
+.text-secondary {
+  color: var(--color-dim-grey);
+}
+
+.text-white {
+  color: var(--color-white);
+}
+
+/* Background Colors */
+.bg-sea-salt {
+  background-color: var(--color-sea-salt);
+}
+
+.bg-oxford-blue {
+  background-color: var(--color-oxford-blue);
+}
+
+.bg-white {
+  background-color: var(--color-white);
+}
+
+/* Spacing Utilities */
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+
+.pt-xs { padding-top: var(--spacing-xs); }
+.pt-sm { padding-top: var(--spacing-sm); }
+.pt-md { padding-top: var(--spacing-md); }
+.pt-lg { padding-top: var(--spacing-lg); }
+.pt-xl { padding-top: var(--spacing-xl); }
+
+.pb-xs { padding-bottom: var(--spacing-xs); }
+.pb-sm { padding-bottom: var(--spacing-sm); }
+.pb-md { padding-bottom: var(--spacing-md); }
+.pb-lg { padding-bottom: var(--spacing-lg); }
+.pb-xl { padding-bottom: var(--spacing-xl); }
+
+/* Container */
+.container {
+  max-width: var(--container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--page-margin);
+  padding-right: var(--page-margin);
+}
+
+/* Grid Utilities */
+.grid {
+  display: grid;
+  gap: var(--grid-gutter);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1023px) {
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Flex Utilities */
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+/* Visibility */
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hide-mobile {
+    display: block;
+  }
+  .hide-desktop {
+    display: none;
+  }
+}
+
+/* ============================================
+   SECTION LAYOUT SYSTEM
+   ============================================ */
+
+/**
+ * Setup a grid that enables both full-width and constrained layouts
+ * depending on the class of the child elements.
+ */
+.shopify-section {
+  --content-width: min(
+    calc(var(--page-width) - var(--page-margin) * 2),
+    calc(100% - var(--page-margin) * 2)
+  );
+  --content-margin: minmax(var(--page-margin), 1fr);
+  --content-grid: var(--content-margin) var(--content-width) var(--content-margin);
+
+  position: relative;
+  grid-template-columns: var(--content-grid);
+  display: grid;
+  width: 100%;
+}
+
+/* Child elements, by default, are constrained to the central column */
+.shopify-section > * {
+  grid-column: 2;
+}
+
+/* Full-width elements span the entire viewport */
+.shopify-section > .full-width {
+  grid-column: 1 / -1;
+}
+
+/* Section Spacing */
+.section-spacing {
+  padding-top: var(--section-spacing);
+  padding-bottom: var(--section-spacing);
+}
+
+/* ============================================
+   BADGE COMPONENT
+   ============================================ */
+.badge {
+  display: inline-block;
+  background-color: var(--color-oxford-blue);
+  color: var(--color-silver);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  border-radius: 0;
+}
+
+.badge--new {
+  background-color: var(--color-harvest-gold);
+  color: var(--color-oxford-blue);
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-dim-grey);
+  background-color: var(--color-white);
+  color: var(--color-foreground);
+  font-size: var(--font-size-body);
+  transition: border-color var(--transition-fast);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-harvest-gold);
+}
+
+/* ============================================
+   RESPONSIVE IMAGES
+   ============================================ */
+.responsive-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.image-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================
+   LOADING & TRANSITIONS
+   ============================================ */
+.fade-in {
+  animation: fadeIn var(--transition-base);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid var(--color-harvest-gold);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-harvest-gold);
+  outline-offset: 4px;
+}

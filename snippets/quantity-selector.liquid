@@ -1,0 +1,142 @@
+{% comment %}
+  Quantity Selector Snippet
+  Displays +/- buttons with quantity input
+  
+  Usage:
+  {% render 'quantity-selector', 
+    id: 'quantity',
+    value: 1,
+    min: 1
+  %}
+{% endcomment %}
+
+{%- liquid
+  assign qty_id = id | default: 'quantity'
+  assign qty_value = value | default: 1
+  assign qty_min = min | default: 1
+-%}
+
+<div class="quantity-selector">
+  <button 
+    type="button" 
+    class="quantity-selector__button quantity-selector__button--minus"
+    aria-label="Decrease quantity"
+    data-quantity-minus
+  >
+    <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
+      <path d="M0 1H12" stroke="currentColor" stroke-width="2"/>
+    </svg>
+  </button>
+  
+  <input 
+    type="number" 
+    id="{{ qty_id }}"
+    name="quantity" 
+    value="{{ qty_value }}"
+    min="{{ qty_min }}"
+    class="quantity-selector__input"
+    aria-label="Quantity"
+    data-quantity-input
+  >
+  
+  <button 
+    type="button" 
+    class="quantity-selector__button quantity-selector__button--plus"
+    aria-label="Increase quantity"
+    data-quantity-plus
+  >
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M6 0V12M0 6H12" stroke="currentColor" stroke-width="2"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  (function() {
+    const quantitySelectors = document.querySelectorAll('.quantity-selector');
+    
+    quantitySelectors.forEach(selector => {
+      const input = selector.querySelector('[data-quantity-input]');
+      const minusBtn = selector.querySelector('[data-quantity-minus]');
+      const plusBtn = selector.querySelector('[data-quantity-plus]');
+      const min = parseInt(input.getAttribute('min')) || 1;
+      
+      minusBtn.addEventListener('click', () => {
+        const currentValue = parseInt(input.value) || min;
+        if (currentValue > min) {
+          input.value = currentValue - 1;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+      
+      plusBtn.addEventListener('click', () => {
+        const currentValue = parseInt(input.value) || min;
+        input.value = currentValue + 1;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      
+      input.addEventListener('change', () => {
+        const value = parseInt(input.value) || min;
+        if (value < min) {
+          input.value = min;
+        }
+      });
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .quantity-selector {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-dim-grey);
+    background-color: var(--color-white);
+  }
+  
+  .quantity-selector__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    color: var(--color-oxford-blue);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+  }
+  
+  .quantity-selector__button:hover {
+    background-color: var(--color-sea-salt);
+  }
+  
+  .quantity-selector__button:active {
+    background-color: #E5E5E5;
+  }
+  
+  .quantity-selector__input {
+    width: 60px;
+    height: 40px;
+    border: none;
+    border-left: 1px solid var(--color-dim-grey);
+    border-right: 1px solid var(--color-dim-grey);
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-oxford-blue);
+    background-color: var(--color-white);
+    -moz-appearance: textfield;
+  }
+  
+  .quantity-selector__input::-webkit-outer-spin-button,
+  .quantity-selector__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .quantity-selector__input:focus {
+    outline: 2px solid var(--color-harvest-gold);
+    outline-offset: -2px;
+  }
+{% endstylesheet %}

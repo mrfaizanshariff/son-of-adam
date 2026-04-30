@@ -1,0 +1,966 @@
+{% comment %}
+  SON OF ADAM - Product Detail Page
+  50/50 layout with image gallery, buy box, accordions, and related products
+{% endcomment %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'product-form-' | append: section.id
+-%}
+
+<article class="product-page full-width section-spacing" role="main" aria-label="Product details">
+  <div class="product-page__container">
+    
+    {%- comment -%} Breadcrumb Navigation {%- endcomment -%}
+    {% render 'breadcrumb' %}
+    
+    {%- comment -%} Product Main Content: 50/50 Split {%- endcomment -%}
+    <div class="product-main">
+      
+      {%- comment -%} Left: Product Gallery {%- endcomment -%}
+      <div class="product-main__gallery">
+        {% render 'product-gallery', product: product %}
+      </div>
+      
+      {%- comment -%} Right: Product Info & Buy Box {%- endcomment -%}
+      <div class="product-main__info">
+        
+        {%- comment -%} Product Title {%- endcomment -%}
+        <h1 class="product-main__title">{{ product.title }}</h1>
+        
+        {%- comment -%} Star Rating {%- endcomment -%}
+        {% if section.settings.show_rating %}
+          <div class="product-main__rating">
+            {% render 'star-rating', rating: 5, count: 120 %}
+          </div>
+        {% endif %}
+        
+        {%- comment -%} Price {%- endcomment -%}
+        <div class="product-main__price">
+          <span class="product-main__price-amount">
+            {{ current_variant.price | money }}
+          </span>
+          {% if current_variant.compare_at_price > current_variant.price %}
+            <span class="product-main__price-compare">
+              {{ current_variant.compare_at_price | money }}
+            </span>
+          {% endif %}
+        </div>
+        
+        {%- comment -%} Product Description {%- endcomment -%}
+        {% if product.description != blank %}
+          <div class="product-main__description">
+            {{ product.description }}
+          </div>
+        {% endif %}
+        
+        {%- comment -%} Product Form {%- endcomment -%}
+        {% form 'product', product, id: product_form_id, class: 'product-form', data-inventory: current_variant.inventory_quantity, data-available: current_variant.available %}
+          
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+          
+          {%- comment -%} Variant Selector {%- endcomment -%}
+          {% unless product.has_only_default_variant %}
+            <div class="product-form__variants">
+              <label for="variant-selector" class="product-form__label">
+                VARIANT
+              </label>
+              <select
+                id="variant-selector"
+                class="product-form__select"
+                data-variant-select
+              >
+                {% for variant in product.variants %}
+                  <option
+                    value="{{ variant.id }}"
+                    {% if variant == current_variant %}selected{% endif %}
+                    {% unless variant.available %}disabled{% endunless %}
+                    data-inventory="{{ variant.inventory_quantity }}"
+                    data-available="{{ variant.available }}"
+                  >
+                    {{ variant.title }}
+                    {% unless variant.available %} - Sold Out{% endunless %}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endunless %}
+          
+          {%- comment -%} Quantity Selector {%- endcomment -%}
+          <div class="product-form__quantity">
+            <label for="quantity" class="product-form__label">
+              
+              {% if current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity < 7 %}
+                <span style="color:#991B1B" class="product-form__stock">Only {{ current_variant.inventory_quantity }} left in stock</span>
+              {% endif %}
+            </label>
+            <div class="quantity-selector" data-quantity-wrapper>
+              <button
+                type="button"
+                class="quantity-selector__button quantity-selector__button--minus"
+                aria-label="Decrease quantity"
+                data-quantity-minus
+              >
+                <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
+                  <path d="M0 1H12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+              
+              <input
+                type="number"
+                id="quantity"
+                name="quantity"
+                value="1"
+                min="1"
+                max="{{ current_variant.inventory_quantity | default: 999 }}"
+                class="quantity-selector__input"
+                aria-label="Quantity"
+                data-quantity-input
+              >
+              
+              <button
+                type="button"
+                class="quantity-selector__button quantity-selector__button--plus"
+                aria-label="Increase quantity"
+                data-quantity-plus
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M6 0V12M0 6H12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          {%- comment -%} Add to Cart Button {%- endcomment -%}
+          <button 
+            type="submit" 
+            name="add"
+            class="product-form__submit btn btn-primary"
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
+            {% if current_variant.available %}
+              ADD TO CART
+            {% else %}
+              SOLD OUT
+            {% endif %}
+          </button>
+          
+          {%- comment -%} Dynamic Checkout Buttons {%- endcomment -%}
+          {% if section.settings.show_dynamic_checkout %}
+            {{ form | payment_button }}
+          {% endif %}
+          
+        {% endform %}
+        
+        {%- comment -%} Product Details Accordions - Below Buy Button {%- endcomment -%}
+        <div class="product-info__accordions">
+          {% if section.settings.show_benefits %}
+            {% render 'product-accordion',
+              title: 'Benefits',
+              content: section.settings.benefits_content,
+              open: false
+            %}
+          {% endif %}
+          
+          {% if section.settings.show_ingredients %}
+            {% render 'product-accordion',
+              title: 'Ingredients',
+              content: section.settings.ingredients_content,
+              open: false
+            %}
+          {% endif %}
+          
+          {% if section.settings.show_how_to_use %}
+            {% render 'product-accordion',
+              title: 'How to Use',
+              content: section.settings.how_to_use_content,
+              open: false
+            %}
+          {% endif %}
+          
+          {%- comment -%} Custom Dynamic Accordions {%- endcomment -%}
+          {% for block in section.blocks %}
+            {% if block.type == 'accordion' %}
+              {% render 'product-accordion',
+                title: block.settings.title,
+                content: block.settings.content,
+                open: false
+              %}
+            {% endif %}
+          {% endfor %}
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+</article>
+
+{%- comment -%} Brand Philosophy Section {%- endcomment -%}
+{% if section.settings.show_brand_section %}
+  <div class="product-brand-section full-width">
+    <div class="product-brand-section__container">
+      <div class="product-brand-section__content">
+        <p class="product-brand-section__label">THE RITUAL</p>
+        <h2 class="product-brand-section__title">
+          {{ section.settings.brand_title | default: 'CRAFTED FOR THE DISCERNING FEW.' }}
+        </h2>
+        <p class="product-brand-section__description">
+          {% if section.settings.brand_description != blank %}
+            {{ section.settings.brand_description }}
+          {% else %}
+            Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.
+          {% endif %}
+        </p>
+        {% if section.settings.brand_button_text != blank and section.settings.brand_button_url != blank %}
+          <a href="{{ section.settings.brand_button_url }}" class="btn btn-secondary">
+            {{ section.settings.brand_button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{%- comment -%} Related Products Section {%- endcomment -%}
+{% if section.settings.show_related_products %}
+  <div class="product-related full-width section-spacing">
+    <div class="product-related__container">
+      <h2 class="product-related__title">YOU MAY ALSO LIKE</h2>
+      
+      <div class="product-related__grid">
+        {% if section.settings.related_products_collection != blank %}
+          {% assign related_collection = collections[section.settings.related_products_collection] %}
+          {% for related_product in related_collection.products limit: 4 %}
+            {% unless related_product.id == product.id %}
+              {% render 'product-card', product: related_product %}
+            {% endunless %}
+          {% endfor %}
+        {% else %}
+          {%- comment -%} Show products from same collection {%- endcomment -%}
+          {% if product.collections.size > 0 %}
+            {% assign first_collection = product.collections.first %}
+            {% for related_product in first_collection.products limit: 4 %}
+              {% unless related_product.id == product.id %}
+                {% render 'product-card', product: related_product %}
+              {% endunless %}
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{%- comment -%} Product Reviews Section {%- endcomment -%}
+{% if section.settings.show_reviews %}
+  {% render 'product-reviews', product: product, show_form: section.settings.show_review_form %}
+{% endif %}
+
+<script>
+  // Product Form Functionality with Cart Inventory Validation
+  (function() {
+    const variantSelect = document.querySelector('[data-variant-select]');
+    const variantIdInput = document.querySelector('[data-variant-id]');
+    const quantityInput = document.querySelector('[data-quantity-input]');
+    const quantityMinus = document.querySelector('[data-quantity-minus]');
+    const quantityPlus = document.querySelector('[data-quantity-plus]');
+    const submitButton = document.querySelector('.product-form__submit');
+    const productForm = document.querySelector('.product-form');
+    
+    let cartState = null;
+    let currentVariantId = variantIdInput ? variantIdInput.value : null;
+    
+    // Fetch current cart state
+    async function fetchCart() {
+      try {
+        const response = await fetch('/cart.js');
+        if (!response.ok) throw new Error('Failed to fetch cart');
+        cartState = await response.json();
+        return cartState;
+      } catch (error) {
+        console.error('Error fetching cart:', error);
+        return null;
+      }
+    }
+    
+    // Get quantity of current variant in cart
+    function getCartQuantityForVariant(variantId) {
+      if (!cartState || !cartState.items) return 0;
+      
+      const cartItem = cartState.items.find(item => item.variant_id == variantId);
+      return cartItem ? cartItem.quantity : 0;
+    }
+    
+    // Calculate available quantity (inventory - cart quantity)
+    function getAvailableQuantity(inventory, variantId) {
+      const cartQuantity = getCartQuantityForVariant(variantId);
+      return Math.max(0, inventory - cartQuantity);
+    }
+    
+    // Update UI based on available quantity
+    function updateAvailabilityUI(variantId, inventory, available) {
+      const cartQuantity = getCartQuantityForVariant(variantId);
+      const availableToAdd = getAvailableQuantity(inventory, variantId);
+      
+      // Create or update availability message
+      let availabilityMsg = document.querySelector('.product-availability-message');
+      if (!availabilityMsg) {
+        availabilityMsg = document.createElement('p');
+        availabilityMsg.className = 'product-availability-message';
+        submitButton.parentNode.insertBefore(availabilityMsg, submitButton);
+      }
+      
+      // Update quantity input max
+      if (quantityInput) {
+        quantityInput.setAttribute('max', availableToAdd);
+        if (parseInt(quantityInput.value) > availableToAdd) {
+          quantityInput.value = Math.max(1, availableToAdd);
+        }
+      }
+      
+      // Update button and message based on availability
+      if (!available || inventory === 0) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'SOLD OUT';
+        availabilityMsg.textContent = '';
+        availabilityMsg.style.display = 'none';
+      } else if (cartQuantity >= inventory) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'MAXIMUM IN CART';
+        availabilityMsg.textContent = `You already have ${cartQuantity} in your cart (maximum available)`;
+        availabilityMsg.style.display = 'block';
+        availabilityMsg.className = 'product-availability-message product-availability-message--warning';
+      } else if (availableToAdd <= 5 && availableToAdd > 0) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'ADD TO CART';
+        if (cartQuantity > 0) {
+          availabilityMsg.textContent = `${cartQuantity} in cart, only ${availableToAdd} more available`;
+        } else {
+          availabilityMsg.textContent = `Only ${availableToAdd} available`;
+        }
+        availabilityMsg.style.display = 'block';
+        availabilityMsg.className = 'product-availability-message product-availability-message--low';
+      } else {
+        submitButton.disabled = false;
+        submitButton.textContent = 'ADD TO CART';
+        if (cartQuantity > 0) {
+          availabilityMsg.textContent = `${cartQuantity} already in cart`;
+          availabilityMsg.style.display = 'block';
+          availabilityMsg.className = 'product-availability-message product-availability-message--info';
+        } else {
+          availabilityMsg.textContent = '';
+          availabilityMsg.style.display = 'none';
+        }
+      }
+    }
+    
+    // Validate before form submission
+    async function validateBeforeSubmit(e) {
+      e.preventDefault();
+      
+      if (!variantIdInput || !quantityInput || !productForm) {
+        console.error('Required form elements not found');
+        return false;
+      }
+      
+      const variantId = variantIdInput.value;
+      const requestedQuantity = parseInt(quantityInput.value) || 1;
+      
+      // Fetch latest cart state
+      await fetchCart();
+      
+      // Get inventory from variant select or data attribute
+      let inventory = 999;
+      if (variantSelect) {
+        const selectedOption = variantSelect.querySelector(`option[value="${variantId}"]`);
+        if (selectedOption && selectedOption.dataset.inventory) {
+          inventory = parseInt(selectedOption.dataset.inventory);
+        }
+      } else {
+        // For products with single variant, get inventory from form data attribute
+        const formInventory = productForm.dataset.inventory;
+        if (formInventory) {
+          inventory = parseInt(formInventory);
+        }
+      }
+      
+      const cartQuantity = getCartQuantityForVariant(variantId);
+      const totalQuantity = cartQuantity + requestedQuantity;
+      
+      // Validate total quantity against inventory
+      if (totalQuantity > inventory) {
+        const availableToAdd = Math.max(0, inventory - cartQuantity);
+        alert(`Cannot add ${requestedQuantity} items. You have ${cartQuantity} in cart and only ${availableToAdd} more available.`);
+        if (quantityInput) {
+          quantityInput.value = availableToAdd;
+        }
+        return false;
+      }
+      
+      // If validation passes, submit the form
+      productForm.submit();
+    }
+    
+    // Quantity Controls
+    if (quantityMinus && quantityPlus && quantityInput) {
+      const min = parseInt(quantityInput.getAttribute('min')) || 1;
+      const updateMax = () => parseInt(quantityInput.getAttribute('max')) || 999;
+      
+      quantityMinus.addEventListener('click', () => {
+        const currentValue = parseInt(quantityInput.value) || min;
+        if (currentValue > min) {
+          quantityInput.value = currentValue - 1;
+        }
+      });
+      
+      quantityPlus.addEventListener('click', () => {
+        const currentValue = parseInt(quantityInput.value) || min;
+        const max = updateMax();
+        if (currentValue < max) {
+          quantityInput.value = currentValue + 1;
+        } else {
+          // Show message when max reached
+          const availabilityMsg = document.querySelector('.product-availability-message');
+          if (availabilityMsg) {
+            availabilityMsg.textContent = 'Maximum available quantity reached';
+            availabilityMsg.className = 'product-availability-message product-availability-message--warning';
+            setTimeout(() => {
+              updateAvailabilityUI(currentVariantId, max + getCartQuantityForVariant(currentVariantId), true);
+            }, 2000);
+          }
+        }
+      });
+      
+      quantityInput.addEventListener('change', () => {
+        const value = parseInt(quantityInput.value) || min;
+        const max = updateMax();
+        if (value < min) {
+          quantityInput.value = min;
+        } else if (value > max) {
+          quantityInput.value = max;
+        }
+      });
+    }
+    
+    // Variant Selection
+    if (variantSelect && variantIdInput) {
+      variantSelect.addEventListener('change', async function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const variantId = selectedOption.value;
+        const inventory = parseInt(selectedOption.dataset.inventory) || 999;
+        const available = selectedOption.dataset.available === 'true';
+        
+        currentVariantId = variantId;
+        
+        // Update hidden input
+        variantIdInput.value = variantId;
+        
+        // Fetch cart and update UI
+        await fetchCart();
+        updateAvailabilityUI(variantId, inventory, available);
+        
+        // Update URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('variant', variantId);
+        window.history.replaceState({}, '', url);
+      });
+    }
+    
+    // Form submission validation
+    if (productForm && submitButton) {
+      productForm.addEventListener('submit', validateBeforeSubmit);
+    }
+    
+    // Initialize: Fetch cart and update UI on page load
+    (async function init() {
+      await fetchCart();
+      
+      if (variantSelect) {
+        // Multi-variant product
+        const selectedOption = variantSelect.options[variantSelect.selectedIndex];
+        const inventory = parseInt(selectedOption.dataset.inventory) || 999;
+        const available = selectedOption.dataset.available === 'true';
+        updateAvailabilityUI(currentVariantId, inventory, available);
+      } else if (productForm && currentVariantId) {
+        // Single variant product - get inventory from form data attribute
+        const inventory = parseInt(productForm.dataset.inventory) || 999;
+        const available = productForm.dataset.available === 'true';
+        updateAvailabilityUI(currentVariantId, inventory, available);
+      }
+    })();
+    
+    // Listen for cart updates from other pages
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'cart_updated') {
+        fetchCart().then(() => {
+          if (variantSelect) {
+            // Multi-variant product
+            const selectedOption = variantSelect.options[variantSelect.selectedIndex];
+            const inventory = parseInt(selectedOption.dataset.inventory) || 999;
+            const available = selectedOption.dataset.available === 'true';
+            updateAvailabilityUI(currentVariantId, inventory, available);
+          } else if (productForm && currentVariantId) {
+            // Single variant product
+            const inventory = parseInt(productForm.dataset.inventory) || 999;
+            const available = productForm.dataset.available === 'true';
+            updateAvailabilityUI(currentVariantId, inventory, available);
+          }
+        });
+      }
+    });
+    
+    // Product Accordions - Event Delegation
+    document.addEventListener('click', function(e) {
+      const toggle = e.target.closest('.product-accordion__toggle');
+      if (!toggle) return;
+      
+      const accordion = toggle.closest('.product-accordion');
+      const content = accordion.querySelector('.product-accordion__content');
+      const isOpen = accordion.classList.contains('is-open');
+      
+      if (isOpen) {
+        accordion.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        content.setAttribute('hidden', '');
+      } else {
+        accordion.classList.add('is-open');
+        toggle.setAttribute('aria-expanded', 'true');
+        content.removeAttribute('hidden');
+      }
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .product-page {
+    background-color: var(--color-background);
+  }
+  
+  .product-page__container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+  }
+  
+  /* Product Main: 50/50 Layout */
+  .product-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-4xl);
+    margin-bottom: var(--spacing-4xl);
+  }
+  
+  .product-main__gallery {
+    position: sticky;
+    top: var(--spacing-md);
+    align-self: start;
+  }
+  
+  /* Product Info */
+  .product-main__title {
+    font-size: clamp(28px, 4vw, 36px);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .product-main__rating {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .product-main__price {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .product-main__price-amount {
+    font-family: var(--font-header);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-oxford-blue);
+  }
+  
+  .product-main__price-compare {
+    font-family: var(--font-body);
+    font-size: 20px;
+    color: var(--color-dim-grey);
+    text-decoration: line-through;
+  }
+  
+  .product-main__description {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: var(--color-dim-grey);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .product-main__description p {
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  /* Product Form */
+  .product-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .product-form__label {
+    display: block;
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-oxford-blue);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .product-form__select {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-oxford-blue);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-dim-grey);
+    border-radius: 0;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 5L6 8L9 5' stroke='%230D1C31' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+  
+  .product-form__submit {
+    width: 100%;
+    padding: 16px 32px;
+    margin-top: var(--spacing-sm);
+  }
+  
+  .product-form__submit:disabled {
+    background-color: var(--color-dim-grey);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  .product-availability-message {
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 12px 16px;
+    margin-bottom: var(--spacing-sm);
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .product-availability-message--info {
+    background-color: #E0F2FE;
+    color: #075985;
+    border: 1px solid #BAE6FD;
+  }
+  
+  .product-availability-message--low {
+    background-color: #FEF3C7;
+    color: #92400E;
+    border: 1px solid #FDE68A;
+  }
+  
+  .product-availability-message--warning {
+    background-color: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+  }
+  
+  .shopify-payment-button {
+    margin-top: var(--spacing-sm);
+  }
+  
+  /* Product Info Accordions - Below Buy Button */
+  .product-info__accordions {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid #E5E5E5;
+  }
+  
+  /* Product Details Accordions */
+  .product-details {
+    max-width: 800px;
+    margin: 0 auto var(--spacing-4xl);
+  }
+  
+  /* Brand Philosophy Section */
+  .product-brand-section {
+    background-color: var(--color-oxford-blue);
+    color: var(--color-white);
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  .product-brand-section__container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+  }
+  
+  .product-brand-section__content {
+    text-align: center;
+  }
+  
+  .product-brand-section__label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--color-harvest-gold);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .product-brand-section__title {
+    font-family: var(--font-header);
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: var(--line-height-tight);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .product-brand-section__title::first-letter {
+    font-family: var(--font-display);
+    font-size: 1.3em;
+  }
+  
+  .product-brand-section__description {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .product-brand-section .btn-secondary {
+    color: var(--color-white);
+    border-color: var(--color-white);
+  }
+  
+  .product-brand-section .btn-secondary:hover {
+    background-color: var(--color-white);
+    color: var(--color-oxford-blue);
+  }
+  
+  /* Related Products */
+  .product-related {
+    background-color: var(--color-background);
+  }
+  
+  .product-related__container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+  }
+  
+  .product-related__title {
+    text-align: center;
+    font-size: var(--font-size-section-title);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .product-related__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--grid-gutter);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1023px) {
+    .product-main {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-2xl);
+    }
+    
+    .product-main__gallery {
+      position: static;
+    }
+    
+    .product-related__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .product-main__title {
+      font-size: 24px;
+    }
+    
+    .product-main__price-amount {
+      font-size: 24px;
+    }
+    
+    .product-brand-section__title {
+      font-size: 28px;
+    }
+    
+    .product-related__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product Information"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show Star Rating",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show Dynamic Checkout Buttons",
+      "default": true,
+      "info": "Shows Buy Now buttons for Apple Pay, Google Pay, etc."
+    },
+    {
+      "type": "header",
+      "content": "Product Details Accordions"
+    },
+    {
+      "type": "paragraph",
+      "content": "Configure the default expansion panels below the buy button. Use blocks to add custom panels."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_benefits",
+      "label": "Show Benefits Accordion",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "benefits_content",
+      "label": "Benefits Content",
+      "default": "<p>Enter your product benefits here. This content will appear in the Benefits accordion.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_ingredients",
+      "label": "Show Ingredients Accordion",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "ingredients_content",
+      "label": "Ingredients Content",
+      "default": "<p>List your product ingredients here. This content will appear in the Ingredients accordion.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_how_to_use",
+      "label": "Show How to Use Accordion",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "how_to_use_content",
+      "label": "How to Use Content",
+      "default": "<p>Provide usage instructions here. This content will appear in the How to Use accordion.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Brand Philosophy Section"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_brand_section",
+      "label": "Show Brand Section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "brand_title",
+      "label": "Brand Title",
+      "default": "CRAFTED FOR THE DISCERNING FEW."
+    },
+    {
+      "type": "textarea",
+      "id": "brand_description",
+      "label": "Brand Description",
+      "default": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine."
+    },
+    {
+      "type": "text",
+      "id": "brand_button_text",
+      "label": "Button Text",
+      "default": "EXPLORE OUR PHILOSOPHY"
+    },
+    {
+      "type": "url",
+      "id": "brand_button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Related Products"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related_products",
+      "label": "Show Related Products",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "related_products_collection",
+      "label": "Related Products Collection",
+      "info": "Leave empty to show products from the same collection"
+    },
+    {
+      "type": "header",
+      "content": "Product Reviews"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Show Reviews Section",
+      "default": true,
+      "info": "Display customer reviews below related products"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_review_form",
+      "label": "Show Review Form",
+      "default": true,
+      "info": "Allow customers to submit reviews"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "accordion",
+      "name": "Custom Accordion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Accordion Title",
+          "default": "Custom Panel"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Accordion Content",
+          "default": "<p>Add your custom content here. This will appear in an expansion panel below the buy button.</p>"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

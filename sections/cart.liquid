@@ -1,0 +1,1114 @@
+{% comment %}
+  SON OF ADAM - Cart Page
+  Shopping cart with line items, quantity controls, and checkout
+{% endcomment %}
+
+<main class="cart-page full-width section-spacing" role="main" aria-label="Shopping cart">
+  <div class="cart-page__container">
+    
+    {%- comment -%} Breadcrumb Navigation {%- endcomment -%}
+    {% render 'breadcrumb' %}
+    
+    {%- comment -%} Cart Header {%- endcomment -%}
+    <div class="cart-header">
+      <h1 class="cart-header__title">Your Cart</h1>
+      {% if cart.item_count > 0 %}
+        <p class="cart-header__count">
+          {{ cart.item_count }} 
+          {% if cart.item_count == 1 %}
+            item
+          {% else %}
+            items
+          {% endif %}
+        </p>
+      {% endif %}
+    </div>
+    
+    {% if cart.item_count > 0 %}
+      <form action="{{ routes.cart_url }}" method="post" class="cart-form">
+        
+        <div class="cart-content">
+          
+          {%- comment -%} Cart Items {%- endcomment -%}
+          <div class="cart-items">
+            {% for item in cart.items %}
+              <div class="cart-item"
+                   data-cart-item
+                   data-line="{{ forloop.index }}"
+                   data-key="{{ item.key }}"
+                   data-variant-id="{{ item.variant.id }}"
+                   data-inventory="{{ item.variant.inventory_quantity }}"
+                   data-inventory-policy="{{ item.variant.inventory_policy }}">
+                
+                {%- comment -%} Loading Overlay {%- endcomment -%}
+                <div class="cart-item__loading" data-loading-overlay style="display: none;">
+                  <div class="cart-item__spinner"></div>
+                </div>
+                
+                {%- comment -%} Product Image {%- endcomment -%}
+                <div class="cart-item__image">
+                  {% if item.image %}
+                    <a href="{{ item.url }}">
+                      <img
+                        src="{{ item.image | image_url: width: 200 }}"
+                        width="{{ item.image.width }}"
+                        height="{{ item.image.height }}"
+                        alt="{{ item.image.alt | escape }}"
+                        loading="lazy"
+                      >
+                    </a>
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag: 'cart-item__placeholder' }}
+                  {% endif %}
+                </div>
+                
+                {%- comment -%} Product Info {%- endcomment -%}
+                <div class="cart-item__details">
+                  <h3 class="cart-item__title">
+                    <a href="{{ item.url }}">{{ item.product.title }}</a>
+                  </h3>
+                  
+                  {% unless item.product.has_only_default_variant %}
+                    <p class="cart-item__variant">{{ item.variant.title }}</p>
+                  {% endunless %}
+                  
+                  {% if item.properties.size > 0 %}
+                    <div class="cart-item__properties">
+                      {% for property in item.properties %}
+                        {% unless property.last == blank %}
+                          <p class="cart-item__property">
+                            <span>{{ property.first }}:</span> {{ property.last }}
+                          </p>
+                        {% endunless %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  
+                  <p class="cart-item__price" data-item-price="{{ item.final_price }}">
+                    <span data-price-display>{{ item.final_price | money }}</span>
+                    {% if item.original_price > item.final_price %}
+                      <span class="cart-item__price--compare">
+                        {{ item.original_price | money }}
+                      </span>
+                    {% endif %}
+                  </p>
+                  
+                  {%- comment -%} Inventory Status {%- endcomment -%}
+                  {% if item.variant.inventory_management == 'shopify' %}
+                    <p class="cart-item__inventory" data-inventory-status>
+                      {% if item.variant.inventory_quantity <= 5 and item.variant.inventory_quantity > 0 %}
+                        <span class="cart-item__inventory--low">Only {{ item.variant.inventory_quantity }} left in stock</span>
+                      {% elsif item.variant.inventory_quantity == 0 %}
+                        <span class="cart-item__inventory--out">Out of stock</span>
+                      {% endif %}
+                    </p>
+                  {% endif %}
+                </div>
+                
+                {%- comment -%} Quantity Controls {%- endcomment -%}
+                <div class="cart-item__quantity">
+                  <div class="quantity-selector" data-quantity-selector>
+                    <button
+                      type="button"
+                      class="quantity-selector__button quantity-selector__button--minus"
+                      data-quantity-decrease
+                      aria-label="Decrease quantity">
+                      <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
+                        <path d="M0 1H12" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </button>
+                    <input
+                      type="number"
+                      class="quantity-selector__input"
+                      data-quantity-input
+                      data-line-key="{{ item.key }}"
+                      value="{{ item.quantity }}"
+                      min="0"
+                      max="{{ item.variant.inventory_quantity }}"
+                      {% if item.variant.inventory_management == 'shopify' %}
+                        data-max="{{ item.variant.inventory_quantity }}"
+                      {% endif %}
+                      aria-label="Quantity">
+                    <button
+                      type="button"
+                      class="quantity-selector__button quantity-selector__button--plus"
+                      data-quantity-increase
+                      aria-label="Increase quantity">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M6 0V12M0 6H12" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="cart-item__error" data-error-message style="display: none;"></p>
+                </div>
+                
+                {%- comment -%} Line Total {%- endcomment -%}
+                <div class="cart-item__total">
+                  <p class="cart-item__total-price" data-line-price="{{ item.final_line_price }}">
+                    <span data-line-price-display>{{ item.final_line_price | money }}</span>
+                  </p>
+                  {% if item.line_level_discount_allocations.size > 0 %}
+                    <p class="cart-item__discount">
+                      {% for discount in item.line_level_discount_allocations %}
+                        {{ discount.discount_application.title }} (-{{ discount.amount | money }})
+                      {% endfor %}
+                    </p>
+                  {% endif %}
+                </div>
+                
+                {%- comment -%} Remove Button {%- endcomment -%}
+                <div class="cart-item__remove">
+                  <button
+                    type="button"
+                    class="cart-item__remove-button"
+                    data-remove-item
+                    data-line-key="{{ item.key }}"
+                    aria-label="Remove {{ item.product.title }}">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  </button>
+                </div>
+                
+              </div>
+            {% endfor %}
+          </div>
+          
+          {%- comment -%} Cart Summary {%- endcomment -%}
+          <div class="cart-summary" data-cart-summary>
+            <h2 class="cart-summary__title">Order Summary</h2>
+            
+            <div class="cart-summary__line">
+              <span>Subtotal</span>
+              <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+            </div>
+            
+            {% if cart.cart_level_discount_applications.size > 0 %}
+              <div class="cart-summary__discounts" data-cart-discounts>
+                {% for discount in cart.cart_level_discount_applications %}
+                  <div class="cart-summary__line cart-summary__line--discount">
+                    <span>{{ discount.title }}</span>
+                    <span>-{{ discount.total_allocated_amount | money }}</span>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+            
+            <div class="cart-summary__line cart-summary__line--note">
+              <span>Shipping & taxes calculated at checkout</span>
+            </div>
+            
+            <div class="cart-summary__total">
+              <span>Total</span>
+              <span class="cart-summary__total-price" data-cart-total>{{ cart.total_price | money }}</span>
+            </div>
+            
+            {%- comment -%} Cart Note {%- endcomment -%}
+            {% if section.settings.enable_cart_note %}
+              <div class="cart-summary__note">
+                <label for="cart-note" class="cart-summary__note-label">
+                  Order Notes
+                </label>
+                <textarea
+                  id="cart-note"
+                  name="note"
+                  class="cart-summary__note-textarea"
+                  placeholder="Special instructions for your order..."
+                >{{ cart.note }}</textarea>
+              </div>
+            {% endif %}
+            
+            {%- comment -%} Checkout Button {%- endcomment -%}
+            <button type="submit" name="checkout" class="cart-summary__checkout btn btn-primary" data-checkout-button>
+              Proceed to Checkout
+            </button>
+            
+            {%- comment -%} Continue Shopping {%- endcomment -%}
+            <a href="/collections/all" class="cart-summary__continue">
+              Continue Shopping
+            </a>
+          </div>
+          
+        </div>
+      </form>
+      
+    {% else %}
+      {%- comment -%} Empty Cart State {%- endcomment -%}
+      <div class="cart-empty">
+        <svg class="cart-empty__icon" width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <path d="M20 20L26 60H54L60 20H20Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M26 20V16C26 10.4772 30.4772 6 36 6H44C49.5228 6 54 10.4772 54 16V20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="35" cy="40" r="2" fill="currentColor"/>
+          <circle cx="45" cy="40" r="2" fill="currentColor"/>
+        </svg>
+        <h2 class="cart-empty__title">Your cart is empty</h2>
+        <p class="cart-empty__message">
+          Looks like you haven't added anything to your cart yet. Start shopping to fill it up!
+        </p>
+        <a href="/collections/all" class="btn btn-primary">
+          Shop All Products
+        </a>
+      </div>
+    {% endif %}
+    
+  </div>
+</main>
+
+<script>
+  /**
+   * SON OF ADAM - Comprehensive Cart Management
+   * Features: Real-time updates, inventory sync, optimistic UI, error handling
+   */
+  (function() {
+    'use strict';
+    
+    // Configuration
+    const CONFIG = {
+      debounceDelay: 500,
+      maxRetries: 3,
+      retryDelay: 1000,
+      // Shopify money format from Liquid
+      moneyFormat: {{ shop.money_format | json }}
+    };
+    
+    // State management
+    let updateQueue = [];
+    let isProcessing = false;
+    let debounceTimers = {};
+    
+    /**
+     * Debounce Utility for Cart Quantity Updates
+     * Prevents rapid API calls by delaying execution until user stops changing quantity
+     * Implementation: See debouncedQuantityChange() function (line ~596)
+     * - Delay: 500ms (CONFIG.debounceDelay)
+     * - Clears previous timers when new changes occur
+     * - Reduces server load and improves UX
+     */
+    
+    // Utility: Format money using Shopify's money format
+    function formatMoney(cents) {
+      if (typeof cents === 'string') {
+        cents = cents.replace('.', '');
+      }
+      let value = '';
+      const placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
+      const formatString = CONFIG.moneyFormat;
+      
+      function formatWithDelimiters(number, precision, thousands, decimal) {
+        precision = precision || 2;
+        thousands = thousands || ',';
+        decimal = decimal || '.';
+        
+        if (isNaN(number) || number == null) {
+          return '0';
+        }
+        
+        number = (number / 100.0).toFixed(precision);
+        
+        const parts = number.split('.');
+        const dollarsAmount = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+        const centsAmount = parts[1] ? (decimal + parts[1]) : '';
+        
+        return dollarsAmount + centsAmount;
+      }
+      
+      switch (formatString.match(placeholderRegex)[1]) {
+        case 'amount':
+          value = formatWithDelimiters(cents, 2);
+          break;
+        case 'amount_no_decimals':
+          value = formatWithDelimiters(cents, 0);
+          break;
+        case 'amount_with_comma_separator':
+          value = formatWithDelimiters(cents, 2, '.', ',');
+          break;
+        case 'amount_no_decimals_with_comma_separator':
+          value = formatWithDelimiters(cents, 0, '.', ',');
+          break;
+        case 'amount_with_apostrophe_separator':
+          value = formatWithDelimiters(cents, 2, "'", '.');
+          break;
+      }
+      
+      return formatString.replace(placeholderRegex, value);
+    }
+    
+    // Utility: Show loading state
+    function showLoading(cartItem) {
+      const overlay = cartItem.querySelector('[data-loading-overlay]');
+      if (overlay) overlay.style.display = 'flex';
+    }
+    
+    // Utility: Hide loading state
+    function hideLoading(cartItem) {
+      const overlay = cartItem.querySelector('[data-loading-overlay]');
+      if (overlay) overlay.style.display = 'none';
+    }
+    
+    // Utility: Show error message
+    function showError(cartItem, message) {
+      const errorEl = cartItem.querySelector('[data-error-message]');
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        setTimeout(() => {
+          errorEl.style.display = 'none';
+        }, 5000);
+      }
+    }
+    
+    // Utility: Update line item display
+    function updateLineItemDisplay(cartItem, lineItem) {
+      // Update line price
+      const linePriceEl = cartItem.querySelector('[data-line-price-display]');
+      if (linePriceEl && lineItem.final_line_price) {
+        linePriceEl.textContent = formatMoney(lineItem.final_line_price);
+      }
+      
+      // Update quantity input
+      const quantityInput = cartItem.querySelector('[data-quantity-input]');
+      if (quantityInput && lineItem.quantity !== undefined) {
+        quantityInput.value = lineItem.quantity;
+      }
+      
+      // Update inventory status
+      const inventoryStatus = cartItem.querySelector('[data-inventory-status]');
+      if (inventoryStatus) {
+        // Shopify Cart API returns inventory_quantity directly on the item
+        const inventory = lineItem.inventory_quantity;
+        if (inventory !== undefined && inventory !== null) {
+          if (inventory <= 5 && inventory > 0) {
+            inventoryStatus.innerHTML = `<span class="cart-item__inventory--low">Only ${inventory} left in stock</span>`;
+          } else if (inventory === 0) {
+            inventoryStatus.innerHTML = `<span class="cart-item__inventory--out">Out of stock</span>`;
+          } else {
+            inventoryStatus.innerHTML = '';
+          }
+        }
+      }
+    }
+    
+    // Utility: Update cart summary
+    function updateCartSummary(cart) {
+      // Update subtotal
+      const subtotalEl = document.querySelector('[data-cart-subtotal]');
+      if (subtotalEl) {
+        subtotalEl.textContent = formatMoney(cart.total_price);
+      }
+      
+      // Update total
+      const totalEl = document.querySelector('[data-cart-total]');
+      if (totalEl) {
+        totalEl.textContent = formatMoney(cart.total_price);
+      }
+      
+      // Update cart badge in header
+      updateCartBadge(cart.item_count);
+    }
+    
+    // Utility: Update cart badge in header
+    function updateCartBadge(itemCount) {
+      // Update cart count badge
+      const cartCountBadge = document.querySelector('.header__cart-count');
+      
+      if (itemCount > 0) {
+        if (cartCountBadge) {
+          // Update existing badge
+          cartCountBadge.textContent = itemCount;
+        } else {
+          // Create badge if it doesn't exist
+          const cartLink = document.querySelector('.header__cart');
+          if (cartLink) {
+            const badge = document.createElement('span');
+            badge.className = 'header__cart-count';
+            badge.textContent = itemCount;
+            cartLink.appendChild(badge);
+          }
+        }
+      } else {
+        // Remove badge if cart is empty
+        if (cartCountBadge) {
+          cartCountBadge.remove();
+        }
+      }
+    }
+    
+    // API: Get cart state
+    async function getCart() {
+      try {
+        const response = await fetch('/cart.js');
+        if (!response.ok) throw new Error('Failed to fetch cart');
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching cart:', error);
+        throw error;
+      }
+    }
+    
+    // API: Update cart item quantity
+    async function updateCartItem(key, quantity, retryCount = 0) {
+      try {
+        const response = await fetch('/cart/change.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({
+            id: key,
+            quantity: quantity
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to update cart');
+        }
+        
+        return await response.json();
+      } catch (error) {
+        if (retryCount < CONFIG.maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, CONFIG.retryDelay));
+          return updateCartItem(key, quantity, retryCount + 1);
+        }
+        throw error;
+      }
+    }
+    
+    // API: Remove cart item
+    async function removeCartItem(key) {
+      return updateCartItem(key, 0);
+    }
+    
+    // Handle quantity change
+    async function handleQuantityChange(cartItem, newQuantity) {
+      const key = cartItem.dataset.key;
+      const quantityInput = cartItem.querySelector('[data-quantity-input]');
+      const currentQuantity = parseInt(quantityInput.value);
+      const maxQuantity = parseInt(quantityInput.dataset.max || 999);
+      const inventory = parseInt(cartItem.dataset.inventory || 999);
+      const inventoryPolicy = cartItem.dataset.inventoryPolicy;
+      
+      // Validate quantity
+      if (newQuantity < 0) {
+        showError(cartItem, 'Quantity cannot be negative');
+        quantityInput.value = currentQuantity;
+        return;
+      }
+      
+      // Check inventory limits
+      if (inventoryPolicy === 'deny' && newQuantity > inventory) {
+        showError(cartItem, `Only ${inventory} available in stock`);
+        quantityInput.value = Math.min(currentQuantity, inventory);
+        return;
+      }
+      
+      // Handle removal
+      if (newQuantity === 0) {
+        if (confirm('Remove this item from cart?')) {
+          await handleRemoveItem(cartItem);
+        } else {
+          quantityInput.value = currentQuantity;
+        }
+        return;
+      }
+      
+      // Show loading state
+      showLoading(cartItem);
+      
+      // Optimistic UI update
+      quantityInput.value = newQuantity;
+      const itemPrice = parseInt(cartItem.querySelector('[data-item-price]').dataset.itemPrice);
+      const newLinePrice = itemPrice * newQuantity;
+      const linePriceDisplay = cartItem.querySelector('[data-line-price-display]');
+      if (linePriceDisplay) {
+        linePriceDisplay.textContent = formatMoney(newLinePrice);
+      }
+      
+      try {
+        // Update cart via API
+        const cart = await updateCartItem(key, newQuantity);
+        
+        // Find updated line item
+        const lineItem = cart.items.find(item => item.key === key);
+        if (lineItem) {
+          updateLineItemDisplay(cartItem, lineItem);
+          // Update inventory data attribute (inventory_quantity is directly on item)
+          if (lineItem.inventory_quantity !== undefined) {
+            cartItem.dataset.inventory = lineItem.inventory_quantity;
+            // Update max attribute on quantity input
+            const quantityInput = cartItem.querySelector('[data-quantity-input]');
+            if (quantityInput) {
+              quantityInput.setAttribute('max', lineItem.inventory_quantity);
+              quantityInput.dataset.max = lineItem.inventory_quantity;
+            }
+          }
+        }
+        
+        // Update cart summary
+        updateCartSummary(cart);
+        
+        // Broadcast cart update event
+        window.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
+        
+      } catch (error) {
+        console.error('Error updating cart:', error);
+        showError(cartItem, error.message || 'Failed to update quantity');
+        quantityInput.value = currentQuantity;
+        
+        // Revert optimistic update
+        const revertLinePrice = itemPrice * currentQuantity;
+        if (linePriceDisplay) {
+          linePriceDisplay.textContent = formatMoney(revertLinePrice);
+        }
+      } finally {
+        hideLoading(cartItem);
+      }
+    }
+    
+    // Handle item removal
+    async function handleRemoveItem(cartItem) {
+      const key = cartItem.dataset.key;
+      
+      showLoading(cartItem);
+      
+      try {
+        const cart = await removeCartItem(key);
+        
+        // Remove item from DOM with animation
+        cartItem.style.opacity = '0';
+        cartItem.style.transform = 'translateX(-20px)';
+        setTimeout(() => {
+          cartItem.remove();
+          
+          // Check if cart is empty
+          const remainingItems = document.querySelectorAll('[data-cart-item]');
+          if (remainingItems.length === 0) {
+            window.location.reload();
+          }
+        }, 300);
+        
+        // Update cart summary
+        updateCartSummary(cart);
+        
+        // Broadcast cart update event
+        window.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
+        
+      } catch (error) {
+        console.error('Error removing item:', error);
+        showError(cartItem, 'Failed to remove item');
+        hideLoading(cartItem);
+      }
+    }
+    
+    // Debounced quantity change handler
+    function debouncedQuantityChange(cartItem, newQuantity) {
+      const key = cartItem.dataset.key;
+      
+      // Clear existing timer
+      if (debounceTimers[key]) {
+        clearTimeout(debounceTimers[key]);
+      }
+      
+      // Set new timer
+      debounceTimers[key] = setTimeout(() => {
+        handleQuantityChange(cartItem, newQuantity);
+        delete debounceTimers[key];
+      }, CONFIG.debounceDelay);
+    }
+    
+    // Initialize cart functionality
+    function initCart() {
+      // Quantity input change handlers
+      document.querySelectorAll('[data-quantity-input]').forEach(input => {
+        input.addEventListener('change', function() {
+          const cartItem = this.closest('[data-cart-item]');
+          const newQuantity = parseInt(this.value) || 0;
+          debouncedQuantityChange(cartItem, newQuantity);
+        });
+        
+        // Prevent manual input of invalid values
+        input.addEventListener('input', function() {
+          const max = parseInt(this.dataset.max || 999);
+          if (parseInt(this.value) > max) {
+            this.value = max;
+          }
+        });
+      });
+      
+      // Quantity increase buttons
+      document.querySelectorAll('[data-quantity-increase]').forEach(button => {
+        button.addEventListener('click', function() {
+          const cartItem = this.closest('[data-cart-item]');
+          const input = cartItem.querySelector('[data-quantity-input]');
+          const currentValue = parseInt(input.value) || 0;
+          const maxValue = parseInt(input.dataset.max || 999);
+          const newValue = Math.min(currentValue + 1, maxValue);
+          
+          if (newValue > currentValue) {
+            input.value = newValue;
+            debouncedQuantityChange(cartItem, newValue);
+          } else {
+            showError(cartItem, 'Maximum quantity reached');
+          }
+        });
+      });
+      
+      // Quantity decrease buttons
+      document.querySelectorAll('[data-quantity-decrease]').forEach(button => {
+        button.addEventListener('click', function() {
+          const cartItem = this.closest('[data-cart-item]');
+          const input = cartItem.querySelector('[data-quantity-input]');
+          const currentValue = parseInt(input.value) || 0;
+          const newValue = Math.max(currentValue - 1, 0);
+          
+          input.value = newValue;
+          debouncedQuantityChange(cartItem, newValue);
+        });
+      });
+      
+      // Remove item buttons
+      document.querySelectorAll('[data-remove-item]').forEach(button => {
+        button.addEventListener('click', function() {
+          const cartItem = this.closest('[data-cart-item]');
+          handleRemoveItem(cartItem);
+        });
+      });
+      
+      // Sync cart state across tabs
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'cart_updated') {
+          // Reload cart when updated in another tab
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        }
+      });
+      
+      // Broadcast cart updates to other tabs
+      window.addEventListener('cart:updated', function() {
+        localStorage.setItem('cart_updated', Date.now().toString());
+      });
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCart);
+    } else {
+      initCart();
+    }
+  })();
+</script>
+
+{% stylesheet %}
+  .cart-page {
+    background-color: var(--color-background);
+  }
+  
+  .cart-page__container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+  }
+  
+  /* Cart Header */
+  .cart-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+  }
+  
+  .cart-header__title {
+    font-size: var(--font-size-hero);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .cart-header__count {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--color-dim-grey);
+  }
+  
+  /* Cart Content Layout */
+  .cart-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: var(--spacing-4xl);
+    align-items: start;
+  }
+  
+  /* Cart Items */
+  .cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  
+  .cart-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 120px 1fr auto auto auto;
+    gap: var(--spacing-md);
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: var(--color-white);
+    border: 1px solid #E5E5E5;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .cart-item__loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .cart-item__spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-background);
+    border-top-color: var(--color-harvest-gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .cart-item__image {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+  
+  .cart-item__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .cart-item__placeholder {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .cart-item__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .cart-item__title {
+    font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .cart-item__title a {
+    color: var(--color-oxford-blue);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+  
+  .cart-item__title a:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  .cart-item__variant,
+  .cart-item__property {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+    margin: 0;
+  }
+  
+  .cart-item__price {
+    font-family: var(--font-header);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-oxford-blue);
+    margin: 0;
+  }
+  
+  .cart-item__price--compare {
+    font-size: 14px;
+    color: var(--color-dim-grey);
+    text-decoration: line-through;
+    margin-left: var(--spacing-xs);
+  }
+  
+  .cart-item__inventory {
+    font-family: var(--font-body);
+    font-size: 12px;
+    margin: var(--spacing-xs) 0 0;
+  }
+  
+  .cart-item__inventory--low {
+    color: #D97706;
+    font-weight: 600;
+  }
+  
+  .cart-item__inventory--out {
+    color: #DC2626;
+    font-weight: 600;
+  }
+  
+  .cart-item__error {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: #DC2626;
+    margin-top: var(--spacing-xs);
+    padding: var(--spacing-xs);
+    background-color: #FEE2E2;
+    border-radius: 4px;
+  }
+  
+  .cart-item__total {
+    text-align: right;
+    min-width: 100px;
+  }
+  
+  .cart-item__total-price {
+    font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-oxford-blue);
+    margin: 0;
+  }
+  
+  .cart-item__discount {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-harvest-gold);
+    margin: var(--spacing-xs) 0 0;
+  }
+  
+  .cart-item__remove-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: var(--color-dim-grey);
+    transition: color var(--transition-fast);
+  }
+  
+  .cart-item__remove-button:hover {
+    color: var(--color-oxford-blue);
+  }
+  
+  /* Cart Summary */
+  .cart-summary {
+    position: sticky;
+    top: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background-color: var(--color-white);
+    border: 1px solid #E5E5E5;
+  }
+  
+  .cart-summary__title {
+    font-family: var(--font-header);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid #E5E5E5;
+  }
+  
+  .cart-summary__line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-oxford-blue);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .cart-summary__line--discount {
+    color: var(--color-harvest-gold);
+  }
+  
+  .cart-summary__line--note {
+    font-size: 12px;
+    color: var(--color-dim-grey);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid #E5E5E5;
+  }
+  
+  .cart-summary__line--note span {
+    display: block;
+    text-align: center;
+  }
+  
+  .cart-summary__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-oxford-blue);
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md) 0;
+    border-top: 2px solid var(--color-oxford-blue);
+    border-bottom: 2px solid var(--color-oxford-blue);
+  }
+  
+  .cart-summary__total-price {
+    font-size: 24px;
+  }
+  
+  .cart-summary__note {
+    margin: var(--spacing-lg) 0;
+  }
+  
+  .cart-summary__note-label {
+    display: block;
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-oxford-blue);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .cart-summary__note-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-oxford-blue);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-dim-grey);
+    border-radius: 0;
+    resize: vertical;
+  }
+  
+  .cart-summary__note-textarea:focus {
+    outline: 2px solid var(--color-harvest-gold);
+    outline-offset: -2px;
+  }
+  
+  .cart-summary__update,
+  .cart-summary__checkout {
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .cart-summary__continue {
+    display: block;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+    text-decoration: underline;
+    margin-top: var(--spacing-md);
+    transition: color var(--transition-fast);
+  }
+  
+  .cart-summary__continue:hover {
+    color: var(--color-oxford-blue);
+  }
+  
+  /* Empty Cart */
+  .cart-empty {
+    text-align: center;
+    padding: var(--spacing-4xl) var(--spacing-md);
+  }
+  
+  .cart-empty__icon {
+    color: var(--color-dim-grey);
+    margin: 0 auto var(--spacing-lg);
+  }
+  
+  .cart-empty__title {
+    font-family: var(--font-header);
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .cart-empty__message {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: var(--color-dim-grey);
+    max-width: 500px;
+    margin: 0 auto var(--spacing-xl);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1023px) {
+    .cart-content {
+      grid-template-columns: 1fr;
+    }
+    
+    .cart-summary {
+      position: static;
+    }
+    
+    .cart-item {
+      grid-template-columns: 100px 1fr;
+      grid-template-areas:
+        "image details"
+        "image quantity"
+        "remove total";
+      gap: var(--spacing-sm);
+    }
+    
+    .cart-item__image {
+      grid-area: image;
+    }
+    
+    .cart-item__details {
+      grid-area: details;
+    }
+    
+    .cart-item__quantity {
+      grid-area: quantity;
+    }
+    
+    .cart-item__total {
+      grid-area: total;
+      text-align: right;
+    }
+    
+    .cart-item__remove {
+      grid-area: remove;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .cart-header__title {
+      font-size: clamp(32px, 8vw, 48px);
+    }
+    
+    .cart-item {
+      padding: var(--spacing-sm);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_cart_note",
+      "label": "Enable Order Notes",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

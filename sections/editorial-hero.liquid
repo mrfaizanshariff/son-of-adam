@@ -1,0 +1,344 @@
+{% comment %}
+  SON OF ADAM - Editorial Hero Section
+  Full-width hero with background image/video and centered content
+{% endcomment %}
+
+<section class="editorial-hero full-width section-spacing">
+  <div class="editorial-hero__media">
+    {% if section.settings.video_url != blank %}
+      {%- comment -%} Video Background {%- endcomment -%}
+      <video
+        class="editorial-hero__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        {% if section.settings.image != blank %}poster="{{ section.settings.image | image_url: width: 1920 }}"{% endif %}
+      >
+        <source src="{{ section.settings.video_url }}" type="video/mp4">
+      </video>
+    {% elsif section.settings.image != blank %}
+      {%- comment -%} Image Background {%- endcomment -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 1920 }}"
+        srcset="{{ section.settings.image | image_url: width: 768 }} 768w,
+                {{ section.settings.image | image_url: width: 1200 }} 1200w,
+                {{ section.settings.image | image_url: width: 1920 }} 1920w"
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | escape }}"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+        loading="eager"
+        class="editorial-hero__image"
+      >
+    {% endif %}
+    
+    {%- comment -%} Overlay {%- endcomment -%}
+    <div class="editorial-hero__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+  </div>
+  
+  <div class="editorial-hero__content" style="text-align: {{ section.settings.text_alignment }};">
+    <div class="editorial-hero__text" style="--heading-font-size: {{ section.settings.heading_font_size }}px; --subheading-font-size: {{ section.settings.subheading_font_size }}px; --description-font-size: {{ section.settings.description_font_size }}px;">
+      {% if section.settings.subheading != blank %}
+        <p class="editorial-hero__subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+      
+      {% if section.settings.heading != blank %}
+        <h1 class="editorial-hero__heading hero-title">
+          {{ section.settings.heading | replace: '[gold]', '<span class="text-primary">' | replace: '[/gold]', '</span>' }}
+        </h1>
+      {% endif %}
+      
+      {% if section.settings.text != blank %}
+        <div class="editorial-hero__description">
+          {{ section.settings.text }}
+        </div>
+      {% endif %}
+      
+      {% if section.settings.button_text != blank %}
+        <div class="editorial-hero__buttons">
+          {% render 'button',
+            text: section.settings.button_text,
+            url: section.settings.button_url,
+            style: 'primary',
+            size: 'large'
+          %}
+          
+          {% if section.settings.button_text_2 != blank %}
+            {% render 'button',
+              text: section.settings.button_text_2,
+              url: section.settings.button_url_2,
+              style: 'secondary',
+              size: 'large',
+              dark_bg: true
+            %}
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .editorial-hero {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+  
+  .editorial-hero__media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  
+  .editorial-hero__image,
+  .editorial-hero__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .editorial-hero__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-oxford-blue);
+    z-index: 1;
+  }
+  
+  .editorial-hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: var(--container-max-width);
+    padding: var(--spacing-4xl) var(--page-margin);
+    text-align: left;
+  }
+  
+  .editorial-hero__text {
+    max-width: 800px;
+    /* margin: 0 auto; */
+  }
+  
+  .editorial-hero__subheading {
+    font-family: var(--font-body);
+    font-size: var(--subheading-font-size, var(--font-size-small));
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-white);
+    margin-bottom: var(--spacing-md);
+    opacity: 0.9;
+  }
+  
+  .editorial-hero__heading {
+    color: var(--color-white);
+    margin-bottom: var(--spacing-lg);
+    line-height: var(--line-height-tight);
+    font-size: var(--heading-font-size, var(--font-size-hero));
+  }
+  
+  .editorial-hero__heading .text-primary {
+    color: var(--color-harvest-gold);
+  }
+  
+  .editorial-hero__description {
+    font-family: var(--font-body);
+    font-size: var(--description-font-size, var(--font-size-body));
+    line-height: var(--line-height-loose);
+    color: var(--color-white);
+    margin-bottom: var(--spacing-xl);
+    opacity: 0.95;
+  }
+  
+  .editorial-hero__description p {
+    font-size: inherit;
+  }
+  
+  .editorial-hero__buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: left;
+    flex-wrap: wrap;
+  }
+  
+  /* Responsive */
+  @media (max-width: 767px) {
+    .editorial-hero {
+      min-height: 60vh;
+    }
+    
+    .editorial-hero__content {
+      padding: var(--spacing-3xl) var(--page-margin);
+    }
+    
+    .editorial-hero__heading {
+      font-size: clamp(36px, 10vw, 48px);
+    }
+    
+    .editorial-hero__buttons {
+      flex-direction: column;
+    }
+    
+    .editorial-hero__buttons .btn {
+      width: 100%;
+    }
+  }
+  
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .editorial-hero {
+      min-height: 70vh;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial Hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background Image",
+      "info": "Recommended: 1920x1080px"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL (MP4)",
+      "info": "Video will override image if provided"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Premium Grooming"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading Font Size",
+      "default": 14
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "GROOMING AS [gold]TIMELESS[/gold] AS MAN",
+      "info": "Use [gold]text[/gold] to highlight text in gold"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "min": 40,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Font Size",
+      "default": 80
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Clearly natural grooming essentials made to protect your skin and refine your style.</p>"
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Description Font Size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Primary Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Essentials"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Secondary Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text_2",
+      "label": "Button Text",
+      "default": "Discover the Brand"
+    },
+    {
+      "type": "url",
+      "id": "button_url_2",
+      "label": "Button URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Hero",
+      "category": "Hero"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,114 @@
+{% comment %}
+  Product Accordion Snippet
+  Collapsible content section with +/- icon
+  
+  Usage:
+  {% render 'product-accordion', 
+    title: 'Benefits',
+    content: product.metafields.custom.benefits,
+    open: false
+  %}
+{% endcomment %}
+
+{%- liquid
+  assign accordion_id = title | handleize
+  assign is_open = open | default: false
+-%}
+
+<div class="product-accordion {% if is_open %}is-open{% endif %}">
+  <button 
+    type="button" 
+    class="product-accordion__toggle"
+    aria-expanded="{{ is_open }}"
+    aria-controls="accordion-{{ accordion_id }}"
+  >
+    <span class="product-accordion__title">{{ title | upcase }}</span>
+    <svg class="product-accordion__icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path class="product-accordion__icon-horizontal" d="M4 8H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path class="product-accordion__icon-vertical" d="M8 4V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </button>
+  
+  <div 
+    id="accordion-{{ accordion_id }}"
+    class="product-accordion__content"
+    {% unless is_open %}hidden{% endunless %}
+  >
+    <div class="product-accordion__inner">
+      {{ content }}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-accordion {
+    border-bottom: 1px solid var(--color-dim-grey);
+  }
+  
+  .product-accordion__toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .product-accordion__title {
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-oxford-blue);
+  }
+  
+  .product-accordion__icon {
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+  }
+  
+  .product-accordion__icon-vertical {
+    transition: opacity var(--transition-fast);
+  }
+  
+  .product-accordion.is-open .product-accordion__icon-vertical {
+    opacity: 0;
+  }
+  
+  .product-accordion__content {
+    overflow: hidden;
+  }
+  
+  .product-accordion__content[hidden] {
+    display: none;
+  }
+  
+  .product-accordion__inner {
+    padding-bottom: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: var(--color-oxford-blue);
+  }
+  
+  .product-accordion__inner p {
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .product-accordion__inner p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .product-accordion__inner ul,
+  .product-accordion__inner ol {
+    margin: var(--spacing-sm) 0;
+    padding-left: var(--spacing-md);
+  }
+  
+  .product-accordion__inner li {
+    margin-bottom: var(--spacing-xs);
+  }
+{% endstylesheet %}

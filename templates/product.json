@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "product": {
+      "type": "product",
+      "settings": {
+        "show_rating": true,
+        "show_dynamic_checkout": true,
+        "show_benefits": true,
+        "show_ingredients": true,
+        "show_how_to_use": true,
+        "show_brand_section": true,
+        "brand_title": "CRAFTED FOR THE DISCERNING FEW.",
+        "brand_description": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.",
+        "brand_button_text": "EXPLORE OUR PHILOSOPHY",
+        "brand_button_url": "/pages/about",
+        "show_related_products": true,
+        "related_products_collection": ""
+      }
+    }
+  },
+  "order": [
+    "product"
+  ]
+}

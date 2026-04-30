@@ -1,0 +1,239 @@
+{% style %}
+  {% comment %}
+    SON OF ADAM Design System
+    Custom Brand Fonts: Old London, Flama Condensed, Mosvita
+  {% endcomment %}
+  
+  /* ===================================
+     CUSTOM FONT DECLARATIONS
+     SON OF ADAM Brand Fonts
+     =================================== */
+  
+  /* Old London - Display Font (Hero Headlines) */
+  @font-face {
+    font-family: 'Old London';
+    src: url('{{ 'OldLondonAlternate.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'OldLondonAlternate.woff' | asset_url }}') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Flama Condensed - Header Font (Navigation & Titles) */
+  @font-face {
+    font-family: 'Flama Condensed';
+    src: url('{{ 'FlamaCondensedTrial-Light.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'FlamaCondensedTrial-Light.woff' | asset_url }}') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Flama Condensed';
+    src: url('{{ 'FlamaCondensedTrial-Book.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'FlamaCondensedTrial-Book.woff' | asset_url }}') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Flama Condensed';
+    src: url('{{ 'FlamaCondensedTrial-Medium.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'FlamaCondensedTrial-Medium.woff' | asset_url }}') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Flama Condensed';
+    src: url('{{ 'FlamaCondensedTrial-SemiBold.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'FlamaCondensedTrial-SemiBold.woff' | asset_url }}') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Flama Condensed';
+    src: url('{{ 'FlamaCondensedTrial-Bold.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'FlamaCondensedTrial-Bold.woff' | asset_url }}') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Flama Condensed';
+    src: url('{{ 'FlamaCondensedTrial-Extrabold.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'FlamaCondensedTrial-Extrabold.woff' | asset_url }}') format('woff');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Flama Condensed';
+    src: url('{{ 'FlamaCondensedTrial-Black.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'FlamaCondensedTrial-Black.woff' | asset_url }}') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Mosvita - Body Font (Content & Descriptions) */
+  @font-face {
+    font-family: 'Mosvita';
+    src: url('{{ 'Mosvita-Light.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'Mosvita-Light.woff' | asset_url }}') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Mosvita';
+    src: url('{{ 'Mosvita-Regular.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'Mosvita-Regular.woff' | asset_url }}') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Mosvita';
+    src: url('{{ 'Mosvita-SemiBold.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'Mosvita-SemiBold.woff' | asset_url }}') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Mosvita';
+    src: url('{{ 'Mosvita-Bold.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'Mosvita-Bold.woff' | asset_url }}') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Mosvita';
+    src: url('{{ 'Mosvita-ExtraBold.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'Mosvita-ExtraBold.woff' | asset_url }}') format('woff');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Mosvita';
+    src: url('{{ 'Mosvita-Black.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'Mosvita-Black.woff' | asset_url }}') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    /* Typography System - Custom Brand Fonts */
+    --font-display: 'Old London', serif;
+    --font-header: 'Flama Condensed', 'Arial Narrow', 'Helvetica Condensed', sans-serif;
+    --font-body: 'Mosvita', 'Helvetica Neue', Arial, sans-serif;
+    
+    /* Brand Colors */
+    --color-sea-salt: {{ settings.color_sea_salt }};
+    --color-oxford-blue: {{ settings.color_oxford_blue }};
+    --color-harvest-gold: {{ settings.color_harvest_gold }};
+    --color-silver: {{ settings.color_silver }};
+    --color-dim-grey: {{ settings.color_dim_grey }};
+    --color-california-blue: {{ settings.color_california_blue }};
+    --color-white: {{ settings.color_white }};
+    
+    /* Semantic Color Aliases */
+    --color-background: var(--color-sea-salt);
+    --color-foreground: var(--color-oxford-blue);
+    --color-primary: var(--color-harvest-gold);
+    --color-secondary: var(--color-oxford-blue);
+    --color-text-secondary: var(--color-dim-grey);
+    
+    /* Layout & Spacing */
+    --container-max-width: {{ settings.container_max_width }}px;
+    --page-margin-desktop: {{ settings.page_margin_desktop }}px;
+    --page-margin-mobile: {{ settings.page_margin_mobile }}px;
+    --page-margin: var(--page-margin-mobile);
+    
+    --section-spacing-desktop: {{ settings.section_spacing_desktop }}px;
+    --section-spacing-tablet: {{ settings.section_spacing_tablet }}px;
+    --section-spacing-mobile: {{ settings.section_spacing_mobile }}px;
+    --section-spacing: var(--section-spacing-mobile);
+    
+    --grid-gutter: {{ settings.grid_gutter }}px;
+    
+    /* Spacing Scale */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+    --spacing-2xl: 64px;
+    --spacing-3xl: 80px;
+    --spacing-4xl: 120px;
+    
+    /* Button Styles */
+    --button-border-radius: {{ settings.button_border_radius }}px;
+    
+    /* Typography Scale */
+    --font-size-hero: clamp(48px, 8vw, 80px);
+    --font-size-section-title: clamp(32px, 5vw, 42px);
+    --font-size-subheading: 24px;
+    --font-size-body: 16px;
+    --font-size-small: 14px;
+    --font-size-caption: 12px;
+    
+    --line-height-tight: 1.1;
+    --line-height-normal: 1.2;
+    --line-height-relaxed: 1.4;
+    --line-height-loose: 1.6;
+    
+    /* Grid System */
+    --page-width: var(--container-max-width);
+    --content-width: min(
+      calc(var(--container-max-width) - var(--page-margin) * 2),
+      calc(100% - var(--page-margin) * 2)
+    );
+    --content-margin: minmax(var(--page-margin), 1fr);
+    --content-grid: var(--content-margin) var(--content-width) var(--content-margin);
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Z-index Scale */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+  }
+  
+  /* Responsive Adjustments */
+  @media (min-width: 768px) {
+    :root {
+      --page-margin: var(--page-margin-desktop);
+      --section-spacing: var(--section-spacing-tablet);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    :root {
+      --section-spacing: var(--section-spacing-desktop);
+    }
+  }
+{% endstyle %}

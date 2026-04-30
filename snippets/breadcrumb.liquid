@@ -1,0 +1,151 @@
+{% comment %}
+  Breadcrumb Navigation Snippet
+  Displays hierarchical navigation path
+  
+  Usage:
+  {% render 'breadcrumb' %}
+{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ shop.url }}"
+    }
+    {%- if template == 'collection' -%}
+    ,{
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ collection.title | escape }}",
+      "item": "{{ shop.url }}{{ collection.url }}"
+    }
+    {%- elsif template == 'product' -%}
+      {%- if collection -%}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{{ collection.title | escape }}",
+        "item": "{{ shop.url }}{{ collection.url }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "{{ product.title | escape }}",
+        "item": "{{ shop.url }}{{ product.url }}"
+      }
+      {%- else -%}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{{ product.title | escape }}",
+        "item": "{{ shop.url }}{{ product.url }}"
+      }
+      {%- endif -%}
+    {%- elsif template == 'page' -%}
+    ,{
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ page.title | escape }}",
+      "item": "{{ shop.url }}{{ page.url }}"
+    }
+    {%- endif -%}
+  ]
+}
+</script>
+
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item">
+      <a href="/" class="breadcrumb__link">HOME</a>
+    </li>
+    
+    {% if template == 'collection' %}
+      <li class="breadcrumb__item breadcrumb__item--active">
+        <span class="breadcrumb__text">{{ collection.title | upcase }}</span>
+      </li>
+    {% elsif template == 'product' %}
+      {% if collection %}
+        <li class="breadcrumb__item">
+          <a href="{{ collection.url }}" class="breadcrumb__link">{{ collection.title | upcase }}</a>
+        </li>
+      {% endif %}
+      <li class="breadcrumb__item breadcrumb__item--active">
+        <span class="breadcrumb__text">{{ product.title | upcase }}</span>
+      </li>
+    {% elsif template == 'page' %}
+      <li class="breadcrumb__item breadcrumb__item--active">
+        <span class="breadcrumb__text">{{ page.title | upcase }}</span>
+      </li>
+    {% elsif template == 'blog' %}
+      <li class="breadcrumb__item breadcrumb__item--active">
+        <span class="breadcrumb__text">{{ blog.title | upcase }}</span>
+      </li>
+    {% elsif template == 'article' %}
+      <li class="breadcrumb__item">
+        <a href="{{ blog.url }}" class="breadcrumb__link">{{ blog.title | upcase }}</a>
+      </li>
+      <li class="breadcrumb__item breadcrumb__item--active">
+        <span class="breadcrumb__text">{{ article.title | upcase }}</span>
+      </li>
+    {% elsif template == 'search' %}
+      <li class="breadcrumb__item breadcrumb__item--active">
+        <span class="breadcrumb__text">SEARCH</span>
+      </li>
+    {% elsif template == 'cart' %}
+      <li class="breadcrumb__item breadcrumb__item--active">
+        <span class="breadcrumb__text">CART</span>
+      </li>
+    {% endif %}
+  </ol>
+</nav>
+
+{% stylesheet %}
+  .breadcrumb {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .breadcrumb__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .breadcrumb__item {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--color-dim-grey);
+  }
+  
+  .breadcrumb__item:not(:last-child)::after {
+    content: '/';
+    margin-left: var(--spacing-xs);
+    color: var(--color-dim-grey);
+  }
+  
+  .breadcrumb__link {
+    color: var(--color-dim-grey);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+  
+  .breadcrumb__link:hover {
+    color: var(--color-oxford-blue);
+  }
+  
+  .breadcrumb__item--active .breadcrumb__text {
+    color: var(--color-oxford-blue);
+    font-weight: 500;
+  }
+{% endstylesheet %}

@@ -1,0 +1,90 @@
+{% comment %}
+  Star Rating Snippet
+  Displays star rating with review count
+  
+  Usage:
+  {% render 'star-rating', 
+    rating: 4.5,
+    count: 120
+  %}
+{% endcomment %}
+
+{%- liquid
+  assign rating_value = rating | default: 0 | times: 1.0
+  assign review_count = count | default: 0
+  assign full_stars = rating_value | floor
+  assign has_half_star = false
+  assign decimal = rating_value | modulo: 1
+  
+  if decimal >= 0.25 and decimal < 0.75
+    assign has_half_star = true
+  elsif decimal >= 0.75
+    assign full_stars = full_stars | plus: 1
+  endif
+  
+  assign empty_stars = 5 | minus: full_stars
+  if has_half_star
+    assign empty_stars = empty_stars | minus: 1
+  endif
+-%}
+
+<div class="star-rating" role="img" aria-label="{{ rating_value }} out of 5 stars">
+  <div class="star-rating__stars">
+    {%- comment -%} Full Stars {%- endcomment -%}
+    {% for i in (1..full_stars) %}
+      <svg class="star-rating__star star-rating__star--full" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1L10.163 5.38L15 6.12L11.5 9.54L12.326 14.36L8 12.08L3.674 14.36L4.5 9.54L1 6.12L5.837 5.38L8 1Z" fill="#D6B93D" stroke="#D6B93D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    {% endfor %}
+    
+    {%- comment -%} Half Star {%- endcomment -%}
+    {% if has_half_star %}
+      <svg class="star-rating__star star-rating__star--half" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <defs>
+          <linearGradient id="half-fill-{{ rating_value | replace: '.', '-' }}">
+            <stop offset="50%" stop-color="#D6B93D"/>
+            <stop offset="50%" stop-color="transparent"/>
+          </linearGradient>
+        </defs>
+        <path d="M8 1L10.163 5.38L15 6.12L11.5 9.54L12.326 14.36L8 12.08L3.674 14.36L4.5 9.54L1 6.12L5.837 5.38L8 1Z" fill="url(#half-fill-{{ rating_value | replace: '.', '-' }})" stroke="#D6B93D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    {% endif %}
+    
+    {%- comment -%} Empty Stars {%- endcomment -%}
+    {% for i in (1..empty_stars) %}
+      <svg class="star-rating__star star-rating__star--empty" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1L10.163 5.38L15 6.12L11.5 9.54L12.326 14.36L8 12.08L3.674 14.36L4.5 9.54L1 6.12L5.837 5.38L8 1Z" fill="none" stroke="#D6B93D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    {% endfor %}
+  </div>
+  
+  {% if review_count > 0 %}
+    <span class="star-rating__count">({{ review_count }} REVIEWS)</span>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .star-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+  
+  .star-rating__stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  
+  .star-rating__star {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .star-rating__count {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-dim-grey);
+    letter-spacing: 0.05em;
+  }
+{% endstylesheet %}

@@ -1,0 +1,64 @@
+{% comment %}
+  Reusable Button Component for SON OF ADAM Theme
+  
+  Parameters:
+  - text: Button text (required)
+  - url: Button URL (optional)
+  - style: 'primary' or 'secondary' (default: 'primary')
+  - size: 'small', 'medium', 'large' (default: 'medium')
+  - full_width: true/false (default: false)
+  - dark_bg: true/false - for secondary buttons on dark backgrounds (default: false)
+  - class: Additional CSS classes (optional)
+  - attributes: Additional HTML attributes (optional)
+  
+  Usage:
+  {% render 'button', text: 'Shop Now', url: '/collections/all', style: 'primary' %}
+  {% render 'button', text: 'Learn More', url: '/pages/about', style: 'secondary', dark_bg: true %}
+{% endcomment %}
+
+{% liquid
+  assign button_style = style | default: 'primary'
+  assign button_size = size | default: 'medium'
+  assign button_full = full_width | default: false
+  assign button_dark = dark_bg | default: false
+  assign button_text = text
+  assign button_url = url
+  assign button_class = class | default: ''
+  assign button_attrs = attributes | default: ''
+  
+  # Build CSS classes
+  assign css_classes = 'btn'
+  
+  if button_style == 'primary'
+    assign css_classes = css_classes | append: ' btn-primary'
+  elsif button_style == 'secondary'
+    assign css_classes = css_classes | append: ' btn-secondary'
+    if button_dark
+      assign css_classes = css_classes | append: ' btn-secondary--dark'
+    endif
+  endif
+  
+  if button_size == 'small'
+    assign css_classes = css_classes | append: ' btn--small'
+  elsif button_size == 'large'
+    assign css_classes = css_classes | append: ' btn--large'
+  endif
+  
+  if button_full
+    assign css_classes = css_classes | append: ' btn--full'
+  endif
+  
+  if button_class != blank
+    assign css_classes = css_classes | append: ' ' | append: button_class
+  endif
+%}
+
+{% if button_url != blank %}
+  <a href="{{ button_url }}" class="{{ css_classes }}" {{ button_attrs }}>
+    {{ button_text }}
+  </a>
+{% else %}
+  <button type="button" class="{{ css_classes }}" {{ button_attrs }}>
+    {{ button_text }}
+  </button>
+{% endif %}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    {% # Inlined CSS Variables %}
+
+    {%- comment -%} Performance: Resource Hints {%- endcomment -%}
+    <link rel="dns-prefetch" href="https://cdn.shopify.com">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="dns-prefetch" href="https://monorail-edge.shopifysvc.com">
+    {% render 'css-variables' %}
+
+    {% comment %}
+      Custom Font Preloading:
+      Preload critical custom font variants for optimal performance
+      - Old London (Display): Hero headlines
+      - Flama Condensed (Header): Navigation & titles
+      - Mosvita (Body): Content
+    {% endcomment %}
+    
+    {% comment %} Preload Old London (Display font for hero) {% endcomment %}
+    <link rel="preload" href="{{ 'OldLondonAlternate.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    
+    {% comment %} Preload Flama Condensed Bold (Most used header weight) {% endcomment %}
+    <link rel="preload" href="{{ 'FlamaCondensedTrial-Bold.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    
+    {% comment %} Preload Mosvita Regular (Body text) {% endcomment %}
+    <link rel="preload" href="{{ 'Mosvita-Regular.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+
+    {% # Load and preload the critical CSS %}
+    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+
+    {% # Social, title, etc. %}
+    {% render 'meta-tags' %}
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.shopify.com https://*.shopify.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.shopify.com; style-src 'self' 'unsafe-inline' https://cdn.shopify.com; img-src 'self' data: https: blob:; font-src 'self' data: https://cdn.shopify.com; connect-src 'self' https://*.shopify.com;">
+
+    {{ content_for_header }}
+  </head>
+
+  <body>
+    <a href="#main-content" class="skip-to-content sr-only">Skip to main content</a>
+    {% sections 'header-group' %}
+
+    <main id="main-content" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+  </body>
+</html>

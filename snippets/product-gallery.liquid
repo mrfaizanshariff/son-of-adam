@@ -1,0 +1,163 @@
+{% comment %}
+  Product Gallery Snippet
+  Image gallery with main image and thumbnail navigation
+  
+  Usage:
+  {% render 'product-gallery', 
+    product: product,
+    featured_image: product.featured_image
+  %}
+{% endcomment %}
+
+{%- liquid
+  assign featured_image = product.featured_image
+  assign product_images = product.images
+-%}
+
+<div class="product-gallery">
+  {%- comment -%} Main Image Display {%- endcomment -%}
+  <div class="product-gallery__main">
+    {% if featured_image %}
+      <img
+        src="{{ featured_image | image_url: width: 800 }}"
+        srcset="{{ featured_image | image_url: width: 400 }} 400w,
+                {{ featured_image | image_url: width: 600 }} 600w,
+                {{ featured_image | image_url: width: 800 }} 800w,
+                {{ featured_image | image_url: width: 1000 }} 1000w"
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        width="{{ featured_image.width }}"
+        height="{{ featured_image.height }}"
+        alt="{{ featured_image.alt | escape }}"
+        class="product-gallery__main-image"
+        id="mainProductImage"
+        loading="eager"
+      >
+    {% else %}
+      {{ 'product-1' | placeholder_svg_tag: 'product-gallery__placeholder' }}
+    {% endif %}
+  </div>
+  
+  {%- comment -%} Thumbnail Navigation {%- endcomment -%}
+  {% if product_images.size > 1 %}
+    <div class="product-gallery__thumbnails">
+      {% for image in product_images limit: 4 %}
+        <button 
+          type="button"
+          class="product-gallery__thumbnail {% if forloop.first %}is-active{% endif %}"
+          data-image-url="{{ image | image_url: width: 800 }}"
+          data-image-srcset="{{ image | image_url: width: 400 }} 400w, {{ image | image_url: width: 600 }} 600w, {{ image | image_url: width: 800 }} 800w, {{ image | image_url: width: 1000 }} 1000w"
+          data-image-alt="{{ image.alt | escape }}"
+          aria-label="View image {{ forloop.index }}"
+        >
+          <img
+            src="{{ image | image_url: width: 150 }}"
+            width="{{ image.width }}"
+            height="{{ image.height }}"
+            alt="{{ image.alt | escape }}"
+            class="product-gallery__thumbnail-image"
+            loading="lazy"
+          >
+        </button>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  (function() {
+    const mainImage = document.getElementById('mainProductImage');
+    const thumbnails = document.querySelectorAll('.product-gallery__thumbnail');
+    
+    if (!mainImage || thumbnails.length === 0) return;
+    
+    thumbnails.forEach(thumbnail => {
+      thumbnail.addEventListener('click', function() {
+        // Remove active class from all thumbnails
+        thumbnails.forEach(t => t.classList.remove('is-active'));
+        
+        // Add active class to clicked thumbnail
+        this.classList.add('is-active');
+        
+        // Update main image
+        const newSrc = this.dataset.imageUrl;
+        const newSrcset = this.dataset.imageSrcset;
+        const newAlt = this.dataset.imageAlt;
+        
+        mainImage.src = newSrc;
+        mainImage.srcset = newSrcset;
+        mainImage.alt = newAlt;
+      });
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .product-gallery__main {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-sea-salt);
+    overflow: hidden;
+  }
+  
+  .product-gallery__main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+  
+  .product-gallery__main:hover .product-gallery__main-image {
+    transform: scale(1.05);
+  }
+  
+  .product-gallery__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .product-gallery__thumbnails {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+  }
+  
+  .product-gallery__thumbnail {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-sea-salt);
+    border: 2px solid transparent;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color var(--transition-fast);
+    padding: 0;
+  }
+  
+  .product-gallery__thumbnail:hover {
+    border-color: var(--color-dim-grey);
+  }
+  
+  .product-gallery__thumbnail.is-active {
+    border-color: var(--color-oxford-blue);
+  }
+  
+  .product-gallery__thumbnail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Responsive */
+  @media (max-width: 767px) {
+    .product-gallery__thumbnails {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+{% endstylesheet %}

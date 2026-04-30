@@ -1,0 +1,333 @@
+{% comment %}
+  SON OF ADAM - Newsletter Signup Section
+  Oxford Blue background with email capture and optional testimonial
+{% endcomment %}
+
+<section class="newsletter-signup full-width section-spacing bg-oxford-blue">
+  <div class="newsletter-signup__container">
+    {% if section.settings.show_testimonial and section.settings.testimonial_text != blank %}
+      <div class="newsletter-signup__testimonial">
+        <div class="newsletter-signup__quote-icon">
+          <svg width="40" height="32" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 32V16C0 7.168 5.333 0 16 0v8c-5.333 0-8 2.667-8 8h8v16H0zm24 0V16c0-8.832 5.333-16 16-16v8c-5.333 0-8 2.667-8 8h8v16H24z" fill="currentColor" opacity="0.3"/>
+          </svg>
+        </div>
+        
+        <blockquote class="newsletter-signup__quote">
+          {{ section.settings.testimonial_text }}
+        </blockquote>
+        
+        {% if section.settings.testimonial_author != blank %}
+          <cite class="newsletter-signup__author">
+            {{ section.settings.testimonial_author }}
+          </cite>
+        {% endif %}
+      </div>
+    {% endif %}
+    
+    <div class="newsletter-signup__content">
+      {% if section.settings.heading != blank %}
+        <h2 class="newsletter-signup__heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+      
+      {% if section.settings.text != blank %}
+        <p class="newsletter-signup__text">{{ section.settings.text }}</p>
+      {% endif %}
+      
+      {% form 'customer', class: 'newsletter-signup__form' %}
+        {% if form.posted_successfully? %}
+          <div class="newsletter-signup__success">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.667 5L7.5 14.167 3.333 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            {{ section.settings.success_message }}
+          </div>
+        {% endif %}
+        
+        {% if form.errors %}
+          <div class="newsletter-signup__error">
+            {{ form.errors | default_errors }}
+          </div>
+        {% endif %}
+        
+        <div class="newsletter-signup__input-wrapper">
+          <input
+            type="hidden"
+            name="contact[tags]"
+            value="newsletter"
+          >
+          <input
+            type="email"
+            name="contact[email]"
+            id="newsletter-email"
+            placeholder="{{ section.settings.placeholder }}"
+            class="newsletter-signup__input"
+            required
+            aria-label="Email address"
+          >
+          <button type="submit" class="btn btn-primary newsletter-signup__button">
+            {{ section.settings.button_text }}
+          </button>
+        </div>
+        
+        {% if section.settings.show_privacy_notice %}
+          <p class="newsletter-signup__privacy">
+            {{ section.settings.privacy_text }}
+          </p>
+        {% endif %}
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .newsletter-signup {
+    background-color: var(--color-oxford-blue);
+    color: var(--color-white);
+  }
+  
+  .newsletter-signup__container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-4xl) var(--page-margin);
+    text-align: center;
+  }
+  
+  /* Testimonial */
+  .newsletter-signup__testimonial {
+    margin-bottom: var(--spacing-4xl);
+    padding-bottom: var(--spacing-4xl);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .newsletter-signup__quote-icon {
+    color: var(--color-harvest-gold);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .newsletter-signup__quote {
+    font-family: var(--font-body);
+    font-size: clamp(18px, 3vw, 24px);
+    line-height: var(--line-height-relaxed);
+    font-style: italic;
+    color: var(--color-white);
+    margin: 0 0 var(--spacing-md) 0;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .newsletter-signup__author {
+    font-family: var(--font-header);
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-harvest-gold);
+    font-style: normal;
+  }
+  
+  /* Content */
+  .newsletter-signup__heading {
+    font-family: var(--font-header);
+    font-size: clamp(28px, 5vw, 36px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-white);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .newsletter-signup__text {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: var(--color-white);
+    opacity: 0.9;
+    margin-bottom: var(--spacing-xl);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Form */
+  .newsletter-signup__form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .newsletter-signup__input-wrapper {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .newsletter-signup__input {
+    flex: 1;
+    padding: 16px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-white);
+    font-size: var(--font-size-body);
+    border-radius: var(--button-border-radius);
+    transition: all var(--transition-fast);
+  }
+  
+  .newsletter-signup__input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .newsletter-signup__input:focus {
+    outline: none;
+    border-color: var(--color-harvest-gold);
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  .newsletter-signup__button {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  
+  .newsletter-signup__privacy {
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: var(--line-height-relaxed);
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+  }
+  
+  .newsletter-signup__privacy a {
+    color: var(--color-harvest-gold);
+    text-decoration: underline;
+  }
+  
+  /* Success/Error Messages */
+  .newsletter-signup__success,
+  .newsletter-signup__error {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--button-border-radius);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+  }
+  
+  .newsletter-signup__success {
+    background-color: rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(76, 175, 80, 0.5);
+    color: #4CAF50;
+  }
+  
+  .newsletter-signup__error {
+    background-color: rgba(244, 67, 54, 0.2);
+    border: 1px solid rgba(244, 67, 54, 0.5);
+    color: #F44336;
+  }
+  
+  /* Responsive */
+  @media (max-width: 767px) {
+    .newsletter-signup__container {
+      padding: var(--spacing-3xl) var(--page-margin);
+    }
+    
+    .newsletter-signup__testimonial {
+      margin-bottom: var(--spacing-2xl);
+      padding-bottom: var(--spacing-2xl);
+    }
+    
+    .newsletter-signup__input-wrapper {
+      flex-direction: column;
+    }
+    
+    .newsletter-signup__button {
+      width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Newsletter Signup",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Testimonial (Optional)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_testimonial",
+      "label": "Show Testimonial",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text",
+      "label": "Testimonial Text",
+      "default": "The only brand that understands the balance between traditional grooming and modern skin protection. My skin has never looked better."
+    },
+    {
+      "type": "text",
+      "id": "testimonial_author",
+      "label": "Author",
+      "default": "James P. — London, UK"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Upgrade Your Grooming Game."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Description",
+      "default": "Subscribe for exclusive offers, grooming tips, and 10% off your first order."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email Placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Join Now"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success Message",
+      "default": "Thanks for subscribing!"
+    },
+    {
+      "type": "header",
+      "content": "Privacy Notice"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_privacy_notice",
+      "label": "Show Privacy Notice",
+      "default": true
+    },
+    {
+      "type": "html",
+      "id": "privacy_text",
+      "label": "Privacy Text",
+      "default": "We respect your privacy. Unsubscribe anytime. <a href=\"/pages/privacy-policy\">Privacy Policy</a>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter Signup",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}

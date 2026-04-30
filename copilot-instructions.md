@@ -1,0 +1,1 @@
+F:/Web development/Freelance work/shopify Themes/son-of-adam/AGENTS.md

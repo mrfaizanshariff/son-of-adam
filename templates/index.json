@@ -1,0 +1,122 @@
+{
+  "sections": {
+    "editorial_hero": {
+      "type": "editorial-hero",
+      "settings": {
+        "subheading": "Premium Grooming",
+        "heading": "GROOMING AS [gold]TIMELESS[/gold] AS MAN",
+        "text": "<p>Clearly natural grooming essentials made to protect your skin and refine your style.</p>",
+        "button_text": "Shop Essentials",
+        "button_url": "/collections/all",
+        "button_text_2": "Discover the Brand",
+        "button_url_2": "/pages/about",
+        "overlay_opacity": 40
+      }
+    },
+    "featured_products": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Featured Products",
+        "products_to_show": 4,
+        "products_per_row": "4",
+        "view_all_text": "View All"
+      }
+    },
+    "image_with_text_1": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "left",
+        "background_color": "sea-salt",
+        "subheading": "Our Philosophy",
+        "heading": "Simple. Honest. Effective Grooming.",
+        "text": "<p>We believe in transparency. No fillers, no synthetic fragrances, just the power of nature refined for the modern man. Our mission is to provide you with the tools to master your routine and protect your skin.</p>",
+        "button_text": "Our Story",
+        "button_url": "/pages/about",
+        "button_style": "secondary"
+      }
+    },
+    "browse_categories": {
+      "type": "multicolumn-categories",
+      "blocks": {
+        "category_1": {
+          "type": "category",
+          "settings": {
+            "title": "Beard Care",
+            "description": "Oils, balms & grooming tools",
+            "overlay_text": "Shop Now"
+          }
+        },
+        "category_2": {
+          "type": "category",
+          "settings": {
+            "title": "Face Care",
+            "description": "Cleansers, moisturizers & serums",
+            "overlay_text": "Shop Now"
+          }
+        },
+        "category_3": {
+          "type": "category",
+          "settings": {
+            "title": "Body Care",
+            "description": "Soaps, scrubs & body oils",
+            "overlay_text": "Shop Now"
+          }
+        },
+        "category_4": {
+          "type": "category",
+          "settings": {
+            "title": "Fragrance",
+            "description": "Colognes & body sprays",
+            "overlay_text": "Shop Now"
+          }
+        }
+      },
+      "block_order": [
+        "category_1",
+        "category_2",
+        "category_3",
+        "category_4"
+      ],
+      "settings": {
+        "heading": "Browse Categories",
+        "columns": "4"
+      }
+    },
+    "testimonial_newsletter": {
+      "type": "newsletter-signup",
+      "settings": {
+        "show_testimonial": true,
+        "testimonial_text": "The only brand that understands the balance between traditional grooming and modern skin protection. My skin has never looked better.",
+        "testimonial_author": "James P. — London, UK",
+        "heading": "Upgrade Your Grooming Game.",
+        "text": "Subscribe for exclusive offers, grooming tips, and 10% off your first order.",
+        "placeholder": "Enter your email",
+        "button_text": "Join Now",
+        "success_message": "Thanks for subscribing!",
+        "show_privacy_notice": true,
+        "privacy_text": "We respect your privacy. Unsubscribe anytime. <a href=\"/pages/privacy-policy\">Privacy Policy</a>"
+      }
+    },
+    "image_with_text_2": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "right",
+        "background_color": "oxford-blue",
+        "subheading": "Crafted with Care",
+        "heading": "Premium Ingredients. Proven Results.",
+        "text": "<p>Every product is formulated with the finest natural ingredients, rigorously tested to deliver exceptional results without compromise.</p>",
+        "button_text": "Shop Now",
+        "button_url": "/collections/all",
+        "button_style": "primary"
+      }
+    }
+  },
+  "order": [
+    "editorial_hero",
+    "featured_products",
+    "image_with_text_1",
+    "browse_categories",
+    "testimonial_newsletter",
+    "image_with_text_2"
+  ]
+}

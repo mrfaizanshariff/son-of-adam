@@ -1,0 +1,1087 @@
+{% comment %}
+  SON OF ADAM - Collection Page
+  Displays products with filters, sorting, and grid layout
+{% endcomment %}
+
+<main class="collection-page full-width" role="main" aria-label="Collection products">
+  <div class="collection-page__container">
+    
+    {%- comment -%} Breadcrumb Navigation {%- endcomment -%}
+    {% render 'breadcrumb' %}
+    
+    {%- comment -%} Collection Header {%- endcomment -%}
+    <div class="collection-header">
+      <h1 class="collection-header__title">{{ collection.title }}</h1>
+      {% if collection.description != blank %}
+        <div class="collection-header__description">
+          {{ collection.description }}
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="collection-content">
+      
+      {%- comment -%} Horizontal Filter Bar with Dropdown Panels {%- endcomment -%}
+      {% if section.settings.enable_filters %}
+        <div class="collection-filter-bar">
+          <div class="filter-bar__left">
+            
+            {%- comment -%} Category Filter Dropdown {%- endcomment -%}
+            <div class="filter-dropdown">
+              <button type="button" class="filter-dropdown__trigger" data-filter="category" aria-expanded="false">
+                <span>CATEGORY</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="filter-dropdown__panel" data-panel="category">
+                <div class="filter-dropdown__header">
+                  <span class="filter-dropdown__title">Category</span>
+                  <button type="button" class="filter-dropdown__clear" data-clear="category">Clear</button>
+                </div>
+                <div class="filter-dropdown__options">
+                  {%- liquid
+                    # Create array to store category tags
+                    assign category_tags = ''
+                    
+                    # Loop through all tags in the collection
+                    for tag in collection.all_tags
+                      # Check if tag starts with 'category:' prefix
+                      if tag contains 'category:'
+                        # Extract the category value after 'category:'
+                        assign tag_parts = tag | split: 'category:'
+                        assign category_value = tag_parts[1] | strip | downcase | handleize
+                        
+                        # Count products with this tag
+                        assign tag_count = 0
+                        for product in collection.products
+                          if product.tags contains tag
+                            assign tag_count = tag_count | plus: 1
+                          endif
+                        endfor
+                        
+                        # Only show categories that have products
+                        if tag_count > 0
+                          # Format the display label (capitalize first letter)
+                          assign display_label = tag_parts[1] | strip
+                          
+                          echo '<label class="filter-option">'
+                          echo '<input type="checkbox" name="category" value="' | append: category_value | append: '">'
+                          echo '<span class="filter-option__label">' | append: display_label | append: '</span>'
+                          echo '<span class="filter-option__count">(' | append: tag_count | append: ')</span>'
+                          echo '</label>'
+                        endif
+                      endif
+                    endfor
+                  -%}
+                  
+                  {%- comment -%}
+                  Fallback: If no category tags found, show default categories
+                  This ensures the filter doesn't break if tags aren't set up yet
+                  {%- endcomment -%}
+                  {%- unless collection.all_tags contains 'category:' -%}
+                   <label class="filter-option">
+                      <input type="checkbox" name="category" value="face">
+                      <span class="filter-option__label">Face Care</span>
+                      <span class="filter-option__count">(0)</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" name="category" value="beard">
+                      <span class="filter-option__label">Beard & Hair</span>
+                      <span class="filter-option__count">(0)</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" name="category" value="body">
+                      <span class="filter-option__label">Body Care</span>
+                      <span class="filter-option__count">(0)</span>
+                    </label> 
+                  {%- endunless -%}
+                </div>
+              </div>
+            </div>
+            
+            {%- comment -%} Skin Type Filter Dropdown {%- endcomment -%}
+            <div class="filter-dropdown">
+              <button type="button" class="filter-dropdown__trigger" data-filter="skin-type" aria-expanded="false">
+                <span>SKIN TYPE</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="filter-dropdown__panel" data-panel="skin-type">
+                <div class="filter-dropdown__header">
+                  <span class="filter-dropdown__title">Skin Type</span>
+                  <button type="button" class="filter-dropdown__clear" data-clear="skin-type">Clear</button>
+                </div>
+                <div class="filter-dropdown__options">
+                  {%- liquid
+                    # Loop through all tags in the collection for skin type
+                    for tag in collection.all_tags
+                      # Check if tag starts with 'skin-type:' prefix
+                      if tag contains 'skin-type:'
+                        # Extract the skin type value after 'skin-type:'
+                        assign tag_parts = tag | split: 'skin-type:'
+                        assign skin_type_value = tag_parts[1] | strip | downcase | handleize
+                        
+                        # Count products with this tag
+                        assign tag_count = 0
+                        for product in collection.products
+                          if product.tags contains tag
+                            assign tag_count = tag_count | plus: 1
+                          endif
+                        endfor
+                        
+                        # Only show skin types that have products
+                        if tag_count > 0
+                          # Format the display label (capitalize first letter)
+                          assign display_label = tag_parts[1] | strip
+                          
+                          echo '<label class="filter-option">'
+                          echo '<input type="checkbox" name="skin-type" value="' | append: skin_type_value | append: '">'
+                          echo '<span class="filter-option__label">' | append: display_label | append: '</span>'
+                          echo '<span class="filter-option__count">(' | append: tag_count | append: ')</span>'
+                          echo '</label>'
+                        endif
+                      endif
+                    endfor
+                  -%}
+                  
+                  {%- comment -%}
+                  Fallback: If no skin-type tags found, show default options
+                  {%- endcomment -%}
+                  {%- unless collection.all_tags contains 'skin-type:' -%}
+                    <label class="filter-option">
+                      <input type="checkbox" name="skin-type" value="normal">
+                      <span class="filter-option__label">Normal</span>
+                      <span class="filter-option__count">(0)</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" name="skin-type" value="dry">
+                      <span class="filter-option__label">Dry</span>
+                      <span class="filter-option__count">(0)</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" name="skin-type" value="oily">
+                      <span class="filter-option__label">Oily</span>
+                      <span class="filter-option__count">(0)</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" name="skin-type" value="combination">
+                      <span class="filter-option__label">Combination</span>
+                      <span class="filter-option__count">(0)</span>
+                    </label>
+                    <label class="filter-option">
+                      <input type="checkbox" name="skin-type" value="sensitive">
+                      <span class="filter-option__label">Sensitive</span>
+                      <span class="filter-option__count">(0)</span>
+                    </label> 
+                  {%- endunless -%}
+                </div>
+              </div>
+            </div>
+            
+            {%- comment -%} Price Filter Dropdown {%- endcomment -%}
+            <div class="filter-dropdown">
+              <button type="button" class="filter-dropdown__trigger" data-filter="price" aria-expanded="false">
+                <span>PRICE</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="filter-dropdown__panel" data-panel="price">
+                <div class="filter-dropdown__header">
+                  <span class="filter-dropdown__title">Price</span>
+                  <button type="button" class="filter-dropdown__clear" data-clear="price">Clear</button>
+                </div>
+                <div class="filter-dropdown__options">
+                  {%- liquid
+                    # Define price ranges
+                    assign price_ranges = '0-500,500-1000,1000-2000,2000+' | split: ','
+                    assign price_labels = 'Under ₹500,₹500 - ₹1000,₹1000 - ₹2000,Over ₹2000' | split: ','
+                    
+                    # Loop through price ranges and calculate counts
+                    for i in (0..3)
+                      assign range = price_ranges[i]
+                      assign label = price_labels[i]
+                      assign count = 0
+                      
+                      # Parse range
+                      if range contains '+'
+                        assign min_price = range | remove: '+' | times: 100
+                        assign max_price = 999999999
+                      else
+                        assign range_parts = range | split: '-'
+                        assign min_price = range_parts[0] | times: 100
+                        assign max_price = range_parts[1] | times: 100
+                      endif
+                      
+                      # Count products in this price range
+                      for product in collection.products
+                        if product.price >= min_price and product.price < max_price
+                          assign count = count | plus: 1
+                        elsif product.price >= min_price and max_price == 999999999
+                          assign count = count | plus: 1
+                        endif
+                      endfor
+                      
+                      # Only show if count > 0
+                      if count > 0
+                        echo '<label class="filter-option">'
+                        echo '<input type="checkbox" name="price" value="' | append: range | append: '">'
+                        echo '<span class="filter-option__label">' | append: label | append: '</span>'
+                        echo '<span class="filter-option__count">(' | append: count | append: ')</span>'
+                        echo '</label>'
+                      endif
+                    endfor
+                  -%}
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          
+          <div class="filter-bar__right">
+            <div class="filter-bar__count">
+              <span id="productCount">
+                {% if collection.products_count > 0 %}
+                  {{ collection.products_count }}
+                  {% if collection.products_count == 1 %}
+                    Product
+                  {% else %}
+                    Products
+                  {% endif %}
+                {% endif %}
+              </span>
+            </div>
+            
+            {% if section.settings.enable_sorting %}
+              <div class="filter-bar__sort">
+                <label for="sortBy" class="filter-bar__sort-label">SORT BY:</label>
+                <select id="sortBy" class="filter-bar__sort-select">
+                  <option value="manual">Featured</option>
+                  <option value="best-selling">Best Selling</option>
+                  <option value="title-ascending">Alphabetically, A-Z</option>
+                  <option value="title-descending">Alphabetically, Z-A</option>
+                  <option value="price-ascending">Price, Low to High</option>
+                  <option value="price-descending">Price, High to Low</option>
+                  <option value="created-descending">Date, New to Old</option>
+                </select>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        {%- comment -%} Active Filters Display {%- endcomment -%}
+        <div class="active-filters" id="activeFilters" style="display: none;">
+          <div class="active-filters__tags" id="activeFilterTags"></div>
+          <button type="button" class="active-filters__clear-all" id="clearAllFilters">Clear All Filters</button>
+        </div>
+      {% endif %}
+      
+      {%- comment -%} Main Content Area {%- endcomment -%}
+      <div class="collection-main">
+        
+        {%- comment -%} Product Grid {%- endcomment -%}
+        {% paginate collection.products by section.settings.products_per_page %}
+          <div class="collection-grid">
+            {% if collection.products.size > 0 %}
+              {% for product in collection.products %}
+                {% render 'product-card', product: product %}
+              {% endfor %}
+            {% else %}
+              <div class="collection-empty">
+                <p class="collection-empty__message">No products found in this collection.</p>
+                <a href="/collections/all" class="btn btn-primary">Shop All Products</a>
+              </div>
+            {% endif %}
+          </div>
+          
+          {%- comment -%} Pagination {%- endcomment -%}
+          {% if paginate.pages > 1 %}
+            <div class="collection-pagination">
+              {% if paginate.previous %}
+                <a href="{{ paginate.previous.url }}" class="collection-pagination__link collection-pagination__link--prev">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  Previous
+                </a>
+              {% endif %}
+              
+              <span class="collection-pagination__info">
+                Page {{ paginate.current_page }} of {{ paginate.pages }}
+              </span>
+              
+              {% if paginate.next %}
+                <a href="{{ paginate.next.url }}" class="collection-pagination__link collection-pagination__link--next">
+                  Next
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endpaginate %}
+        
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  (function() {
+    // Filter Dropdown Toggle Functionality
+    const filterTriggers = document.querySelectorAll('.filter-dropdown__trigger');
+    const filterPanels = document.querySelectorAll('.filter-dropdown__panel');
+    
+    // Close all dropdowns
+    function closeAllDropdowns() {
+      filterTriggers.forEach(trigger => {
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.classList.remove('is-active');
+      });
+      filterPanels.forEach(panel => {
+        panel.classList.remove('is-open');
+      });
+    }
+    
+    // Toggle dropdown
+    filterTriggers.forEach(trigger => {
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const filterName = this.dataset.filter;
+        const panel = document.querySelector(`[data-panel="${filterName}"]`);
+        const isOpen = panel.classList.contains('is-open');
+        
+        // Close all dropdowns first
+        closeAllDropdowns();
+        
+        // Toggle current dropdown
+        if (!isOpen) {
+          this.setAttribute('aria-expanded', 'true');
+          this.classList.add('is-active');
+          panel.classList.add('is-open');
+        }
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.filter-dropdown')) {
+        closeAllDropdowns();
+      }
+    });
+    
+    // Clear individual filter
+    document.querySelectorAll('.filter-dropdown__clear').forEach(clearBtn => {
+      clearBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const filterName = this.dataset.clear;
+        const panel = document.querySelector(`[data-panel="${filterName}"]`);
+        const checkboxes = panel.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = false);
+        applyFilters();
+      });
+    });
+    
+    // Filter Functionality with URL Parameters
+    const filterCheckboxes = document.querySelectorAll('.filter-option input[type="checkbox"]');
+    const activeFiltersContainer = document.getElementById('activeFilters');
+    const activeFilterTags = document.getElementById('activeFilterTags');
+    const clearAllFiltersBtn = document.getElementById('clearAllFilters');
+    
+    // Apply filters function - CLIENT-SIDE FILTERING
+    const applyFilters = () => {
+      // Collect selected filters
+      const selectedFilters = {
+        category: [],
+        skinType: [],
+        price: []
+      };
+      
+      filterCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          const filterType = checkbox.name;
+          const filterValue = checkbox.value;
+          
+          if (filterType === 'category') {
+            selectedFilters.category.push(filterValue);
+          } else if (filterType === 'skin-type') {
+            selectedFilters.skinType.push(filterValue);
+          } else if (filterType === 'price') {
+            selectedFilters.price.push(filterValue);
+          }
+        }
+      });
+      
+      // Get all product cards
+      const productCards = document.querySelectorAll('.product-card');
+      let visibleCount = 0;
+      
+      // Filter products client-side
+      productCards.forEach(card => {
+        const productTags = card.dataset.productTags ? card.dataset.productTags.split(',') : [];
+        const productPrice = parseInt(card.dataset.productPrice);
+        let show = true;
+        
+        // Check category filter
+        if (selectedFilters.category.length > 0) {
+          show = selectedFilters.category.some(cat => {
+            const fullTag = `category:${cat}`;
+            return productTags.some(tag => tag.trim().toLowerCase() === fullTag.toLowerCase());
+          });
+        }
+        
+        // Check skin type filter (AND logic with category)
+        if (show && selectedFilters.skinType.length > 0) {
+          show = selectedFilters.skinType.some(type => {
+            const fullTag = `skin-type:${type}`;
+            return productTags.some(tag => tag.trim().toLowerCase() === fullTag.toLowerCase());
+          });
+        }
+        
+        // Check price filter (AND logic with other filters)
+        if (show && selectedFilters.price.length > 0) {
+          const priceValue = selectedFilters.price[0];
+          if (priceValue.includes('-')) {
+            const [min, max] = priceValue.split('-');
+            const minPrice = parseInt(min) * 100;
+            const maxPrice = parseInt(max) * 100;
+            show = productPrice >= minPrice && productPrice < maxPrice;
+          } else if (priceValue.includes('+')) {
+            const minPrice = parseInt(priceValue.replace('+', '')) * 100;
+            show = productPrice >= minPrice;
+          }
+        }
+        
+        // Show/hide product card
+        card.style.display = show ? 'block' : 'none';
+        if (show) visibleCount++;
+      });
+      
+      // Update product count
+      const productCountEl = document.getElementById('productCount');
+      if (productCountEl) {
+        productCountEl.textContent = `${visibleCount} ${visibleCount === 1 ? 'Product' : 'Products'}`;
+      }
+      
+      // Update active filter tags
+      updateActiveFilterTags();
+      
+      // Update filter counts
+      updateFilterCounts();
+    };
+    
+    // Update filter option counts dynamically
+    function updateFilterCounts() {
+      // Get all visible product cards
+      const visibleProducts = Array.from(document.querySelectorAll('.product-card'))
+        .filter(card => card.style.display !== 'none');
+      
+      // Update category counts
+      document.querySelectorAll('[name="category"]').forEach(checkbox => {
+        const categoryValue = checkbox.value;
+        const fullTag = `category:${categoryValue}`;
+        const count = visibleProducts.filter(card => {
+          const tags = card.dataset.productTags ? card.dataset.productTags.split(',') : [];
+          return tags.some(tag => tag.trim().toLowerCase() === fullTag.toLowerCase());
+        }).length;
+        
+        const countSpan = checkbox.closest('.filter-option').querySelector('.filter-option__count');
+        if (countSpan) {
+          countSpan.textContent = `(${count})`;
+        }
+      });
+      
+      // Update skin-type counts
+      document.querySelectorAll('[name="skin-type"]').forEach(checkbox => {
+        const skinTypeValue = checkbox.value;
+        const fullTag = `skin-type:${skinTypeValue}`;
+        const count = visibleProducts.filter(card => {
+          const tags = card.dataset.productTags ? card.dataset.productTags.split(',') : [];
+          return tags.some(tag => tag.trim().toLowerCase() === fullTag.toLowerCase());
+        }).length;
+        
+        const countSpan = checkbox.closest('.filter-option').querySelector('.filter-option__count');
+        if (countSpan) {
+          countSpan.textContent = `(${count})`;
+        }
+      });
+      
+      // Update price counts
+      document.querySelectorAll('[name="price"]').forEach(checkbox => {
+        const priceValue = checkbox.value;
+        let count = 0;
+        
+        if (priceValue.includes('-')) {
+          const [min, max] = priceValue.split('-');
+          const minPrice = parseInt(min) * 100;
+          const maxPrice = parseInt(max) * 100;
+          count = visibleProducts.filter(card => {
+            const price = parseInt(card.dataset.productPrice);
+            return price >= minPrice && price < maxPrice;
+          }).length;
+        } else if (priceValue.includes('+')) {
+          const minPrice = parseInt(priceValue.replace('+', '')) * 100;
+          count = visibleProducts.filter(card => {
+            const price = parseInt(card.dataset.productPrice);
+            return price >= minPrice;
+          }).length;
+        }
+        
+        const countSpan = checkbox.closest('.filter-option').querySelector('.filter-option__count');
+        if (countSpan) {
+          countSpan.textContent = `(${count})`;
+        }
+      });
+    }
+    
+    // Initialize filters on page load
+    function initializeFilters() {
+      // Show all products initially and update counts
+      updateActiveFilterTags();
+      updateFilterCounts();
+    }
+    
+    // Update active filter tags display
+    function updateActiveFilterTags() {
+      const activeFilters = [];
+      
+      filterCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          const label = checkbox.closest('.filter-option').querySelector('.filter-option__label').textContent;
+          activeFilters.push({
+            name: checkbox.name,
+            value: checkbox.value,
+            label: label
+          });
+        }
+      });
+      
+      if (activeFilters.length > 0) {
+        activeFiltersContainer.style.display = 'flex';
+        activeFilterTags.innerHTML = activeFilters.map(filter => `
+          <button type="button" class="active-filter-tag" data-filter-name="${filter.name}" data-filter-value="${filter.value}">
+            <span>${filter.label}</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M9 3L3 9M3 3l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        `).join('');
+        
+        // Add click handlers to remove tags
+        document.querySelectorAll('.active-filter-tag').forEach(tag => {
+          tag.addEventListener('click', function() {
+            const filterName = this.dataset.filterName;
+            const filterValue = this.dataset.filterValue;
+            const checkbox = document.querySelector(`input[name="${filterName}"][value="${filterValue}"]`);
+            if (checkbox) {
+              checkbox.checked = false;
+              applyFilters();
+            }
+          });
+        });
+      } else {
+        activeFiltersContainer.style.display = 'none';
+      }
+    }
+    
+    // Checkbox change handlers
+    filterCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        clearTimeout(window.filterTimeout);
+        window.filterTimeout = setTimeout(applyFilters, 500);
+      });
+    });
+    
+    // Clear all filters
+    if (clearAllFiltersBtn) {
+      clearAllFiltersBtn.addEventListener('click', function() {
+        filterCheckboxes.forEach(cb => cb.checked = false);
+        applyFilters();
+      });
+    }
+    
+    // Initialize filters on page load
+    initializeFilters();
+    
+    // Sort Functionality
+    const sortSelect = document.getElementById('sortBy');
+    if (sortSelect) {
+      // Set current sort value from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentSort = urlParams.get('sort_by');
+      if (currentSort) {
+        sortSelect.value = currentSort;
+      }
+      
+      sortSelect.addEventListener('change', function() {
+        const sortValue = this.value;
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        
+        if (sortValue && sortValue !== 'manual') {
+          params.set('sort_by', sortValue);
+        } else {
+          params.delete('sort_by');
+        }
+        
+        window.location.href = `${url.pathname}?${params.toString()}`;
+      });
+    }
+  })();
+</script>
+
+{% stylesheet %}
+  /* Collection Page Styles */
+  .collection-page {
+    padding: var(--spacing-2xl) 0;
+  }
+  
+  .collection-page__container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+  }
+  
+  /* Collection Header */
+  .collection-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .collection-header__title {
+    font-size: var(--font-size-hero);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .collection-header__description {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: var(--color-dim-grey);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  /* Collection Content Layout */
+  .collection-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  
+  /* Horizontal Filter Bar */
+  .collection-filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-dim-grey);
+    gap: var(--spacing-md);
+  }
+  
+  .filter-bar__left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+  }
+  
+  .filter-bar__right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+  
+  /* Filter Dropdown */
+  .filter-dropdown {
+    position: relative;
+  }
+  
+  .filter-dropdown__trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+    background: none;
+    border: 1px solid var(--color-dim-grey);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  
+  .filter-dropdown__trigger:hover,
+  .filter-dropdown__trigger.is-active {
+    background: var(--color-oxford-blue);
+    color: var(--color-sea-salt);
+    border-color: var(--color-oxford-blue);
+  }
+  
+  .filter-dropdown__trigger svg {
+    transition: transform var(--transition-fast);
+  }
+  
+  .filter-dropdown__trigger.is-active svg {
+    transform: rotate(180deg);
+  }
+  
+  .filter-dropdown__panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 250px;
+    background: var(--color-white);
+    border: 1px solid var(--color-dim-grey);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    display: none;
+  }
+  
+  .filter-dropdown__panel.is-open {
+    display: block;
+  }
+  
+  .filter-dropdown__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid #E5E5E5;
+  }
+  
+  .filter-dropdown__title {
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+  }
+  
+  .filter-dropdown__clear {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--color-dim-grey);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color var(--transition-fast);
+  }
+  
+  .filter-dropdown__clear:hover {
+    color: var(--color-oxford-blue);
+  }
+  
+  .filter-dropdown__options {
+    padding: var(--spacing-sm) 0;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  /* Filter Options */
+  .filter-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+  
+  .filter-option:hover {
+    background: var(--color-sea-salt);
+  }
+  
+  .filter-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+  
+  .filter-option__label {
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-oxford-blue);
+  }
+  
+  .filter-option__count {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-dim-grey);
+  }
+  
+  /* Filter Bar Right Side */
+  .filter-bar__count {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+  }
+  
+  .filter-bar__sort {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+  
+  .filter-bar__sort-label {
+    font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+  }
+  
+  .filter-bar__sort-select {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-oxford-blue);
+    background: var(--color-white);
+    border: 1px solid var(--color-dim-grey);
+    cursor: pointer;
+  }
+  
+  /* Active Filters */
+  .active-filters {
+    display: none;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    flex-wrap: wrap;
+  }
+  
+  .active-filters__tags {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+  
+  .active-filter-tag {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 4px var(--spacing-sm);
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-oxford-blue);
+    background: var(--color-sea-salt);
+    border: 1px solid var(--color-dim-grey);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  
+  .active-filter-tag:hover {
+    background: var(--color-oxford-blue);
+    color: var(--color-sea-salt);
+    border-color: var(--color-oxford-blue);
+  }
+  
+  .active-filter-tag svg {
+    flex-shrink: 0;
+  }
+  
+  .active-filters__clear-all {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-dim-grey);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color var(--transition-fast);
+  }
+  
+  .active-filters__clear-all:hover {
+    color: var(--color-oxford-blue);
+  }
+  
+  /* Product Grid */
+  .collection-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--grid-gutter);
+    margin-bottom: var(--spacing-2xl);
+  }
+  
+  /* Empty State */
+  .collection-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--spacing-4xl) var(--spacing-md);
+  }
+  
+  .collection-empty__message {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    color: var(--color-dim-grey);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  /* Pagination */
+  .collection-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .collection-pagination__link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+  
+  .collection-pagination__link:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  .collection-pagination__info {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1023px) {
+    .collection-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .filter-bar__count {
+      order: -1;
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .collection-header__title {
+      font-size: clamp(32px, 8vw, 48px);
+    }
+    
+    .collection-filter-bar {
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+    }
+    
+    .filter-bar__toggle {
+      flex: 1;
+      justify-content: center;
+    }
+    
+    .filter-bar__sort {
+      flex: 1;
+      margin-left: 0;
+    }
+    
+    .filter-bar__sort-select {
+      width: 100%;
+    }
+    
+    .filter-bar__count {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .collection-filters {
+      max-width: 100%;
+    }
+    
+    .collection-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .collection-pagination {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .collection-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* Desktop: Show filters inline on larger screens */
+  @media (min-width: 1024px) {
+    .collection-filters {
+      position: static;
+      max-width: none;
+      width: 100%;
+      height: auto;
+      box-shadow: none;
+      overflow-y: visible;
+    }
+    
+    .collection-filters__header {
+      position: static;
+    }
+    
+    .collection-filters__close {
+      display: none;
+    }
+    
+    .filter-bar__toggle {
+      display: none;
+    }
+    
+    .collection-filters.is-open,
+    .collection-filters {
+      left: 0;
+    }
+    
+    body.filter-panel-open::before {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filters",
+      "label": "Enable Filters",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable Sorting",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per Page",
+      "default": 16
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,454 @@
+{% comment %}
+  SON OF ADAM - Search Page
+  Premium search results with product grid
+{% endcomment %}
+
+<main class="search-page full-width section-spacing" role="main" aria-label="Search results">
+  <div class="search-page__container">
+    
+    {%- comment -%} Breadcrumb Navigation {%- endcomment -%}
+    {% render 'breadcrumb' %}
+    
+    {%- comment -%} Search Header {%- endcomment -%}
+    <div class="search-header">
+      <h1 class="search-header__title">Search</h1>
+      
+      {%- comment -%} Search Form {%- endcomment -%}
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+        <div class="search-form__wrapper">
+          <input
+            type="search"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="Search for products..."
+            class="search-form__input"
+            aria-label="Search"
+            autofocus
+          >
+          <button type="submit" class="search-form__button">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M13 13L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span class="visually-hidden">Search</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    {%- comment -%} Search Results {%- endcomment -%}
+    {% if search.performed %}
+      
+      {%- comment -%} Results Header {%- endcomment -%}
+      <div class="search-results-header">
+        {% if search.results_count > 0 %}
+          <p class="search-results-header__count">
+            {{ search.results_count }} 
+            {% if search.results_count == 1 %}
+              result
+            {% else %}
+              results
+            {% endif %}
+            for "{{ search.terms }}"
+          </p>
+        {% else %}
+          <p class="search-results-header__count">
+            No results found for "{{ search.terms }}"
+          </p>
+        {% endif %}
+      </div>
+      
+      {%- comment -%} Results Grid {%- endcomment -%}
+      {% if search.results_count > 0 %}
+        {% paginate search.results by 16 %}
+          <div class="search-results-grid">
+            {% for item in search.results %}
+              {% case item.object_type %}
+                {% when 'product' %}
+                  {% render 'product-card', product: item %}
+                
+                {% when 'article' %}
+                  <div class="search-result-card search-result-card--article">
+                    {% if item.image %}
+                      <a href="{{ item.url }}" class="search-result-card__image-link">
+                        <img 
+                          src="{{ item.image | image_url: width: 400 }}"
+                          width="{{ item.image.width }}"
+                          height="{{ item.image.height }}"
+                          alt="{{ item.image.alt | escape }}"
+                          class="search-result-card__image"
+                          loading="lazy"
+                        >
+                      </a>
+                    {% endif %}
+                    <div class="search-result-card__content">
+                      <span class="search-result-card__type">Article</span>
+                      <h3 class="search-result-card__title">
+                        <a href="{{ item.url }}">{{ item.title }}</a>
+                      </h3>
+                      {% if item.excerpt != blank %}
+                        <p class="search-result-card__excerpt">
+                          {{ item.excerpt | strip_html | truncate: 120 }}
+                        </p>
+                      {% endif %}
+                    </div>
+                  </div>
+                
+                {% when 'page' %}
+                  <div class="search-result-card search-result-card--page">
+                    <div class="search-result-card__content">
+                      <span class="search-result-card__type">Page</span>
+                      <h3 class="search-result-card__title">
+                        <a href="{{ item.url }}">{{ item.title }}</a>
+                      </h3>
+                      {% if item.content != blank %}
+                        <p class="search-result-card__excerpt">
+                          {{ item.content | strip_html | truncate: 120 }}
+                        </p>
+                      {% endif %}
+                    </div>
+                  </div>
+              {% endcase %}
+            {% endfor %}
+          </div>
+          
+          {%- comment -%} Pagination {%- endcomment -%}
+          {% if paginate.pages > 1 %}
+            <div class="search-pagination">
+              {% if paginate.previous %}
+                <a href="{{ paginate.previous.url }}" class="search-pagination__link search-pagination__link--prev">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  Previous
+                </a>
+              {% endif %}
+              
+              <span class="search-pagination__info">
+                Page {{ paginate.current_page }} of {{ paginate.pages }}
+              </span>
+              
+              {% if paginate.next %}
+                <a href="{{ paginate.next.url }}" class="search-pagination__link search-pagination__link--next">
+                  Next
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endpaginate %}
+      {% else %}
+        {%- comment -%} No Results State {%- endcomment -%}
+        <div class="search-empty">
+          <svg class="search-empty__icon" width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <circle cx="26" cy="26" r="20" stroke="currentColor" stroke-width="3"/>
+            <path d="M42 42L56 56" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <path d="M20 26H32M26 20V32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <h2 class="search-empty__title">No results found</h2>
+          <p class="search-empty__message">
+            We couldn't find any results for "{{ search.terms }}". Try searching with different keywords.
+          </p>
+          <a href="/collections/all" class="btn btn-primary">
+            Shop All Products
+          </a>
+        </div>
+      {% endif %}
+      
+    {% else %}
+      {%- comment -%} Initial State (No Search Performed) {%- endcomment -%}
+      <div class="search-initial">
+        <svg class="search-initial__icon" width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="32" cy="32" r="24" stroke="currentColor" stroke-width="3"/>
+          <path d="M50 50L70 70" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <h2 class="search-initial__title">Start Your Search</h2>
+        <p class="search-initial__message">
+          Enter a search term above to find products, articles, and pages.
+        </p>
+      </div>
+    {% endif %}
+    
+  </div>
+</main>
+
+{% stylesheet %}
+  .search-page {
+    background-color: var(--color-background);
+  }
+  
+  .search-page__container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+  }
+  
+  /* Search Header */
+  .search-header {
+    text-align: center;
+    margin-bottom: var(--spacing-4xl);
+  }
+  
+  .search-header__title {
+    font-size: var(--font-size-hero);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  /* Search Form */
+  .search-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .search-form__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-form__input {
+    width: 100%;
+    padding: 16px 60px 16px 24px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--color-oxford-blue);
+    background-color: var(--color-white);
+    border: 2px solid var(--color-dim-grey);
+    border-radius: 0;
+    transition: border-color var(--transition-fast);
+  }
+  
+  .search-form__input:focus {
+    outline: none;
+    border-color: var(--color-oxford-blue);
+  }
+  
+  .search-form__input::placeholder {
+    color: var(--color-dim-grey);
+  }
+  
+  .search-form__button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--color-oxford-blue);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+  
+  .search-form__button:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  /* Results Header */
+  .search-results-header {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid #E5E5E5;
+  }
+  
+  .search-results-header__count {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+  }
+  
+  /* Results Grid */
+  .search-results-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--grid-gutter);
+    margin-bottom: var(--spacing-2xl);
+  }
+  
+  /* Search Result Card (for articles and pages) */
+  .search-result-card {
+    background-color: var(--color-white);
+    border: 1px solid #E5E5E5;
+    transition: box-shadow var(--transition-fast);
+  }
+  
+  .search-result-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-result-card__image-link {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  
+  .search-result-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+  
+  .search-result-card:hover .search-result-card__image {
+    transform: scale(1.05);
+  }
+  
+  .search-result-card__content {
+    padding: var(--spacing-md);
+  }
+  
+  .search-result-card__type {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-harvest-gold);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .search-result-card__title {
+    font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .search-result-card__title a {
+    color: var(--color-oxford-blue);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+  
+  .search-result-card__title a:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  .search-result-card__excerpt {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: var(--line-height-relaxed);
+    color: var(--color-dim-grey);
+  }
+  
+  /* Pagination */
+  .search-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .search-pagination__link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+  
+  .search-pagination__link:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  .search-pagination__info {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+  }
+  
+  /* Empty State */
+  .search-empty,
+  .search-initial {
+    text-align: center;
+    padding: var(--spacing-4xl) var(--spacing-md);
+  }
+  
+  .search-empty__icon,
+  .search-initial__icon {
+    color: var(--color-dim-grey);
+    margin: 0 auto var(--spacing-lg);
+  }
+  
+  .search-empty__title,
+  .search-initial__title {
+    font-family: var(--font-header);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .search-empty__message,
+  .search-initial__message {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: var(--color-dim-grey);
+    max-width: 500px;
+    margin: 0 auto var(--spacing-xl);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1023px) {
+    .search-results-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .search-header__title {
+      font-size: clamp(32px, 8vw, 48px);
+    }
+    
+    .search-form__input {
+      padding: 14px 50px 14px 16px;
+      font-size: 14px;
+    }
+    
+    .search-form__button {
+      width: 50px;
+    }
+    
+    .search-results-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .search-pagination {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+  }
+  
+  /* Utility Class */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Search",
+  "settings": []
+}
+{% endschema %}

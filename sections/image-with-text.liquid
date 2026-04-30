@@ -1,0 +1,300 @@
+{% comment %}
+  SON OF ADAM - Image with Text Section
+  50/50 split layout with image and content
+{% endcomment %}
+
+<section class="image-with-text full-width {% if section.settings.background_color != 'none' %}bg-{{ section.settings.background_color }}{% endif %}">
+  <div class="image-with-text__container {% if section.settings.image_position == 'right' %}image-with-text__container--reverse{% endif %}">
+    <div class="image-with-text__media">
+      {% if section.settings.image != blank %}
+        <img
+          src="{{ section.settings.image | image_url: width: 1200 }}"
+          srcset="{{ section.settings.image | image_url: width: 600 }} 600w,
+                  {{ section.settings.image | image_url: width: 900 }} 900w,
+                  {{ section.settings.image | image_url: width: 1200 }} 1200w"
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          alt="{{ section.settings.image.alt | escape }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          loading="lazy"
+          class="image-with-text__image"
+        >
+      {% else %}
+        <div class="image-with-text__placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="image-with-text__content">
+      <div class="image-with-text__text">
+        {% if section.settings.subheading != blank %}
+          <p class="image-with-text__subheading label">{{ section.settings.subheading }}</p>
+        {% endif %}
+        
+        {% if section.settings.heading != blank %}
+          <h2 class="image-with-text__heading">{{ section.settings.heading }}</h2>
+        {% endif %}
+        
+        {% if section.settings.text != blank %}
+          <div class="image-with-text__description">
+            {{ section.settings.text }}
+          </div>
+        {% endif %}
+        
+        {% if section.settings.button_text != blank %}
+          <div class="image-with-text__button">
+            {% render 'button',
+              text: section.settings.button_text,
+              url: section.settings.button_url,
+              style: section.settings.button_style
+            %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .image-with-text {
+    width: 100%;
+  }
+  
+  .image-with-text__container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: center;
+  }
+  
+  .image-with-text__container--reverse {
+    direction: rtl;
+  }
+  
+  .image-with-text__container--reverse > * {
+    direction: ltr;
+  }
+  
+  .image-with-text__media {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    overflow: hidden;
+  }
+  
+  .image-with-text__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .image-with-text__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-sea-salt);
+  }
+  
+  .image-with-text__content {
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .image-with-text__text {
+    max-width: 500px;
+  }
+  
+  .image-with-text__subheading {
+    color: var(--color-dim-grey);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .image-with-text__heading {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .image-with-text__description {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: var(--color-foreground);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .image-with-text__description p {
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .image-with-text__description p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .image-with-text__button {
+    margin-top: var(--spacing-lg);
+  }
+  
+  /* Background Color Variations */
+  .image-with-text.bg-oxford-blue {
+    background-color: var(--color-oxford-blue);
+  }
+  
+  .image-with-text.bg-oxford-blue .image-with-text__subheading,
+  .image-with-text.bg-oxford-blue .image-with-text__heading,
+  .image-with-text.bg-oxford-blue .image-with-text__description {
+    color: var(--color-white);
+  }
+  
+  .image-with-text.bg-oxford-blue .image-with-text__subheading {
+    opacity: 0.8;
+  }
+  
+  /* Responsive */
+  @media (max-width: 1023px) {
+    .image-with-text__container {
+      grid-template-columns: 1fr;
+    }
+    
+    .image-with-text__container--reverse {
+      direction: ltr;
+    }
+    
+    .image-with-text__media {
+      min-height: 400px;
+    }
+    
+    .image-with-text__content {
+      padding: var(--spacing-2xl) var(--page-margin);
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .image-with-text__media {
+      min-height: 300px;
+    }
+    
+    .image-with-text__content {
+      padding: var(--spacing-xl) var(--page-margin);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Image with Text",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image Position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "Background Color",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "sea-salt",
+          "label": "Sea Salt"
+        },
+        {
+          "value": "oxford-blue",
+          "label": "Oxford Blue"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Recommended: 1200x800px"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Our Philosophy"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Simple. Honest. Effective Grooming."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>We believe in transparency. No fillers, no synthetic fragrances, just the power of nature refined for the modern man. Our mission is to provide you with the tools to master your routine and protect your skin.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Our Story"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button Style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        }
+      ],
+      "default": "secondary"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with Text",
+      "category": "Content"
+    }
+  ]
+}
+{% endschema %}

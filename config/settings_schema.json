@@ -1,0 +1,185 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "SON OF ADAM",
+    "theme_version": "1.0.0",
+    "theme_author": "SON OF ADAM",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Custom Brand Fonts"
+      },
+      {
+        "type": "paragraph",
+        "content": "This theme uses custom SON OF ADAM brand fonts that are pre-loaded for optimal performance:"
+      },
+      {
+        "type": "paragraph",
+        "content": "**Old London** - Display font for hero headlines and major brand statements"
+      },
+      {
+        "type": "paragraph",
+        "content": "**Flama Condensed** - Header font for navigation, section titles, and product names (weights: Light, Book, Medium, SemiBold, Bold, Extrabold, Black)"
+      },
+      {
+        "type": "paragraph",
+        "content": "**Mosvita** - Body font for descriptions, labels, and general content (weights: Light, Regular, SemiBold, Bold, ExtraBold, Black)"
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Brand Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_sea_salt",
+        "default": "#F9F9F9",
+        "label": "Sea Salt (Primary Background)"
+      },
+      {
+        "type": "color",
+        "id": "color_oxford_blue",
+        "default": "#0D1C31",
+        "label": "Oxford Blue (Secondary Background)"
+      },
+      {
+        "type": "color",
+        "id": "color_harvest_gold",
+        "default": "#D6B93D",
+        "label": "Harvest Gold (Primary CTA)"
+      },
+      {
+        "type": "color",
+        "id": "color_silver",
+        "default": "#B7B7B9",
+        "label": "Silver (Secondary Accent)"
+      },
+      {
+        "type": "color",
+        "id": "color_dim_grey",
+        "default": "#636363",
+        "label": "Dim Grey (Secondary Text)"
+      },
+      {
+        "type": "color",
+        "id": "color_california_blue",
+        "default": "#CAE0FF",
+        "label": "California Blue (Highlight)"
+      },
+      {
+        "type": "color",
+        "id": "color_white",
+        "default": "#FFFFFF",
+        "label": "Pure White"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Container & Spacing"
+      },
+      {
+        "type": "range",
+        "id": "container_max_width",
+        "min": 1000,
+        "max": 1400,
+        "step": 50,
+        "unit": "px",
+        "label": "Max Container Width",
+        "default": 1200
+      },
+      {
+        "type": "range",
+        "id": "page_margin_desktop",
+        "min": 20,
+        "max": 80,
+        "step": 4,
+        "unit": "px",
+        "label": "Page Margin (Desktop)",
+        "default": 40
+      },
+      {
+        "type": "range",
+        "id": "page_margin_mobile",
+        "min": 10,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "label": "Page Margin (Mobile)",
+        "default": 20
+      },
+      {
+        "type": "range",
+        "id": "section_spacing_desktop",
+        "min": 60,
+        "max": 160,
+        "step": 10,
+        "unit": "px",
+        "label": "Section Spacing (Desktop)",
+        "default": 120
+      },
+      {
+        "type": "range",
+        "id": "section_spacing_tablet",
+        "min": 40,
+        "max": 120,
+        "step": 10,
+        "unit": "px",
+        "label": "Section Spacing (Tablet)",
+        "default": 80
+      },
+      {
+        "type": "range",
+        "id": "section_spacing_mobile",
+        "min": 30,
+        "max": 100,
+        "step": 10,
+        "unit": "px",
+        "label": "Section Spacing (Mobile)",
+        "default": 60
+      },
+      {
+        "type": "range",
+        "id": "grid_gutter",
+        "min": 12,
+        "max": 48,
+        "step": 4,
+        "unit": "px",
+        "label": "Grid Gutter",
+        "default": 24
+      }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Button Styles"
+      },
+      {
+        "type": "range",
+        "id": "button_border_radius",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Button Border Radius",
+        "default": 0,
+        "info": "0 for rectangular buttons (brand style)"
+      }
+    ]
+  }
+]
