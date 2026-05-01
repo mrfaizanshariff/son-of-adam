@@ -24,6 +24,14 @@
       {%- comment -%} Horizontal Filter Bar with Dropdown Panels {%- endcomment -%}
       {% if section.settings.enable_filters %}
         <div class="collection-filter-bar">
+          {%- comment -%} Mobile Filter Toggle Button {%- endcomment -%}
+          <button type="button" class="filter-bar__mobile-toggle" id="mobileFilterToggle" aria-label="Open filters">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>FILTERS</span>
+          </button>
+          
           <div class="filter-bar__left">
             
             {%- comment -%} Category Filter Dropdown {%- endcomment -%}
@@ -239,6 +247,168 @@
             </div>
             
           </div>
+          
+          {%- comment -%} Mobile Filter Sidebar {%- endcomment -%}
+          <div class="mobile-filter-sidebar" id="mobileFilterSidebar">
+            <div class="mobile-filter-sidebar__header">
+              <h2 class="mobile-filter-sidebar__title">FILTERS</h2>
+              <button type="button" class="mobile-filter-sidebar__close" id="mobileFilterClose" aria-label="Close filters">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            
+            <div class="mobile-filter-sidebar__content">
+              {%- comment -%} Category Filter Section {%- endcomment -%}
+              <div class="mobile-filter-section">
+                <h3 class="mobile-filter-section__title">CATEGORY</h3>
+                <div class="mobile-filter-section__options">
+                  {%- liquid
+                    for tag in collection.all_tags
+                      if tag contains 'category:'
+                        assign tag_parts = tag | split: 'category:'
+                        assign category_value = tag_parts[1] | strip | downcase | handleize
+                        assign tag_count = 0
+                        for product in collection.products
+                          if product.tags contains tag
+                            assign tag_count = tag_count | plus: 1
+                          endif
+                        endfor
+                        if tag_count > 0
+                          assign display_label = tag_parts[1] | strip
+                          echo '<label class="mobile-filter-option">'
+                          echo '<input type="checkbox" name="category" value="' | append: category_value | append: '">'
+                          echo '<span class="mobile-filter-option__label">' | append: display_label | append: '</span>'
+                          echo '<span class="mobile-filter-option__count">(' | append: tag_count | append: ')</span>'
+                          echo '</label>'
+                        endif
+                      endif
+                    endfor
+                  -%}
+                  {%- unless collection.all_tags contains 'category:' -%}
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="category" value="face">
+                      <span class="mobile-filter-option__label">Face Care</span>
+                      <span class="mobile-filter-option__count">(0)</span>
+                    </label>
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="category" value="beard">
+                      <span class="mobile-filter-option__label">Beard & Hair</span>
+                      <span class="mobile-filter-option__count">(0)</span>
+                    </label>
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="category" value="body">
+                      <span class="mobile-filter-option__label">Body Care</span>
+                      <span class="mobile-filter-option__count">(0)</span>
+                    </label>
+                  {%- endunless -%}
+                </div>
+              </div>
+              
+              {%- comment -%} Skin Type Filter Section {%- endcomment -%}
+              <div class="mobile-filter-section">
+                <h3 class="mobile-filter-section__title">SKIN TYPE</h3>
+                <div class="mobile-filter-section__options">
+                  {%- liquid
+                    for tag in collection.all_tags
+                      if tag contains 'skin-type:'
+                        assign tag_parts = tag | split: 'skin-type:'
+                        assign skin_type_value = tag_parts[1] | strip | downcase | handleize
+                        assign tag_count = 0
+                        for product in collection.products
+                          if product.tags contains tag
+                            assign tag_count = tag_count | plus: 1
+                          endif
+                        endfor
+                        if tag_count > 0
+                          assign display_label = tag_parts[1] | strip
+                          echo '<label class="mobile-filter-option">'
+                          echo '<input type="checkbox" name="skin-type" value="' | append: skin_type_value | append: '">'
+                          echo '<span class="mobile-filter-option__label">' | append: display_label | append: '</span>'
+                          echo '<span class="mobile-filter-option__count">(' | append: tag_count | append: ')</span>'
+                          echo '</label>'
+                        endif
+                      endif
+                    endfor
+                  -%}
+                  {%- unless collection.all_tags contains 'skin-type:' -%}
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="skin-type" value="normal">
+                      <span class="mobile-filter-option__label">Normal</span>
+                      <span class="mobile-filter-option__count">(0)</span>
+                    </label>
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="skin-type" value="dry">
+                      <span class="mobile-filter-option__label">Dry</span>
+                      <span class="mobile-filter-option__count">(0)</span>
+                    </label>
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="skin-type" value="oily">
+                      <span class="mobile-filter-option__label">Oily</span>
+                      <span class="mobile-filter-option__count">(0)</span>
+                    </label>
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="skin-type" value="combination">
+                      <span class="mobile-filter-option__label">Combination</span>
+                      <span class="mobile-filter-option__count">(0)</span>
+                    </label>
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="skin-type" value="sensitive">
+                      <span class="mobile-filter-option__label">Sensitive</span>
+                      <span class="mobile-filter-option__count">(0)</span>
+                    </label>
+                  {%- endunless -%}
+                </div>
+              </div>
+              
+              {%- comment -%} Price Filter Section {%- endcomment -%}
+              <div class="mobile-filter-section">
+                <h3 class="mobile-filter-section__title">PRICE</h3>
+                <div class="mobile-filter-section__options">
+                  {%- liquid
+                    assign price_ranges = '0-500,500-1000,1000-2000,2000+' | split: ','
+                    assign price_labels = 'Under ₹500,₹500 - ₹1000,₹1000 - ₹2000,Over ₹2000' | split: ','
+                    for i in (0..3)
+                      assign range = price_ranges[i]
+                      assign label = price_labels[i]
+                      assign count = 0
+                      if range contains '+'
+                        assign min_price = range | remove: '+' | times: 100
+                        assign max_price = 999999999
+                      else
+                        assign range_parts = range | split: '-'
+                        assign min_price = range_parts[0] | times: 100
+                        assign max_price = range_parts[1] | times: 100
+                      endif
+                      for product in collection.products
+                        if product.price >= min_price and product.price < max_price
+                          assign count = count | plus: 1
+                        elsif product.price >= min_price and max_price == 999999999
+                          assign count = count | plus: 1
+                        endif
+                      endfor
+                      if count > 0
+                        echo '<label class="mobile-filter-option">'
+                        echo '<input type="checkbox" name="price" value="' | append: range | append: '">'
+                        echo '<span class="mobile-filter-option__label">' | append: label | append: '</span>'
+                        echo '<span class="mobile-filter-option__count">(' | append: count | append: ')</span>'
+                        echo '</label>'
+                      endif
+                    endfor
+                  -%}
+                </div>
+              </div>
+            </div>
+            
+            <div class="mobile-filter-sidebar__footer">
+              <button type="button" class="mobile-filter-sidebar__clear" id="mobileClearFilters">Clear All</button>
+              <button type="button" class="mobile-filter-sidebar__apply" id="mobileApplyFilters">Apply Filters</button>
+            </div>
+          </div>
+          
+          {%- comment -%} Mobile Filter Backdrop {%- endcomment -%}
+          <div class="mobile-filter-backdrop" id="mobileFilterBackdrop"></div>
           
           <div class="filter-bar__right">
             <div class="filter-bar__count">
@@ -606,6 +776,84 @@
     // Initialize filters on page load
     initializeFilters();
     
+    // Mobile Filter Sidebar Functionality
+    (function() {
+      const mobileToggle = document.getElementById('mobileFilterToggle');
+      const mobileSidebar = document.getElementById('mobileFilterSidebar');
+      const mobileClose = document.getElementById('mobileFilterClose');
+      const mobileBackdrop = document.getElementById('mobileFilterBackdrop');
+      const mobileApply = document.getElementById('mobileApplyFilters');
+      const mobileClear = document.getElementById('mobileClearFilters');
+      
+      if (!mobileToggle || !mobileSidebar || !mobileBackdrop) return;
+      
+      // Open sidebar
+      function openMobileSidebar() {
+        mobileSidebar.classList.add('is-open');
+        mobileBackdrop.classList.add('is-visible');
+        document.body.style.overflow = 'hidden';
+        
+        // Sync mobile checkboxes with desktop
+        const desktopCheckboxes = document.querySelectorAll('.filter-dropdown__options input[type="checkbox"]');
+        const mobileCheckboxes = document.querySelectorAll('.mobile-filter-sidebar input[type="checkbox"]');
+        
+        desktopCheckboxes.forEach((desktopCb, index) => {
+          if (mobileCheckboxes[index]) {
+            mobileCheckboxes[index].checked = desktopCb.checked;
+          }
+        });
+      }
+      
+      // Close sidebar
+      function closeMobileSidebar() {
+        mobileSidebar.classList.remove('is-open');
+        mobileBackdrop.classList.remove('is-visible');
+        document.body.style.overflow = '';
+      }
+      
+      // Apply filters from mobile sidebar
+      function applyMobileFilters() {
+        // Sync mobile checkboxes back to desktop
+        const desktopCheckboxes = document.querySelectorAll('.filter-dropdown__options input[type="checkbox"]');
+        const mobileCheckboxes = document.querySelectorAll('.mobile-filter-sidebar input[type="checkbox"]');
+        
+        mobileCheckboxes.forEach((mobileCb, index) => {
+          if (desktopCheckboxes[index]) {
+            desktopCheckboxes[index].checked = mobileCb.checked;
+          }
+        });
+        
+        // Trigger the main filter apply function
+        applyFilters();
+        closeMobileSidebar();
+      }
+      
+      // Clear all mobile filters
+      function clearMobileFilters() {
+        const mobileCheckboxes = document.querySelectorAll('.mobile-filter-sidebar input[type="checkbox"]');
+        mobileCheckboxes.forEach(cb => cb.checked = false);
+      }
+      
+      // Event listeners
+      mobileToggle.addEventListener('click', openMobileSidebar);
+      mobileClose.addEventListener('click', closeMobileSidebar);
+      mobileBackdrop.addEventListener('click', closeMobileSidebar);
+      mobileApply.addEventListener('click', applyMobileFilters);
+      mobileClear.addEventListener('click', clearMobileFilters);
+      
+      // Handle escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileSidebar.classList.contains('is-open')) {
+          closeMobileSidebar();
+        }
+      });
+      
+      // Prevent body scroll when sidebar is open
+      mobileSidebar.addEventListener('touchmove', function(e) {
+        e.stopPropagation();
+      }, { passive: true });
+    })();
+    
     // Sort Functionality
     const sortSelect = document.getElementById('sortBy');
     if (sortSelect) {
@@ -958,6 +1206,224 @@
     color: var(--color-dim-grey);
   }
   
+  /* Mobile Filter Toggle Button */
+  .filter-bar__mobile-toggle {
+    display: none;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+    background: var(--color-white);
+    border: 2px solid var(--color-oxford-blue);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .filter-bar__mobile-toggle:hover {
+    background: var(--color-oxford-blue);
+    color: var(--color-sea-salt);
+  }
+  
+  .filter-bar__mobile-toggle svg {
+    flex-shrink: 0;
+  }
+  
+  /* Mobile Filter Sidebar */
+  .mobile-filter-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 85%;
+    max-width: 400px;
+    height: 100vh;
+    background: var(--color-white);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+  
+  .mobile-filter-sidebar.is-open {
+    left: 0;
+  }
+  
+  .mobile-filter-sidebar__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-bottom: 2px solid var(--color-dim-grey);
+    background: var(--color-sea-salt);
+  }
+  
+  .mobile-filter-sidebar__title {
+    font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+    margin: 0;
+  }
+  
+  .mobile-filter-sidebar__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-oxford-blue);
+    transition: color var(--transition-fast);
+  }
+  
+  .mobile-filter-sidebar__close:hover {
+    color: var(--color-harvest-gold);
+  }
+  
+  .mobile-filter-sidebar__content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--spacing-md);
+  }
+  
+  .mobile-filter-section {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid #E5E5E5;
+  }
+  
+  .mobile-filter-section:last-child {
+    border-bottom: none;
+  }
+  
+  .mobile-filter-section__title {
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+  
+  .mobile-filter-section__options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .mobile-filter-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    border-radius: 4px;
+    min-height: 48px;
+  }
+  
+  .mobile-filter-option:active {
+    background: var(--color-sea-salt);
+  }
+  
+  .mobile-filter-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  
+  .mobile-filter-option__label {
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--color-oxford-blue);
+  }
+  
+  .mobile-filter-option__count {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-dim-grey);
+  }
+  
+  .mobile-filter-sidebar__footer {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-top: 2px solid var(--color-dim-grey);
+    background: var(--color-sea-salt);
+  }
+  
+  .mobile-filter-sidebar__clear {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-oxford-blue);
+    background: var(--color-white);
+    border: 2px solid var(--color-oxford-blue);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    min-height: 48px;
+  }
+  
+  .mobile-filter-sidebar__clear:active {
+    background: var(--color-sea-salt);
+  }
+  
+  .mobile-filter-sidebar__apply {
+    flex: 2;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-sea-salt);
+    background: var(--color-oxford-blue);
+    border: 2px solid var(--color-oxford-blue);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    min-height: 48px;
+  }
+  
+  .mobile-filter-sidebar__apply:active {
+    background: var(--color-harvest-gold);
+    border-color: var(--color-harvest-gold);
+  }
+  
+  /* Mobile Filter Backdrop */
+  .mobile-filter-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .mobile-filter-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  
   /* Responsive Design */
   @media (max-width: 1023px) {
     .collection-grid {
@@ -968,35 +1434,64 @@
       order: -1;
       width: 100%;
     }
+    /* Show mobile toggle, hide desktop dropdowns on tablet */
+    .filter-bar__mobile-toggle {
+      display: flex;
+    }
+    
+    .filter-bar__left {
+      display: none;
+    }
   }
   
   @media (max-width: 767px) {
+    .collection-page {
+      padding: var(--spacing-lg) 0;
+    }
     .collection-header__title {
       font-size: clamp(32px, 8vw, 48px);
     }
     
     .collection-filter-bar {
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) 0;
+    }
+    
+    .filter-bar__mobile-toggle {
+      order: 1;
+    }
+    
+    .filter-bar__right {
+      order: 2;
+      width: 100%;
+      flex-direction: column;
       gap: var(--spacing-sm);
     }
     
-    .filter-bar__toggle {
-      flex: 1;
-      justify-content: center;
+    .filter-bar__count {
+      order: 1;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
     }
     
     .filter-bar__sort {
-      flex: 1;
-      margin-left: 0;
+      order: 2;
+      width: 100%;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+    
+    .filter-bar__sort-label {
+      font-size: 12px;
     }
     
     .filter-bar__sort-select {
       width: 100%;
-    }
-    
-    .filter-bar__count {
-      width: 100%;
-      text-align: center;
+      padding: var(--spacing-sm);
+      font-size: 14px;
+      min-height: 44px;
     }
     
     .collection-filters {
