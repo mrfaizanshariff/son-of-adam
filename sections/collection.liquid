@@ -49,9 +49,6 @@
                 </div>
                 <div class="filter-dropdown__options">
                   {%- liquid
-                    # Create array to store category tags
-                    assign category_tags = ''
-                    
                     # Loop through all tags in the collection
                     for tag in collection.all_tags
                       # Check if tag starts with 'category:' prefix
@@ -461,7 +458,7 @@
             {% else %}
               <div class="collection-empty">
                 <p class="collection-empty__message">No products found in this collection.</p>
-                <a href="/collections/all" class="btn btn-primary">Shop All Products</a>
+                <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">Shop All Products</a>
               </div>
             {% endif %}
           </div>

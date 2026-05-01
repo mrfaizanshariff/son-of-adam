@@ -6,7 +6,6 @@
     {%- comment -%} Performance: Resource Hints {%- endcomment -%}
     <link rel="dns-prefetch" href="https://cdn.shopify.com">
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
-    <link rel="dns-prefetch" href="https://monorail-edge.shopifysvc.com">
     {% render 'css-variables' %}
 
     {% comment %}
@@ -18,13 +17,13 @@
     {% endcomment %}
     
     {% comment %} Preload Old London (Display font for hero) {% endcomment %}
-    <link rel="preload" href="{{ 'OldLondonAlternate.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    {{ 'OldLondonAlternate.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
     
     {% comment %} Preload Flama Condensed Bold (Most used header weight) {% endcomment %}
-    <link rel="preload" href="{{ 'FlamaCondensedTrial-Bold.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    {{ 'FlamaCondensedTrial-Bold.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
     
     {% comment %} Preload Mosvita Regular (Body text) {% endcomment %}
-    <link rel="preload" href="{{ 'Mosvita-Regular.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    {{ 'Mosvita-Regular.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
 
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
