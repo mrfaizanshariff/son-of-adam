@@ -17,8 +17,8 @@
   {
     "@context": "https://schema.org/",
     "@type": "AggregateRating",
-    "ratingValue": "{{ average_rating }}",
-    "reviewCount": "{{ reviews_count }}",
+    "ratingValue": {{ average_rating | json }},
+    "reviewCount": {{ reviews_count | json }},
     "itemReviewed": {
       "@type": "Product",
       "name": "{{ product.title | escape }}",

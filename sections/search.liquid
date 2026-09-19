@@ -49,11 +49,11 @@
             {% else %}
               results
             {% endif %}
-            for "{{ search.terms }}"
+            for "{{ search.terms | escape }}"
           </p>
         {% else %}
           <p class="search-results-header__count">
-            No results found for "{{ search.terms }}"
+            No results found for "{{ search.terms | escape }}"
           </p>
         {% endif %}
       </div>
@@ -149,7 +149,7 @@
           </svg>
           <h2 class="search-empty__title">No results found</h2>
           <p class="search-empty__message">
-            We couldn't find any results for "{{ search.terms }}". Try searching with different keywords.
+            We couldn't find any results for "{{ search.terms | escape }}". Try searching with different keywords.
           </p>
           <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">
             Shop All Products

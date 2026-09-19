@@ -9,8 +9,9 @@
   - full_width: true/false (default: false)
   - dark_bg: true/false - for secondary buttons on dark backgrounds (default: false)
   - class: Additional CSS classes (optional)
-  - attributes: Additional HTML attributes (optional)
-  
+  - target: Anchor target, e.g. '_blank' (optional)
+  - rel: Anchor rel attribute, e.g. 'noopener' (optional)
+
   Usage:
   {% render 'button', text: 'Shop Now', url: '/collections/all', style: 'primary' %}
   {% render 'button', text: 'Learn More', url: '/pages/about', style: 'secondary', dark_bg: true %}
@@ -24,8 +25,9 @@
   assign button_text = text
   assign button_url = url
   assign button_class = class | default: ''
-  assign button_attrs = attributes | default: ''
-  
+  assign button_target = target | default: ''
+  assign button_rel = rel | default: ''
+
   # Build CSS classes
   assign css_classes = 'btn'
   
@@ -54,11 +56,16 @@
 %}
 
 {% if button_url != blank %}
-  <a href="{{ button_url }}" class="{{ css_classes }}" {{ button_attrs }}>
-    {{ button_text }}
+  <a
+    href="{{ button_url }}"
+    class="{{ css_classes }}"
+    {%- if button_target != blank %} target="{{ button_target | escape }}"{% endif %}
+    {%- if button_rel != blank %} rel="{{ button_rel | escape }}"{% endif %}
+  >
+    {{ button_text | escape }}
   </a>
 {% else %}
-  <button type="button" class="{{ css_classes }}" {{ button_attrs }}>
-    {{ button_text }}
+  <button type="button" class="{{ css_classes }}">
+    {{ button_text | escape }}
   </button>
 {% endif %}

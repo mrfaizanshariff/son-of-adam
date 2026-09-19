@@ -77,7 +77,7 @@
                       {% for property in item.properties %}
                         {% unless property.last == blank %}
                           <p class="cart-item__property">
-                            <span>{{ property.first }}:</span> {{ property.last }}
+                            <span>{{ property.first | escape }}:</span> {{ property.last | escape }}
                           </p>
                         {% endunless %}
                       {% endfor %}
@@ -214,7 +214,7 @@
                   name="note"
                   class="cart-summary__note-textarea"
                   placeholder="Special instructions for your order..."
-                >{{ cart.note }}</textarea>
+                >{{ cart.note | escape }}</textarea>
               </div>
             {% endif %}
             

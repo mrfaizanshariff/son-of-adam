@@ -68,7 +68,7 @@
                         # Only show categories that have products
                         if tag_count > 0
                           # Format the display label (capitalize first letter)
-                          assign display_label = tag_parts[1] | strip
+                          assign display_label = tag_parts[1] | strip | escape
                           
                           echo '<label class="filter-option">'
                           echo '<input type="checkbox" name="category" value="' | append: category_value | append: '">'
@@ -139,7 +139,7 @@
                         # Only show skin types that have products
                         if tag_count > 0
                           # Format the display label (capitalize first letter)
-                          assign display_label = tag_parts[1] | strip
+                          assign display_label = tag_parts[1] | strip | escape
                           
                           echo '<label class="filter-option">'
                           echo '<input type="checkbox" name="skin-type" value="' | append: skin_type_value | append: '">'
@@ -273,7 +273,7 @@
                           endif
                         endfor
                         if tag_count > 0
-                          assign display_label = tag_parts[1] | strip
+                          assign display_label = tag_parts[1] | strip | escape
                           echo '<label class="mobile-filter-option">'
                           echo '<input type="checkbox" name="category" value="' | append: category_value | append: '">'
                           echo '<span class="mobile-filter-option__label">' | append: display_label | append: '</span>'
@@ -319,7 +319,7 @@
                           endif
                         endfor
                         if tag_count > 0
-                          assign display_label = tag_parts[1] | strip
+                          assign display_label = tag_parts[1] | strip | escape
                           echo '<label class="mobile-filter-option">'
                           echo '<input type="checkbox" name="skin-type" value="' | append: skin_type_value | append: '">'
                           echo '<span class="mobile-filter-option__label">' | append: display_label | append: '</span>'
