@@ -149,6 +149,10 @@ For CSS and JavaScript, we recommend using the [`{% stylesheet %}`](https://shop
 
 The Skeleton Theme explicitly separates essential CSS necessary for every page into a dedicated `critical.css` file.
 
+## Known limitations / TODO
+
+- **Collection filtering (`sections/collection.liquid`)**: category/skin-type/price filter counts are computed by scanning `collection.all_tags` and `collection.products` in Liquid. Outside a `{% paginate %}` block, `collection.products` is capped at the storefront's default page size, so counts undercount products on collections larger than that page size. TODO: migrate the category/skin-type/price filters to Shopify's native [`collection.filters`](https://shopify.dev/docs/api/liquid/objects/collection#collection-filters) (storefront filtering API), which computes accurate counts server-side regardless of collection size. This requires reworking the filter UI markup and its JS to read/apply `filter.values` instead of custom tag-parsing.
+
 ## Contributing
 
 We're excited for your contributions to the Skeleton Theme! This repository aims to remain as lean, lightweight, and fundamental as possible, and we kindly ask your contributions to align with this intention.

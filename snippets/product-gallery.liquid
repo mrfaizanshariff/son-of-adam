@@ -41,13 +41,14 @@
   {% if product_images.size > 1 %}
     <div class="product-gallery__thumbnails">
       {% for image in product_images limit: 4 %}
-        <button 
+        <button
           type="button"
           class="product-gallery__thumbnail {% if forloop.first %}is-active{% endif %}"
           data-image-url="{{ image | image_url: width: 800 }}"
           data-image-srcset="{{ image | image_url: width: 400 }} 400w, {{ image | image_url: width: 600 }} 600w, {{ image | image_url: width: 800 }} 800w, {{ image | image_url: width: 1000 }} 1000w"
-          data-image-alt="{{ image.alt | escape }}"
-          aria-label="View image {{ forloop.index }}"
+          data-image-alt="{{ image.alt | default: product.title | escape }}"
+          aria-label="{{ 'accessibility.view_image_n' | t: n: forloop.index | default: 'View image' }}"
+          {% if forloop.first %}aria-current="true"{% endif %}
         >
           <img
             src="{{ image | image_url: width: 150 }}"
@@ -63,8 +64,8 @@
   {% endif %}
 </div>
 
-<script>
-  (function() {
+{% javascript %}
+  document.addEventListener('DOMContentLoaded', () => {
     const mainImage = document.getElementById('mainProductImage');
     const thumbnails = document.querySelectorAll('.product-gallery__thumbnail');
     
@@ -72,24 +73,25 @@
     
     thumbnails.forEach(thumbnail => {
       thumbnail.addEventListener('click', function() {
-        // Remove active class from all thumbnails
-        thumbnails.forEach(t => t.classList.remove('is-active'));
+        thumbnails.forEach(t => {
+          t.classList.remove('is-active');
+          t.removeAttribute('aria-current');
+        });
         
-        // Add active class to clicked thumbnail
         this.classList.add('is-active');
+        this.setAttribute('aria-current', 'true');
         
-        // Update main image
         const newSrc = this.dataset.imageUrl;
         const newSrcset = this.dataset.imageSrcset;
         const newAlt = this.dataset.imageAlt;
         
-        mainImage.src = newSrc;
-        mainImage.srcset = newSrcset;
-        mainImage.alt = newAlt;
+        if (newSrc) mainImage.src = newSrc;
+        if (newSrcset) mainImage.srcset = newSrcset;
+        if (newAlt) mainImage.alt = newAlt;
       });
     });
-  })();
-</script>
+  });
+{% endjavascript %}
 
 {% stylesheet %}
   .product-gallery {

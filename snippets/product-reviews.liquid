@@ -48,7 +48,7 @@
       {%- endif -%}
       
       {%- if show_form -%}
-        <button type="button" class="btn btn-secondary product-reviews__write-btn" data-toggle-review-form>
+        <button type="button" class="btn btn-secondary product-reviews__write-btn" aria-expanded="false" aria-controls="review-form" data-toggle-review-form>
           {{ 'products.reviews.write_button' | t }}
         </button>
       {%- endif -%}
@@ -67,37 +67,37 @@
           
           <div class="product-reviews__form-group">
             <label for="review-rating" class="product-reviews__label">{{ 'products.reviews.rating_label' | t }}</label>
-            <div class="product-reviews__star-input" data-star-input>
+            <div class="product-reviews__star-input" role="radiogroup" aria-label="{{ 'products.reviews.rating_label' | t }}" data-star-input>
               {% for i in (1..5) %}
-                <button type="button" class="product-reviews__star-btn" data-rating="{{ i }}" aria-label="{{ i }} stars">
+                <button type="button" class="product-reviews__star-btn" role="radio" aria-checked="false" data-rating="{{ i }}" aria-label="{{ i }} stars">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 </button>
               {% endfor %}
             </div>
-            <input type="hidden" name="rating" id="review-rating" required>
+            <input type="hidden" name="rating" id="review-rating" required aria-required="true">
           </div>
           
           <div class="product-reviews__form-group">
             <label for="review-title" class="product-reviews__label">{{ 'products.reviews.title_label' | t }}</label>
-            <input type="text" id="review-title" name="title" class="product-reviews__input" required maxlength="100">
+            <input type="text" id="review-title" name="title" class="product-reviews__input" required aria-required="true" maxlength="100">
           </div>
           
           <div class="product-reviews__form-group">
             <label for="review-body" class="product-reviews__label">{{ 'products.reviews.body_label' | t }}</label>
-            <textarea id="review-body" name="body" class="product-reviews__textarea" required rows="5" maxlength="1000"></textarea>
+            <textarea id="review-body" name="body" class="product-reviews__textarea" required aria-required="true" rows="5" maxlength="1000"></textarea>
           </div>
           
           <div class="product-reviews__form-row">
             <div class="product-reviews__form-group">
               <label for="review-name" class="product-reviews__label">{{ 'products.reviews.name_label' | t }}</label>
-              <input type="text" id="review-name" name="author" class="product-reviews__input" required maxlength="50">
+              <input type="text" id="review-name" name="author" class="product-reviews__input" required aria-required="true" maxlength="50">
             </div>
             
             <div class="product-reviews__form-group">
               <label for="review-email" class="product-reviews__label">{{ 'products.reviews.email_label' | t }}</label>
-              <input type="email" id="review-email" name="email" class="product-reviews__input" required>
+              <input type="email" id="review-email" name="email" class="product-reviews__input" required aria-required="true">
             </div>
           </div>
           
@@ -106,7 +106,7 @@
             <button type="submit" class="btn btn-primary">{{ 'products.reviews.submit' | t }}</button>
           </div>
           
-          <div class="product-reviews__form-message" data-form-message style="display: none;"></div>
+          <div class="product-reviews__form-message" data-form-message role="status" aria-live="polite" style="display: none;"></div>
         </form>
       </div>
     {%- endif -%}
@@ -124,7 +124,7 @@
           <div class="product-review">
             <div class="product-review__header">
               <div class="product-review__rating">
-                {% render 'star-rating', rating: review.rating, show_count: false %}
+                {% render 'star-rating', rating: review.rating, show_count: false, unique_id: forloop.index %}
               </div>
               <h4 class="product-review__title">{{ review.title | escape }}</h4>
             </div>

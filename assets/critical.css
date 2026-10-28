@@ -117,7 +117,7 @@ h1::first-letter {
   font-family: var(--font-display);
   font-size: 1.2em;
   font-weight: 400;
-  margin-right: 0.05em;
+  margin-inline-end: 0.05em;
 }
 
 /* Section Title - Mixed Font (First letter Old London, rest Flama Condensed) */
@@ -136,7 +136,7 @@ h2::first-letter {
   font-family: var(--font-display);
   font-size: 1.3em;
   font-weight: 400;
-  margin-right: 0.05em;
+  margin-inline-end: 0.05em;
 }
 
 /* Subheading - Mixed Font (First letter Old London, rest Flama Condensed) */
@@ -153,7 +153,7 @@ h3::first-letter {
   font-family: var(--font-display);
   font-size: 1.2em;
   font-weight: 400;
-  margin-right: 0.05em;
+  margin-inline-end: 0.05em;
 }
 
 /* H4, H5, H6 - Also get mixed font treatment */
@@ -170,7 +170,7 @@ h6::first-letter {
   font-family: var(--font-display);
   font-size: 1.2em;
   font-weight: 400;
-  margin-right: 0.05em;
+  margin-inline-end: 0.05em;
 }
 
 /* Body Text */
@@ -296,11 +296,11 @@ a:hover {
 }
 
 .text-left {
-  text-align: left;
+  text-align: start;
 }
 
 .text-right {
-  text-align: right;
+  text-align: end;
 }
 
 /* Text Colors */
@@ -357,10 +357,8 @@ a:hover {
 /* Container */
 .container {
   max-width: var(--container-max-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--page-margin);
-  padding-right: var(--page-margin);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
 }
 
 /* Grid Utilities */
@@ -554,7 +552,8 @@ select:focus {
 /* ============================================
    ACCESSIBILITY
    ============================================ */
-.sr-only {
+.sr-only,
+.visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -564,6 +563,28 @@ select:focus {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Skip to Content Visible on Focus */
+.skip-to-content:focus {
+  position: fixed;
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
+  z-index: 10000;
+  width: auto;
+  height: auto;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  border: 2px solid var(--color-harvest-gold);
+  border-radius: var(--button-border-radius);
+  clip: auto;
+  white-space: normal;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Focus Styles */
@@ -576,4 +597,25 @@ button:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--color-harvest-gold);
   outline-offset: 4px;
+}
+
+/* High Contrast Mode Focus */
+@media (forced-colors: active) {
+  :focus-visible,
+  button:focus-visible,
+  a:focus-visible {
+    outline: 3px solid LinkText;
+  }
+}
+
+/* Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

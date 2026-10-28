@@ -10,19 +10,22 @@
 
     {% comment %}
       Custom Font Preloading:
-      Preload critical custom font variants for optimal performance
-      - Old London (Display): Hero headlines
-      - Flama Condensed (Header): Navigation & titles
-      - Mosvita (Body): Content
+      Preload only the font files needed for text that's guaranteed
+      above the fold on every page - the header nav (rendered via
+      {% sections 'header-group' %} before content_for_layout) and the
+      default body weight. Section headings vary by template/position
+      and aren't preloaded to avoid competing with these for bandwidth.
+      - Old London (Display, 400): Hero headlines
+      - Flama Condensed (Header, 500): Nav links (.header__menu-link) - the
+        actual weight rendered in the header, present on every page
+      - Flama Condensed (Header, 700): Most common weight for section
+        headings elsewhere in the theme
+      - Mosvita (Body, 400): Default body text weight
     {% endcomment %}
-    
-    {% comment %} Preload Old London (Display font for hero) {% endcomment %}
+
     {{ 'OldLondonAlternate.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
-    
-    {% comment %} Preload Flama Condensed Bold (Most used header weight) {% endcomment %}
+    {{ 'FlamaCondensedTrial-Medium.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
     {{ 'FlamaCondensedTrial-Bold.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
-    
-    {% comment %} Preload Mosvita Regular (Body text) {% endcomment %}
     {{ 'Mosvita-Regular.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
 
     {% # Load and preload the critical CSS %}
@@ -36,7 +39,7 @@
   </head>
 
   <body>
-    <a href="#main-content" class="skip-to-content sr-only">Skip to main content</a>
+    <a href="#main-content" class="skip-to-content sr-only">{{ 'accessibility.skip_to_content' | t | default: 'Skip to main content' }}</a>
     {% sections 'header-group' %}
 
     <main id="main-content" role="main">

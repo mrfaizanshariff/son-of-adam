@@ -1,44 +1,36 @@
-{% comment %}
+{% doc %}
   Product Accordion Snippet
-  Collapsible content section with +/- icon
-  
-  Usage:
-  {% render 'product-accordion', 
+  Accessible collapsible content section with +/- icon using native details/summary
+
+  @param {string} title - Accordion heading
+  @param {string} content - HTML or text content to display
+  @param {boolean} [open] - Initial open state (default: false)
+
+  @example
+  {% render 'product-accordion',
     title: 'Benefits',
     content: product.metafields.custom.benefits,
     open: false
   %}
-{% endcomment %}
+{% enddoc %}
 
 {%- liquid
-  assign accordion_id = title | handleize
   assign is_open = open | default: false
 -%}
 
-<div class="product-accordion {% if is_open %}is-open{% endif %}">
-  <button 
-    type="button" 
-    class="product-accordion__toggle"
-    aria-expanded="{{ is_open }}"
-    aria-controls="accordion-{{ accordion_id }}"
-  >
+<details class="product-accordion" {% if is_open %}open{% endif %}>
+  <summary class="product-accordion__toggle">
     <span class="product-accordion__title">{{ title | upcase }}</span>
-    <svg class="product-accordion__icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <svg class="product-accordion__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <path class="product-accordion__icon-horizontal" d="M4 8H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       <path class="product-accordion__icon-vertical" d="M8 4V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
     </svg>
-  </button>
+  </summary>
   
-  <div 
-    id="accordion-{{ accordion_id }}"
-    class="product-accordion__content"
-    {% unless is_open %}hidden{% endunless %}
-  >
-    <div class="product-accordion__inner">
-      {{ content }}
-    </div>
+  <div class="product-accordion__inner">
+    {{ content }}
   </div>
-</div>
+</details>
 
 {% stylesheet %}
   .product-accordion {
@@ -54,7 +46,12 @@
     background: none;
     border: none;
     cursor: pointer;
-    text-align: left;
+    text-align: start;
+    list-style: none;
+  }
+
+  .product-accordion__toggle::-webkit-details-marker {
+    display: none;
   }
   
   .product-accordion__title {
@@ -74,16 +71,8 @@
     transition: opacity var(--transition-fast);
   }
   
-  .product-accordion.is-open .product-accordion__icon-vertical {
+  .product-accordion[open] .product-accordion__icon-vertical {
     opacity: 0;
-  }
-  
-  .product-accordion__content {
-    overflow: hidden;
-  }
-  
-  .product-accordion__content[hidden] {
-    display: none;
   }
   
   .product-accordion__inner {
@@ -105,7 +94,7 @@
   .product-accordion__inner ul,
   .product-accordion__inner ol {
     margin: var(--spacing-sm) 0;
-    padding-left: var(--spacing-md);
+    padding-inline-start: var(--spacing-md);
   }
   
   .product-accordion__inner li {

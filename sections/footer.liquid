@@ -62,13 +62,15 @@
       {% if section.settings.menu_shop.links.size > 0 %}
         <div class="footer__column">
           <h3 class="footer__heading">Shop</h3>
-          <ul class="footer__menu">
-            {% for link in section.settings.menu_shop.links %}
-              <li class="footer__menu-item">
-                <a href="{{ link.url }}" class="footer__menu-link">{{ link.title }}</a>
-              </li>
-            {% endfor %}
-          </ul>
+          <nav aria-label="Shop links">
+            <ul class="footer__menu">
+              {% for link in section.settings.menu_shop.links %}
+                <li class="footer__menu-item">
+                  <a href="{{ link.url }}" class="footer__menu-link">{{ link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </nav>
         </div>
       {% endif %}
       
@@ -76,13 +78,15 @@
       {% if section.settings.menu_about.links.size > 0 %}
         <div class="footer__column">
           <h3 class="footer__heading">About</h3>
-          <ul class="footer__menu">
-            {% for link in section.settings.menu_about.links %}
-              <li class="footer__menu-item">
-                <a href="{{ link.url }}" class="footer__menu-link">{{ link.title }}</a>
-              </li>
-            {% endfor %}
-          </ul>
+          <nav aria-label="About links">
+            <ul class="footer__menu">
+              {% for link in section.settings.menu_about.links %}
+                <li class="footer__menu-item">
+                  <a href="{{ link.url }}" class="footer__menu-link">{{ link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </nav>
         </div>
       {% endif %}
       
@@ -90,13 +94,15 @@
       {% if section.settings.menu_support.links.size > 0 %}
         <div class="footer__column">
           <h3 class="footer__heading">Support</h3>
-          <ul class="footer__menu">
-            {% for link in section.settings.menu_support.links %}
-              <li class="footer__menu-item">
-                <a href="{{ link.url }}" class="footer__menu-link">{{ link.title }}</a>
-              </li>
-            {% endfor %}
-          </ul>
+          <nav aria-label="Support links">
+            <ul class="footer__menu">
+              {% for link in section.settings.menu_support.links %}
+                <li class="footer__menu-item">
+                  <a href="{{ link.url }}" class="footer__menu-link">{{ link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </nav>
         </div>
       {% endif %}
     </div>

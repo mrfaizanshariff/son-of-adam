@@ -29,21 +29,29 @@
         <h1 class="product-main__title">{{ product.title }}</h1>
         
         {%- comment -%} Star Rating {%- endcomment -%}
-        {% if section.settings.show_rating %}
+        {%- liquid
+          assign product_review_count = product.metafields.reviews.rating_count | default: 0
+          assign product_review_rating = product.metafields.reviews.rating | default: 0
+        -%}
+        {% if section.settings.show_rating and product_review_count > 0 %}
           <div class="product-main__rating">
-            {% render 'star-rating', rating: 5, count: 120 %}
+            {% render 'star-rating', rating: product_review_rating, count: product_review_count %}
           </div>
         {% endif %}
         
         {%- comment -%} Price {%- endcomment -%}
-        <div class="product-main__price">
+        {%- liquid
+          assign product_price_formatted = current_variant.price | money
+          assign product_compare_price_formatted = current_variant.compare_at_price | money
+        -%}
+        <div class="product-main__price" aria-label="{% if current_variant.compare_at_price > current_variant.price %}{{ 'products.price.sale_price' | t: price: product_price_formatted, original: product_compare_price_formatted }}{% else %}{{ 'products.price.regular_price' | t: price: product_price_formatted }}{% endif %}">
           <span class="product-main__price-amount">
-            {{ current_variant.price | money }}
+            {{ product_price_formatted }}
           </span>
           {% if current_variant.compare_at_price > current_variant.price %}
-            <span class="product-main__price-compare">
-              {{ current_variant.compare_at_price | money }}
-            </span>
+            <s class="product-main__price-compare" aria-hidden="true">
+              {{ product_compare_price_formatted }}
+            </s>
           {% endif %}
         </div>
         
@@ -63,11 +71,12 @@
           {% unless product.has_only_default_variant %}
             <div class="product-form__variants">
               <label for="variant-selector" class="product-form__label">
-                VARIANT
+                {{ 'products.product.variant' | t | default: 'Variant' | upcase }}
               </label>
               <select
                 id="variant-selector"
                 class="product-form__select"
+                aria-label="{{ 'products.product.variant' | t | default: 'Variant' }}"
                 data-variant-select
               >
                 {% for variant in product.variants %}
@@ -79,7 +88,7 @@
                     data-available="{{ variant.available }}"
                   >
                     {{ variant.title }}
-                    {% unless variant.available %} - Sold Out{% endunless %}
+                    {% unless variant.available %} - {{ 'products.product.sold_out' | t | default: 'Sold out' }}{% endunless %}
                   </option>
                 {% endfor %}
               </select>
@@ -89,46 +98,12 @@
           {%- comment -%} Quantity Selector {%- endcomment -%}
           <div class="product-form__quantity">
             <label for="quantity" class="product-form__label">
-              
               {% if current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity < 7 %}
-                <span style="color:#991B1B" class="product-form__stock">Only {{ current_variant.inventory_quantity }} left in stock</span>
+                <span class="product-form__stock product-form__stock--low">{{ 'products.product.only_n_left' | t: count: current_variant.inventory_quantity }}</span>
               {% endif %}
             </label>
-            <div class="quantity-selector" data-quantity-wrapper>
-              <button
-                type="button"
-                class="quantity-selector__button quantity-selector__button--minus"
-                aria-label="Decrease quantity"
-                data-quantity-minus
-              >
-                <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
-                  <path d="M0 1H12" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </button>
-              
-              <input
-                type="number"
-                id="quantity"
-                name="quantity"
-                value="1"
-                min="1"
-                max="{{ current_variant.inventory_quantity | default: 999 }}"
-                class="quantity-selector__input"
-                aria-label="Quantity"
-                data-quantity-input
-              >
-              
-              <button
-                type="button"
-                class="quantity-selector__button quantity-selector__button--plus"
-                aria-label="Increase quantity"
-                data-quantity-plus
-              >
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M6 0V12M0 6H12" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </button>
-            </div>
+            {% assign max_quantity = current_variant.inventory_quantity | default: 999 %}
+            {% render 'quantity-selector', id: 'quantity', value: 1, min: 1, max: max_quantity %}
           </div>
           
           {%- comment -%} Add to Cart Button {%- endcomment -%}
@@ -139,9 +114,9 @@
             {% unless current_variant.available %}disabled{% endunless %}
           >
             {% if current_variant.available %}
-              ADD TO CART
+              {{ 'products.product.add_to_cart' | t | default: 'Add to cart' | upcase }}
             {% else %}
-              SOLD OUT
+              {{ 'products.product.sold_out' | t | default: 'Sold out' | upcase }}
             {% endif %}
           </button>
           
@@ -263,8 +238,6 @@
     const variantSelect = document.querySelector('[data-variant-select]');
     const variantIdInput = document.querySelector('[data-variant-id]');
     const quantityInput = document.querySelector('[data-quantity-input]');
-    const quantityMinus = document.querySelector('[data-quantity-minus]');
-    const quantityPlus = document.querySelector('[data-quantity-plus]');
     const submitButton = document.querySelector('.product-form__submit');
     const productForm = document.querySelector('.product-form');
     
@@ -403,42 +376,20 @@
     }
     
     // Quantity Controls
-    if (quantityMinus && quantityPlus && quantityInput) {
-      const min = parseInt(quantityInput.getAttribute('min')) || 1;
-      const updateMax = () => parseInt(quantityInput.getAttribute('max')) || 999;
-      
-      quantityMinus.addEventListener('click', () => {
-        const currentValue = parseInt(quantityInput.value) || min;
-        if (currentValue > min) {
-          quantityInput.value = currentValue - 1;
-        }
-      });
-      
-      quantityPlus.addEventListener('click', () => {
-        const currentValue = parseInt(quantityInput.value) || min;
-        const max = updateMax();
-        if (currentValue < max) {
-          quantityInput.value = currentValue + 1;
-        } else {
-          // Show message when max reached
-          const availabilityMsg = document.querySelector('.product-availability-message');
-          if (availabilityMsg) {
-            availabilityMsg.textContent = 'Maximum available quantity reached';
-            availabilityMsg.className = 'product-availability-message product-availability-message--warning';
-            setTimeout(() => {
-              updateAvailabilityUI(currentVariantId, max + getCartQuantityForVariant(currentVariantId), true);
-            }, 2000);
-          }
-        }
-      });
-      
-      quantityInput.addEventListener('change', () => {
-        const value = parseInt(quantityInput.value) || min;
-        const max = updateMax();
-        if (value < min) {
-          quantityInput.value = min;
-        } else if (value > max) {
-          quantityInput.value = max;
+    // Increment/decrement/clamp behavior is handled by the shared
+    // quantity-selector snippet's script. We only react when it
+    // signals the max was hit, to surface the availability message.
+    if (quantityInput) {
+      quantityInput.addEventListener('quantity:limit', (event) => {
+        if (event.detail.type !== 'max') return;
+        const max = parseInt(quantityInput.getAttribute('max')) || 999;
+        const availabilityMsg = document.querySelector('.product-availability-message');
+        if (availabilityMsg) {
+          availabilityMsg.textContent = 'Maximum available quantity reached';
+          availabilityMsg.className = 'product-availability-message product-availability-message--warning';
+          setTimeout(() => {
+            updateAvailabilityUI(currentVariantId, max + getCartQuantityForVariant(currentVariantId), true);
+          }, 2000);
         }
       });
     }
@@ -615,6 +566,15 @@
     letter-spacing: 0.1em;
     color: var(--color-oxford-blue);
     margin-bottom: var(--spacing-xs);
+  }
+
+  .product-form__stock {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .product-form__stock--low {
+    color: #991B1B;
   }
   
   .product-form__select {
@@ -802,63 +762,6 @@
     }
   }
 {% endstylesheet %}
-{% stylesheet %}
-  /* Quantity Selector Styles */
-  .quantity-selector {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid var(--color-dim-grey);
-    background-color: var(--color-white);
-  }
-  
-  .quantity-selector__button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: none;
-    border: none;
-    color: var(--color-oxford-blue);
-    cursor: pointer;
-    transition: background-color var(--transition-fast);
-  }
-  
-  .quantity-selector__button:hover {
-    background-color: var(--color-sea-salt);
-  }
-  
-  .quantity-selector__button:active {
-    background-color: #E5E5E5;
-  }
-  
-  .quantity-selector__input {
-    width: 60px;
-    height: 40px;
-    border: none;
-    border-left: 1px solid var(--color-dim-grey);
-    border-right: 1px solid var(--color-dim-grey);
-    text-align: center;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-oxford-blue);
-    background-color: var(--color-white);
-    -moz-appearance: textfield;
-  }
-  
-  .quantity-selector__input::-webkit-outer-spin-button,
-  .quantity-selector__input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  
-  .quantity-selector__input:focus {
-    outline: 2px solid var(--color-harvest-gold);
-    outline-offset: -2px;
-  }
-{% endstylesheet %}
-
 
 {% schema %}
 {

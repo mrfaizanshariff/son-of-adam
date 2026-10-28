@@ -29,66 +29,74 @@
   if product.compare_at_price > product.price
     assign is_on_sale = true
   endif
+
+  assign card_price_formatted = product.price | money
+  assign card_compare_price_formatted = product.compare_at_price | money
 %}
 
-<div class="product-card"
+<article class="product-card"
+     aria-labelledby="ProductTitle-{{ product.id }}"
      data-product-id="{{ product.id }}"
      data-product-price="{{ product.price }}"
      data-product-tags="{{ product.tags | join: ',' }}"
      data-product-url="{{ product.url }}"
      data-variant-id="{{ product.selected_or_first_available_variant.id }}">
   <div class="product-card__inner">
-    <div class="product-card__image-wrapper {% if image_ratio == 'square' %}product-card__image-wrapper--square{% endif %}">
-      {% if product.featured_image %}
-        <img
-          src="{{ product.featured_image | image_url: width: 600 }}"
-          srcset="{{ product.featured_image | image_url: width: 300 }} 300w,
-                  {{ product.featured_image | image_url: width: 600 }} 600w,
-                  {{ product.featured_image | image_url: width: 900 }} 900w"
-          sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-          alt="{{ product.featured_image.alt | escape }}"
-          width="{{ product.featured_image.width }}"
-          height="{{ product.featured_image.height }}"
-          loading="lazy"
-          class="product-card__image"
-        >
-      {% else %}
-        <div class="product-card__image product-card__image--placeholder">
-          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-        </div>
-      {% endif %}
-      
-      {% if show_badge and is_new %}
-        <span class="product-card__badge badge badge--new">New</span>
-      {% elsif show_badge and is_on_sale %}
-        <span class="product-card__badge badge">Sale</span>
-      {% endif %}
-      
-      {% if show_quick_add %}
-        <div class="product-card__actions">
-          <button type="button" class="product-card__add-button btn btn-primary btn-small" data-quick-add>
-            Add to Bag
-          </button>
-          <a href="{{ product.url }}" class="product-card__view-button btn btn-secondary btn-small">
-            View
-          </a>
-        </div>
-      {% endif %}
-    </div>
+    <a href="{{ product.url }}" class="product-card__image-link" tabindex="-1" aria-hidden="true">
+      <div class="product-card__image-wrapper {% if image_ratio == 'square' %}product-card__image-wrapper--square{% endif %}">
+        {% if product.featured_image %}
+          <img
+            src="{{ product.featured_image | image_url: width: 600 }}"
+            srcset="{{ product.featured_image | image_url: width: 300 }} 300w,
+                    {{ product.featured_image | image_url: width: 600 }} 600w,
+                    {{ product.featured_image | image_url: width: 900 }} 900w"
+            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+            alt="{{ product.featured_image.alt | default: product.title | escape }}"
+            width="{{ product.featured_image.width }}"
+            height="{{ product.featured_image.height }}"
+            loading="lazy"
+            class="product-card__image"
+          >
+        {% else %}
+          <div class="product-card__image product-card__image--placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {% endif %}
+        
+        {% if show_badge and is_new %}
+          <span class="product-card__badge badge badge--new">{{ 'products.badge.new' | t | default: 'New' }}</span>
+        {% elsif show_badge and is_on_sale %}
+          <span class="product-card__badge badge">{{ 'products.badge.sale' | t | default: 'Sale' }}</span>
+        {% endif %}
+        
+        {% if show_quick_add %}
+          <div class="product-card__actions">
+            <button type="button" class="product-card__add-button btn btn-primary btn-small" aria-label="{{ 'products.quick_add' | t: title: product.title | default: 'Add to Bag' }}" data-quick-add>
+              {{ 'products.add_to_cart' | t | default: 'Add to Bag' }}
+            </button>
+            <span class="product-card__view-button btn btn-secondary btn-small" aria-hidden="true">
+              {{ 'products.view' | t | default: 'View' }}
+            </span>
+          </div>
+        {% endif %}
+      </div>
+    </a>
     
     <div class="product-card__info">
-      <h3 class="product-card__title">{{ product.title }}</h3>
-      <div class="product-card__price">
+      <h3 id="ProductTitle-{{ product.id }}" class="product-card__title">
+        <a href="{{ product.url }}" class="product-card__title-link">{{ product.title }}</a>
+      </h3>
+      <div class="product-card__price" aria-label="{% if is_on_sale %}{{ 'products.price.sale_price' | t: price: card_price_formatted, original: card_compare_price_formatted }}{% else %}{{ 'products.price.regular_price' | t: price: card_price_formatted }}{% endif %}">
         {% if is_on_sale %}
-          <span class="product-card__price--sale">{{ product.price | money }}</span>
-          <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+          <span class="product-card__price--sale">{{ card_price_formatted }}</span>
+          <s class="product-card__price--compare" aria-hidden="true">{{ card_compare_price_formatted }}</s>
         {% else %}
-          <span class="product-card__price--regular">{{ product.price | money }}</span>
+          <span class="product-card__price--regular">{{ card_price_formatted }}</span>
         {% endif %}
       </div>
     </div>
   </div>
-</div>
+</article>
 
 {% stylesheet %}
   .product-card {

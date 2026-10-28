@@ -23,62 +23,165 @@
       
       {%- comment -%} Horizontal Filter Bar with Dropdown Panels {%- endcomment -%}
       {% if section.settings.enable_filters %}
+        {%- comment -%}
+          Compute filter tag/price counts once; the desktop dropdown UI and
+          the mobile sidebar UI below both reuse these arrays instead of
+          each re-scanning collection.products.
+        {%- endcomment -%}
+        {%- liquid
+          assign category_values_str = ''
+          assign category_labels_str = ''
+          assign category_counts_str = ''
+          assign skin_type_values_str = ''
+          assign skin_type_labels_str = ''
+          assign skin_type_counts_str = ''
+
+          for tag in collection.all_tags
+            if tag contains 'category:'
+              assign tag_parts = tag | split: 'category:'
+              assign tag_count = 0
+              for product in collection.products
+                if product.tags contains tag
+                  assign tag_count = tag_count | plus: 1
+                endif
+              endfor
+              if tag_count > 0
+                assign category_value = tag_parts[1] | strip | downcase | handleize
+                assign display_label = tag_parts[1] | strip | escape
+                if category_values_str == ''
+                  assign category_values_str = category_value
+                  assign category_labels_str = display_label
+                  assign category_counts_str = tag_count
+                else
+                  assign category_values_str = category_values_str | append: '|||' | append: category_value
+                  assign category_labels_str = category_labels_str | append: '|||' | append: display_label
+                  assign category_counts_str = category_counts_str | append: '|||' | append: tag_count
+                endif
+              endif
+            elsif tag contains 'skin-type:'
+              assign tag_parts = tag | split: 'skin-type:'
+              assign tag_count = 0
+              for product in collection.products
+                if product.tags contains tag
+                  assign tag_count = tag_count | plus: 1
+                endif
+              endfor
+              if tag_count > 0
+                assign skin_type_value = tag_parts[1] | strip | downcase | handleize
+                assign display_label = tag_parts[1] | strip | escape
+                if skin_type_values_str == ''
+                  assign skin_type_values_str = skin_type_value
+                  assign skin_type_labels_str = display_label
+                  assign skin_type_counts_str = tag_count
+                else
+                  assign skin_type_values_str = skin_type_values_str | append: '|||' | append: skin_type_value
+                  assign skin_type_labels_str = skin_type_labels_str | append: '|||' | append: display_label
+                  assign skin_type_counts_str = skin_type_counts_str | append: '|||' | append: tag_count
+                endif
+              endif
+            endif
+          endfor
+
+          assign category_values = '' | split: ','
+          assign category_labels = '' | split: ','
+          assign category_counts = '' | split: ','
+          if category_values_str != blank
+            assign category_values = category_values_str | split: '|||'
+            assign category_labels = category_labels_str | split: '|||'
+            assign category_counts = category_counts_str | split: '|||'
+          endif
+
+          assign skin_type_values = '' | split: ','
+          assign skin_type_labels = '' | split: ','
+          assign skin_type_counts = '' | split: ','
+          if skin_type_values_str != blank
+            assign skin_type_values = skin_type_values_str | split: '|||'
+            assign skin_type_labels = skin_type_labels_str | split: '|||'
+            assign skin_type_counts = skin_type_counts_str | split: '|||'
+          endif
+
+          assign price_ranges = '0-500,500-1000,1000-2000,2000+' | split: ','
+          assign price_range_labels = 'Under ₹500,₹500 - ₹1000,₹1000 - ₹2000,Over ₹2000' | split: ','
+          assign price_values_str = ''
+          assign price_labels_str = ''
+          assign price_counts_str = ''
+
+          for i in (0..3)
+            assign range = price_ranges[i]
+            assign label = price_range_labels[i]
+            assign count = 0
+
+            if range contains '+'
+              assign min_price = range | remove: '+' | times: 100
+              assign max_price = 999999999
+            else
+              assign range_parts = range | split: '-'
+              assign min_price = range_parts[0] | times: 100
+              assign max_price = range_parts[1] | times: 100
+            endif
+
+            for product in collection.products
+              if product.price >= min_price and product.price < max_price
+                assign count = count | plus: 1
+              elsif product.price >= min_price and max_price == 999999999
+                assign count = count | plus: 1
+              endif
+            endfor
+
+            if count > 0
+              if price_values_str == ''
+                assign price_values_str = range
+                assign price_labels_str = label
+                assign price_counts_str = count
+              else
+                assign price_values_str = price_values_str | append: '|||' | append: range
+                assign price_labels_str = price_labels_str | append: '|||' | append: label
+                assign price_counts_str = price_counts_str | append: '|||' | append: count
+              endif
+            endif
+          endfor
+
+          assign price_filter_values = '' | split: ','
+          assign price_filter_labels = '' | split: ','
+          assign price_filter_counts = '' | split: ','
+          if price_values_str != blank
+            assign price_filter_values = price_values_str | split: '|||'
+            assign price_filter_labels = price_labels_str | split: '|||'
+            assign price_filter_counts = price_counts_str | split: '|||'
+          endif
+        -%}
         <div class="collection-filter-bar">
           {%- comment -%} Mobile Filter Toggle Button {%- endcomment -%}
-          <button type="button" class="filter-bar__mobile-toggle" id="mobileFilterToggle" aria-label="Open filters">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <button type="button" class="filter-bar__mobile-toggle" id="mobileFilterToggle" aria-label="{{ 'accessibility.open_menu' | t | default: 'Open filters' }}" aria-controls="mobileFilterSidebar" aria-expanded="false">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <span>FILTERS</span>
+            <span>{{ 'collection.filters' | t | default: 'Filters' | upcase }}</span>
           </button>
           
           <div class="filter-bar__left">
             
             {%- comment -%} Category Filter Dropdown {%- endcomment -%}
             <div class="filter-dropdown">
-              <button type="button" class="filter-dropdown__trigger" data-filter="category" aria-expanded="false">
+              <button type="button" class="filter-dropdown__trigger" data-filter="category" aria-expanded="false" aria-controls="panel-category">
                 <span>CATEGORY</span>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
               </button>
-              <div class="filter-dropdown__panel" data-panel="category">
+              <div class="filter-dropdown__panel" id="panel-category" data-panel="category">
                 <div class="filter-dropdown__header">
                   <span class="filter-dropdown__title">Category</span>
-                  <button type="button" class="filter-dropdown__clear" data-clear="category">Clear</button>
+                  <button type="button" class="filter-dropdown__clear" data-clear="category">{{ 'collection.clear_all' | t | default: 'Clear' }}</button>
                 </div>
                 <div class="filter-dropdown__options">
-                  {%- liquid
-                    # Loop through all tags in the collection
-                    for tag in collection.all_tags
-                      # Check if tag starts with 'category:' prefix
-                      if tag contains 'category:'
-                        # Extract the category value after 'category:'
-                        assign tag_parts = tag | split: 'category:'
-                        assign category_value = tag_parts[1] | strip | downcase | handleize
-                        
-                        # Count products with this tag
-                        assign tag_count = 0
-                        for product in collection.products
-                          if product.tags contains tag
-                            assign tag_count = tag_count | plus: 1
-                          endif
-                        endfor
-                        
-                        # Only show categories that have products
-                        if tag_count > 0
-                          # Format the display label (capitalize first letter)
-                          assign display_label = tag_parts[1] | strip | escape
-                          
-                          echo '<label class="filter-option">'
-                          echo '<input type="checkbox" name="category" value="' | append: category_value | append: '">'
-                          echo '<span class="filter-option__label">' | append: display_label | append: '</span>'
-                          echo '<span class="filter-option__count">(' | append: tag_count | append: ')</span>'
-                          echo '</label>'
-                        endif
-                      endif
-                    endfor
-                  -%}
+                  {%- for value in category_values -%}
+                    <label class="filter-option">
+                      <input type="checkbox" name="category" value="{{ value }}">
+                      <span class="filter-option__label">{{ category_labels[forloop.index0] }}</span>
+                      <span class="filter-option__count">({{ category_counts[forloop.index0] }})</span>
+                    </label>
+                  {%- endfor -%}
                   
                   {%- comment -%}
                   Fallback: If no category tags found, show default categories
@@ -107,49 +210,25 @@
             
             {%- comment -%} Skin Type Filter Dropdown {%- endcomment -%}
             <div class="filter-dropdown">
-              <button type="button" class="filter-dropdown__trigger" data-filter="skin-type" aria-expanded="false">
+              <button type="button" class="filter-dropdown__trigger" data-filter="skin-type" aria-expanded="false" aria-controls="panel-skin-type">
                 <span>SKIN TYPE</span>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
               </button>
-              <div class="filter-dropdown__panel" data-panel="skin-type">
+              <div class="filter-dropdown__panel" id="panel-skin-type" data-panel="skin-type">
                 <div class="filter-dropdown__header">
                   <span class="filter-dropdown__title">Skin Type</span>
-                  <button type="button" class="filter-dropdown__clear" data-clear="skin-type">Clear</button>
+                  <button type="button" class="filter-dropdown__clear" data-clear="skin-type">{{ 'collection.clear_all' | t | default: 'Clear' }}</button>
                 </div>
                 <div class="filter-dropdown__options">
-                  {%- liquid
-                    # Loop through all tags in the collection for skin type
-                    for tag in collection.all_tags
-                      # Check if tag starts with 'skin-type:' prefix
-                      if tag contains 'skin-type:'
-                        # Extract the skin type value after 'skin-type:'
-                        assign tag_parts = tag | split: 'skin-type:'
-                        assign skin_type_value = tag_parts[1] | strip | downcase | handleize
-                        
-                        # Count products with this tag
-                        assign tag_count = 0
-                        for product in collection.products
-                          if product.tags contains tag
-                            assign tag_count = tag_count | plus: 1
-                          endif
-                        endfor
-                        
-                        # Only show skin types that have products
-                        if tag_count > 0
-                          # Format the display label (capitalize first letter)
-                          assign display_label = tag_parts[1] | strip | escape
-                          
-                          echo '<label class="filter-option">'
-                          echo '<input type="checkbox" name="skin-type" value="' | append: skin_type_value | append: '">'
-                          echo '<span class="filter-option__label">' | append: display_label | append: '</span>'
-                          echo '<span class="filter-option__count">(' | append: tag_count | append: ')</span>'
-                          echo '</label>'
-                        endif
-                      endif
-                    endfor
-                  -%}
+                  {%- for value in skin_type_values -%}
+                    <label class="filter-option">
+                      <input type="checkbox" name="skin-type" value="{{ value }}">
+                      <span class="filter-option__label">{{ skin_type_labels[forloop.index0] }}</span>
+                      <span class="filter-option__count">({{ skin_type_counts[forloop.index0] }})</span>
+                    </label>
+                  {%- endfor -%}
                   
                   {%- comment -%}
                   Fallback: If no skin-type tags found, show default options
@@ -187,58 +266,25 @@
             
             {%- comment -%} Price Filter Dropdown {%- endcomment -%}
             <div class="filter-dropdown">
-              <button type="button" class="filter-dropdown__trigger" data-filter="price" aria-expanded="false">
+              <button type="button" class="filter-dropdown__trigger" data-filter="price" aria-expanded="false" aria-controls="panel-price">
                 <span>PRICE</span>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
               </button>
-              <div class="filter-dropdown__panel" data-panel="price">
+              <div class="filter-dropdown__panel" id="panel-price" data-panel="price">
                 <div class="filter-dropdown__header">
                   <span class="filter-dropdown__title">Price</span>
-                  <button type="button" class="filter-dropdown__clear" data-clear="price">Clear</button>
+                  <button type="button" class="filter-dropdown__clear" data-clear="price">{{ 'collection.clear_all' | t | default: 'Clear' }}</button>
                 </div>
                 <div class="filter-dropdown__options">
-                  {%- liquid
-                    # Define price ranges
-                    assign price_ranges = '0-500,500-1000,1000-2000,2000+' | split: ','
-                    assign price_labels = 'Under ₹500,₹500 - ₹1000,₹1000 - ₹2000,Over ₹2000' | split: ','
-                    
-                    # Loop through price ranges and calculate counts
-                    for i in (0..3)
-                      assign range = price_ranges[i]
-                      assign label = price_labels[i]
-                      assign count = 0
-                      
-                      # Parse range
-                      if range contains '+'
-                        assign min_price = range | remove: '+' | times: 100
-                        assign max_price = 999999999
-                      else
-                        assign range_parts = range | split: '-'
-                        assign min_price = range_parts[0] | times: 100
-                        assign max_price = range_parts[1] | times: 100
-                      endif
-                      
-                      # Count products in this price range
-                      for product in collection.products
-                        if product.price >= min_price and product.price < max_price
-                          assign count = count | plus: 1
-                        elsif product.price >= min_price and max_price == 999999999
-                          assign count = count | plus: 1
-                        endif
-                      endfor
-                      
-                      # Only show if count > 0
-                      if count > 0
-                        echo '<label class="filter-option">'
-                        echo '<input type="checkbox" name="price" value="' | append: range | append: '">'
-                        echo '<span class="filter-option__label">' | append: label | append: '</span>'
-                        echo '<span class="filter-option__count">(' | append: count | append: ')</span>'
-                        echo '</label>'
-                      endif
-                    endfor
-                  -%}
+                  {%- for value in price_filter_values -%}
+                    <label class="filter-option">
+                      <input type="checkbox" name="price" value="{{ value }}">
+                      <span class="filter-option__label">{{ price_filter_labels[forloop.index0] }}</span>
+                      <span class="filter-option__count">({{ price_filter_counts[forloop.index0] }})</span>
+                    </label>
+                  {%- endfor -%}
                 </div>
               </div>
             </div>
@@ -249,7 +295,7 @@
           <div class="mobile-filter-sidebar" id="mobileFilterSidebar">
             <div class="mobile-filter-sidebar__header">
               <h2 class="mobile-filter-sidebar__title">FILTERS</h2>
-              <button type="button" class="mobile-filter-sidebar__close" id="mobileFilterClose" aria-label="Close filters">
+              <button type="button" class="mobile-filter-sidebar__close" id="mobileFilterClose" aria-label="{{ 'accessibility.close_menu' | t | default: 'Close filters' }}">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
@@ -261,28 +307,13 @@
               <div class="mobile-filter-section">
                 <h3 class="mobile-filter-section__title">CATEGORY</h3>
                 <div class="mobile-filter-section__options">
-                  {%- liquid
-                    for tag in collection.all_tags
-                      if tag contains 'category:'
-                        assign tag_parts = tag | split: 'category:'
-                        assign category_value = tag_parts[1] | strip | downcase | handleize
-                        assign tag_count = 0
-                        for product in collection.products
-                          if product.tags contains tag
-                            assign tag_count = tag_count | plus: 1
-                          endif
-                        endfor
-                        if tag_count > 0
-                          assign display_label = tag_parts[1] | strip | escape
-                          echo '<label class="mobile-filter-option">'
-                          echo '<input type="checkbox" name="category" value="' | append: category_value | append: '">'
-                          echo '<span class="mobile-filter-option__label">' | append: display_label | append: '</span>'
-                          echo '<span class="mobile-filter-option__count">(' | append: tag_count | append: ')</span>'
-                          echo '</label>'
-                        endif
-                      endif
-                    endfor
-                  -%}
+                  {%- for value in category_values -%}
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="category" value="{{ value }}">
+                      <span class="mobile-filter-option__label">{{ category_labels[forloop.index0] }}</span>
+                      <span class="mobile-filter-option__count">({{ category_counts[forloop.index0] }})</span>
+                    </label>
+                  {%- endfor -%}
                   {%- unless collection.all_tags contains 'category:' -%}
                     <label class="mobile-filter-option">
                       <input type="checkbox" name="category" value="face">
@@ -307,28 +338,13 @@
               <div class="mobile-filter-section">
                 <h3 class="mobile-filter-section__title">SKIN TYPE</h3>
                 <div class="mobile-filter-section__options">
-                  {%- liquid
-                    for tag in collection.all_tags
-                      if tag contains 'skin-type:'
-                        assign tag_parts = tag | split: 'skin-type:'
-                        assign skin_type_value = tag_parts[1] | strip | downcase | handleize
-                        assign tag_count = 0
-                        for product in collection.products
-                          if product.tags contains tag
-                            assign tag_count = tag_count | plus: 1
-                          endif
-                        endfor
-                        if tag_count > 0
-                          assign display_label = tag_parts[1] | strip | escape
-                          echo '<label class="mobile-filter-option">'
-                          echo '<input type="checkbox" name="skin-type" value="' | append: skin_type_value | append: '">'
-                          echo '<span class="mobile-filter-option__label">' | append: display_label | append: '</span>'
-                          echo '<span class="mobile-filter-option__count">(' | append: tag_count | append: ')</span>'
-                          echo '</label>'
-                        endif
-                      endif
-                    endfor
-                  -%}
+                  {%- for value in skin_type_values -%}
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="skin-type" value="{{ value }}">
+                      <span class="mobile-filter-option__label">{{ skin_type_labels[forloop.index0] }}</span>
+                      <span class="mobile-filter-option__count">({{ skin_type_counts[forloop.index0] }})</span>
+                    </label>
+                  {%- endfor -%}
                   {%- unless collection.all_tags contains 'skin-type:' -%}
                     <label class="mobile-filter-option">
                       <input type="checkbox" name="skin-type" value="normal">
@@ -363,37 +379,13 @@
               <div class="mobile-filter-section">
                 <h3 class="mobile-filter-section__title">PRICE</h3>
                 <div class="mobile-filter-section__options">
-                  {%- liquid
-                    assign price_ranges = '0-500,500-1000,1000-2000,2000+' | split: ','
-                    assign price_labels = 'Under ₹500,₹500 - ₹1000,₹1000 - ₹2000,Over ₹2000' | split: ','
-                    for i in (0..3)
-                      assign range = price_ranges[i]
-                      assign label = price_labels[i]
-                      assign count = 0
-                      if range contains '+'
-                        assign min_price = range | remove: '+' | times: 100
-                        assign max_price = 999999999
-                      else
-                        assign range_parts = range | split: '-'
-                        assign min_price = range_parts[0] | times: 100
-                        assign max_price = range_parts[1] | times: 100
-                      endif
-                      for product in collection.products
-                        if product.price >= min_price and product.price < max_price
-                          assign count = count | plus: 1
-                        elsif product.price >= min_price and max_price == 999999999
-                          assign count = count | plus: 1
-                        endif
-                      endfor
-                      if count > 0
-                        echo '<label class="mobile-filter-option">'
-                        echo '<input type="checkbox" name="price" value="' | append: range | append: '">'
-                        echo '<span class="mobile-filter-option__label">' | append: label | append: '</span>'
-                        echo '<span class="mobile-filter-option__count">(' | append: count | append: ')</span>'
-                        echo '</label>'
-                      endif
-                    endfor
-                  -%}
+                  {%- for value in price_filter_values -%}
+                    <label class="mobile-filter-option">
+                      <input type="checkbox" name="price" value="{{ value }}">
+                      <span class="mobile-filter-option__label">{{ price_filter_labels[forloop.index0] }}</span>
+                      <span class="mobile-filter-option__count">({{ price_filter_counts[forloop.index0] }})</span>
+                    </label>
+                  {%- endfor -%}
                 </div>
               </div>
             </div>

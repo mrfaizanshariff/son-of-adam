@@ -1,4 +1,114 @@
 {
+  "accessibility": {
+    "skip_to_content": "Skip to main content",
+    "main_navigation": "Main navigation",
+    "footer_navigation": "Footer navigation",
+    "view_image_n": "View image {{ n }}",
+    "pause_video": "Pause background video",
+    "play_video": "Play background video",
+    "decrease_quantity": "Decrease quantity",
+    "increase_quantity": "Increase quantity",
+    "quantity": "Quantity",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu"
+  },
+  "general": {
+    "home": "Home",
+    "search": "Search",
+    "cart": "Cart",
+    "account": "Account",
+    "menu": "Menu",
+    "close": "Close",
+    "continue_shopping": "Continue shopping"
+  },
+  "header": {
+    "search": "Search",
+    "account": "Account",
+    "cart": "Cart",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu"
+  },
+  "products": {
+    "add_to_cart": "Add to bag",
+    "quick_add": "Add {{ title }} to bag",
+    "view": "View",
+    "view_details": "View {{ title }}",
+    "sold_out": "Sold out",
+    "badge": {
+      "new": "New",
+      "sale": "Sale"
+    },
+    "price": {
+      "regular_price": "Regular price: {{ price }}",
+      "sale_price": "Sale price: {{ price }}, Original price: {{ original }}"
+    },
+    "product": {
+      "variant": "Variant",
+      "quantity": "Quantity",
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "only_n_left": "Only {{ count }} left in stock",
+      "in_stock": "In stock",
+      "out_of_stock": "Out of stock",
+      "the_ritual": "The ritual",
+      "you_may_also_like": "You may also like"
+    },
+    "reviews": {
+      "title": "Customer reviews",
+      "count": {
+        "one": "Based on {{ count }} review",
+        "other": "Based on {{ count }} reviews"
+      },
+      "no_reviews": "Be the first to review this product",
+      "write_button": "Write a review",
+      "form_title": "Write a review",
+      "rating_label": "Rating *",
+      "title_label": "Review title *",
+      "body_label": "Review *",
+      "name_label": "Name *",
+      "email_label": "Email *",
+      "cancel": "Cancel",
+      "submit": "Submit review",
+      "empty_state": "No reviews yet. Be the first to share your experience!",
+      "success_message": "Thank you for your review! It will be published after moderation.",
+      "error_message": "Failed to submit review. Please try again.",
+      "select_rating": "Please select a rating"
+    }
+  },
+  "cart": {
+    "title": "Your cart",
+    "item_count": {
+      "one": "{{ count }} item",
+      "other": "{{ count }} items"
+    },
+    "checkout": "Proceed to checkout",
+    "update": "Update",
+    "remove": "Remove",
+    "remove_item": "Remove {{ title }}",
+    "order_summary": "Order summary",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "shipping_note": "Shipping & taxes calculated at checkout",
+    "order_notes": "Order notes",
+    "order_notes_placeholder": "Special instructions for your order...",
+    "continue_shopping": "Continue shopping",
+    "empty_title": "Your cart is empty",
+    "empty_message": "Looks like you haven't added anything to your cart yet. Start shopping to fill it up!",
+    "shop_all": "Shop all products",
+    "error_update": "Error updating cart. Please try again.",
+    "only_left": "Only {{ count }} left in stock",
+    "out_of_stock": "Out of stock"
+  },
+  "collection": {
+    "title": "Collection",
+    "filters": "Filters",
+    "clear_all": "Clear all",
+    "sort_by": "Sort by",
+    "products_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    }
+  },
   "404": {
     "title": "404",
     "not_found": "Page not found.",
@@ -12,12 +122,6 @@
     "comment_form_name": "Name",
     "comment_form_submit": "Post",
     "comment_form_title": "Add a comment"
-  },
-  "cart": {
-    "checkout": "Checkout",
-    "title": "Cart",
-    "update": "Update",
-    "remove": "Remove"
   },
   "customers": {
     "login": {
@@ -48,28 +152,5 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
-  },
-  "products": {
-    "reviews": {
-      "title": "CUSTOMER REVIEWS",
-      "count": {
-        "one": "Based on {{ count }} review",
-        "other": "Based on {{ count }} reviews"
-      },
-      "no_reviews": "Be the first to review this product",
-      "write_button": "Write a Review",
-      "form_title": "Write a Review",
-      "rating_label": "Rating *",
-      "title_label": "Review Title *",
-      "body_label": "Review *",
-      "name_label": "Name *",
-      "email_label": "Email *",
-      "cancel": "Cancel",
-      "submit": "Submit Review",
-      "empty_state": "No reviews yet. Be the first to share your experience!",
-      "success_message": "Thank you for your review! It will be published after moderation.",
-      "error_message": "Failed to submit review. Please try again.",
-      "select_rating": "Please select a rating"
-    }
   }
 }

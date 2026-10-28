@@ -1,10 +1,10 @@
-{% comment %}
+{% doc %}
   Breadcrumb Navigation Snippet
-  Displays hierarchical navigation path
-  
-  Usage:
+  Renders accessible hierarchical navigation path with Schema.org BreadcrumbList structured data.
+
+  @example
   {% render 'breadcrumb' %}
-{% endcomment %}
+{% enddoc %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -14,14 +14,14 @@
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": "{{ shop.url }}"
+      "item": "{{ shop.url | escape }}"
     }
     {%- if template == 'collection' -%}
     ,{
       "@type": "ListItem",
       "position": 2,
       "name": "{{ collection.title | escape }}",
-      "item": "{{ shop.url }}{{ collection.url }}"
+      "item": "{{ shop.url | escape }}{{ collection.url }}"
     }
     {%- elsif template == 'product' -%}
       {%- if collection -%}
@@ -29,20 +29,20 @@
         "@type": "ListItem",
         "position": 2,
         "name": "{{ collection.title | escape }}",
-        "item": "{{ shop.url }}{{ collection.url }}"
+        "item": "{{ shop.url | escape }}{{ collection.url }}"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": "{{ product.title | escape }}",
-        "item": "{{ shop.url }}{{ product.url }}"
+        "item": "{{ shop.url | escape }}{{ product.url }}"
       }
       {%- else -%}
       ,{
         "@type": "ListItem",
         "position": 2,
         "name": "{{ product.title | escape }}",
-        "item": "{{ shop.url }}{{ product.url }}"
+        "item": "{{ shop.url | escape }}{{ product.url }}"
       }
       {%- endif -%}
     {%- elsif template == 'page' -%}
@@ -50,7 +50,7 @@
       "@type": "ListItem",
       "position": 2,
       "name": "{{ page.title | escape }}",
-      "item": "{{ shop.url }}{{ page.url }}"
+      "item": "{{ shop.url | escape }}{{ page.url }}"
     }
     {%- endif -%}
   ]
@@ -130,7 +130,7 @@
   
   .breadcrumb__item:not(:last-child)::after {
     content: '/';
-    margin-left: var(--spacing-xs);
+    margin-inline-start: var(--spacing-xs);
     color: var(--color-dim-grey);
   }
   

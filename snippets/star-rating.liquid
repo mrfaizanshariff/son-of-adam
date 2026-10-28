@@ -1,17 +1,19 @@
-{% comment %}
+{% doc %}
   Star Rating Snippet
-  Displays star rating with review count
-  
-  Usage:
-  {% render 'star-rating', 
-    rating: 4.5,
-    count: 120
-  %}
-{% endcomment %}
+  Displays accessible SVG star rating with review count
+
+  @param {number} rating - Average star rating (0-5)
+  @param {number} [count] - Number of reviews
+  @param {string} [unique_id] - Suffix for SVG gradient IDs
+
+  @example
+  {% render 'star-rating', rating: 4.5, count: 120 %}
+{% enddoc %}
 
 {%- liquid
   assign rating_value = rating | default: 0 | times: 1.0
   assign review_count = count | default: 0
+  assign gradient_suffix = unique_id | default: 0
   assign full_stars = rating_value | floor
   assign has_half_star = false
   assign decimal = rating_value | modulo: 1
@@ -41,12 +43,12 @@
     {% if has_half_star %}
       <svg class="star-rating__star star-rating__star--half" width="16" height="16" viewBox="0 0 16 16" fill="none">
         <defs>
-          <linearGradient id="half-fill-{{ rating_value | replace: '.', '-' }}">
+          <linearGradient id="half-fill-{{ rating_value | replace: '.', '-' }}-{{ gradient_suffix }}">
             <stop offset="50%" stop-color="#D6B93D"/>
             <stop offset="50%" stop-color="transparent"/>
           </linearGradient>
         </defs>
-        <path d="M8 1L10.163 5.38L15 6.12L11.5 9.54L12.326 14.36L8 12.08L3.674 14.36L4.5 9.54L1 6.12L5.837 5.38L8 1Z" fill="url(#half-fill-{{ rating_value | replace: '.', '-' }})" stroke="#D6B93D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 1L10.163 5.38L15 6.12L11.5 9.54L12.326 14.36L8 12.08L3.674 14.36L4.5 9.54L1 6.12L5.837 5.38L8 1Z" fill="url(#half-fill-{{ rating_value | replace: '.', '-' }}-{{ gradient_suffix }})" stroke="#D6B93D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     {% endif %}
     

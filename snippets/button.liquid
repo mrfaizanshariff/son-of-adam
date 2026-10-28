@@ -1,21 +1,19 @@
-{% comment %}
+{% doc %}
   Reusable Button Component for SON OF ADAM Theme
-  
-  Parameters:
-  - text: Button text (required)
-  - url: Button URL (optional)
-  - style: 'primary' or 'secondary' (default: 'primary')
-  - size: 'small', 'medium', 'large' (default: 'medium')
-  - full_width: true/false (default: false)
-  - dark_bg: true/false - for secondary buttons on dark backgrounds (default: false)
-  - class: Additional CSS classes (optional)
-  - target: Anchor target, e.g. '_blank' (optional)
-  - rel: Anchor rel attribute, e.g. 'noopener' (optional)
 
-  Usage:
+  @param {string} text - Button text (required)
+  @param {string} [url] - Optional destination URL
+  @param {string} [style] - 'primary' or 'secondary' (default: 'primary')
+  @param {string} [size] - 'small', 'medium', 'large' (default: 'medium')
+  @param {boolean} [full_width] - Full width toggle (default: false)
+  @param {boolean} [dark_bg] - For secondary buttons on dark backgrounds (default: false)
+  @param {string} [class] - Additional CSS classes
+  @param {string} [target] - Anchor target attribute
+  @param {string} [rel] - Anchor rel attribute
+
+  @example
   {% render 'button', text: 'Shop Now', url: '/collections/all', style: 'primary' %}
-  {% render 'button', text: 'Learn More', url: '/pages/about', style: 'secondary', dark_bg: true %}
-{% endcomment %}
+{% enddoc %}
 
 {% liquid
   assign button_style = style | default: 'primary'

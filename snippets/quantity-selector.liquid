@@ -1,14 +1,16 @@
-{% comment %}
+{% doc %}
   Quantity Selector Snippet
-  Displays +/- buttons with quantity input
-  
-  Usage:
-  {% render 'quantity-selector', 
-    id: 'quantity',
-    value: 1,
-    min: 1
-  %}
-{% endcomment %}
+  Displays +/- buttons with accessible quantity input
+
+  @param {string} [id] - Element ID for the input (default: 'quantity')
+  @param {number} [value] - Starting quantity value (default: 1)
+  @param {number} [min] - Minimum allowed quantity (default: 1)
+  @param {number} [max] - Maximum allowed quantity
+  @param {string} [line_key] - Optional cart line item key
+
+  @example
+  {% render 'quantity-selector', id: 'quantity', value: 1, min: 1, max: 10 %}
+{% enddoc %}
 
 {%- liquid
   assign qty_id = id | default: 'quantity'
@@ -17,32 +19,34 @@
 -%}
 
 <div class="quantity-selector">
-  <button 
-    type="button" 
+  <button
+    type="button"
     class="quantity-selector__button quantity-selector__button--minus"
-    aria-label="Decrease quantity"
+    aria-label="{{ 'accessibility.decrease_quantity' | t | default: 'Decrease quantity' }}"
     data-quantity-minus
   >
     <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
       <path d="M0 1H12" stroke="currentColor" stroke-width="2"/>
     </svg>
   </button>
-  
-  <input 
-    type="number" 
+
+  <input
+    type="number"
     id="{{ qty_id }}"
-    name="quantity" 
+    name="quantity"
     value="{{ qty_value }}"
     min="{{ qty_min }}"
+    {%- if max %} max="{{ max }}"{% endif %}
+    {%- if line_key %} data-line-key="{{ line_key }}"{% endif %}
     class="quantity-selector__input"
-    aria-label="Quantity"
+    aria-label="{{ 'accessibility.quantity' | t | default: 'Quantity' }}"
     data-quantity-input
   >
-  
-  <button 
-    type="button" 
+
+  <button
+    type="button"
     class="quantity-selector__button quantity-selector__button--plus"
-    aria-label="Increase quantity"
+    aria-label="{{ 'accessibility.increase_quantity' | t | default: 'Increase quantity' }}"
     data-quantity-plus
   >
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -51,40 +55,6 @@
   </button>
 </div>
 
-<script>
-  (function() {
-    const quantitySelectors = document.querySelectorAll('.quantity-selector');
-    
-    quantitySelectors.forEach(selector => {
-      const input = selector.querySelector('[data-quantity-input]');
-      const minusBtn = selector.querySelector('[data-quantity-minus]');
-      const plusBtn = selector.querySelector('[data-quantity-plus]');
-      const min = parseInt(input.getAttribute('min')) || 1;
-      
-      minusBtn.addEventListener('click', () => {
-        const currentValue = parseInt(input.value) || min;
-        if (currentValue > min) {
-          input.value = currentValue - 1;
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      });
-      
-      plusBtn.addEventListener('click', () => {
-        const currentValue = parseInt(input.value) || min;
-        input.value = currentValue + 1;
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-      
-      input.addEventListener('change', () => {
-        const value = parseInt(input.value) || min;
-        if (value < min) {
-          input.value = min;
-        }
-      });
-    });
-  })();
-</script>
-
 {% stylesheet %}
   .quantity-selector {
     display: inline-flex;
@@ -92,7 +62,7 @@
     border: 1px solid var(--color-dim-grey);
     background-color: var(--color-white);
   }
-  
+
   .quantity-selector__button {
     display: flex;
     align-items: center;
@@ -105,15 +75,15 @@
     cursor: pointer;
     transition: background-color var(--transition-fast);
   }
-  
+
   .quantity-selector__button:hover {
     background-color: var(--color-sea-salt);
   }
-  
+
   .quantity-selector__button:active {
     background-color: #E5E5E5;
   }
-  
+
   .quantity-selector__input {
     width: 60px;
     height: 40px;
@@ -128,15 +98,88 @@
     background-color: var(--color-white);
     -moz-appearance: textfield;
   }
-  
+
   .quantity-selector__input::-webkit-outer-spin-button,
   .quantity-selector__input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  
+
   .quantity-selector__input:focus {
     outline: 2px solid var(--color-harvest-gold);
     outline-offset: -2px;
   }
 {% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    function getMin(input) {
+      var min = parseInt(input.getAttribute('min'), 10);
+      return isNaN(min) ? 0 : min;
+    }
+
+    function getMax(input) {
+      if (!input.hasAttribute('max')) return Infinity;
+      var max = parseInt(input.getAttribute('max'), 10);
+      return isNaN(max) ? Infinity : max;
+    }
+
+    function setQuantity(input, value) {
+      input.value = value;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    // Delegated on document so this works for any number of
+    // quantity-selector instances rendered on the page, including
+    // ones added after this script first ran.
+    document.addEventListener('click', function(event) {
+      var button = event.target.closest('[data-quantity-minus], [data-quantity-plus]');
+      if (!button) return;
+
+      var wrapper = button.closest('.quantity-selector');
+      var input = wrapper && wrapper.querySelector('[data-quantity-input]');
+      if (!input) return;
+
+      var min = getMin(input);
+      var max = getMax(input);
+      var current = parseInt(input.value, 10);
+      if (isNaN(current)) current = min;
+
+      if (button.hasAttribute('data-quantity-minus')) {
+        if (current > min) {
+          setQuantity(input, current - 1);
+        } else {
+          input.dispatchEvent(new CustomEvent('quantity:limit', { bubbles: true, detail: { type: 'min' } }));
+        }
+      } else {
+        if (current < max) {
+          setQuantity(input, current + 1);
+        } else {
+          input.dispatchEvent(new CustomEvent('quantity:limit', { bubbles: true, detail: { type: 'max' } }));
+        }
+      }
+    });
+
+    document.addEventListener('input', function(event) {
+      var input = event.target.closest('[data-quantity-input]');
+      if (!input) return;
+      var max = getMax(input);
+      if (max !== Infinity && input.value !== '' && parseInt(input.value, 10) > max) {
+        input.value = max;
+      }
+    });
+
+    document.addEventListener('change', function(event) {
+      var input = event.target.closest('[data-quantity-input]');
+      if (!input) return;
+      var min = getMin(input);
+      var max = getMax(input);
+      var value = parseInt(input.value, 10);
+      if (isNaN(value) || value < min) {
+        input.value = min;
+      } else if (max !== Infinity && value > max) {
+        input.value = max;
+      }
+    });
+  })();
+{% endjavascript %}

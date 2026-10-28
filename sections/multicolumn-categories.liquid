@@ -13,7 +13,7 @@
   <div class="multicolumn-categories__grid grid grid-{{ section.settings.columns }}">
     {% for block in section.blocks %}
       <div class="category-card" {{ block.shopify_attributes }}>
-        <a href="{{ block.settings.link }}" class="category-card__link">
+        <a href="{{ block.settings.link | escape }}" class="category-card__link">
           <div class="category-card__image-wrapper">
             {% if block.settings.image != blank %}
               <img
