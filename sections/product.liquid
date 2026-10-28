@@ -114,9 +114,9 @@
             {% unless current_variant.available %}disabled{% endunless %}
           >
             {% if current_variant.available %}
-              {{ 'products.product.add_to_cart' | t | default: 'Add to cart' | upcase }}
+              {{ 'products.product.add_to_cart' | t | upcase }}
             {% else %}
-              {{ 'products.product.sold_out' | t | default: 'Sold out' | upcase }}
+              {{ 'products.product.sold_out' | t | upcase }}
             {% endif %}
           </button>
           
@@ -161,6 +161,8 @@
                 content: block.settings.content,
                 open: false
               %}
+            {% elsif block.type == '@app' %}
+              {% render block %}
             {% endif %}
           {% endfor %}
         </div>
