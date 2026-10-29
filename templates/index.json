@@ -1,22 +1,38 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "editorial_hero": {
       "type": "editorial-hero",
       "settings": {
+        "image": "shopify://shop_images/SOA_HERO.png",
+        "video_url": "",
+        "overlay_opacity": 40,
+        "text_alignment": "left",
         "subheading": "Premium Grooming",
+        "subheading_font_size": 14,
         "heading": "GROOMING AS [gold]TIMELESS[/gold] AS MAN",
+        "heading_font_size": 80,
         "text": "<p>Clearly natural grooming essentials made to protect your skin and refine your style.</p>",
+        "description_font_size": 16,
         "button_text": "Shop Essentials",
         "button_url": "/collections/all",
         "button_text_2": "Discover the Brand",
-        "button_url_2": "/pages/about",
-        "overlay_opacity": 40
+        "button_url_2": "/pages/about"
       }
     },
     "featured_products": {
       "type": "featured-collection",
       "settings": {
         "heading": "Featured Products",
+        "collection": "featured-collection",
         "products_to_show": 4,
         "products_per_row": "4",
         "view_all_text": "View All"
@@ -26,7 +42,8 @@
       "type": "image-with-text",
       "settings": {
         "image_position": "left",
-        "background_color": "sea-salt",
+        "background_color": "oxford-blue",
+        "image": "shopify://shop_images/Wildfire1.png",
         "subheading": "Our Philosophy",
         "heading": "Simple. Honest. Effective Grooming.",
         "text": "<p>We believe in transparency. No fillers, no synthetic fragrances, just the power of nature refined for the modern man. Our mission is to provide you with the tools to master your routine and protect your skin.</p>",
@@ -41,33 +58,41 @@
         "category_1": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_sgy728sgy728sgy7.png",
             "title": "Beard Care",
             "description": "Oils, balms & grooming tools",
-            "overlay_text": "Shop Now"
+            "overlay_text": "Coming Soon",
+            "link": ""
           }
         },
         "category_2": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_nprtdonprtdonprt.png",
             "title": "Face Care",
             "description": "Cleansers, moisturizers & serums",
-            "overlay_text": "Shop Now"
+            "overlay_text": "Coming Soon",
+            "link": ""
           }
         },
         "category_3": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t7jttvt7jttvt7jt.png",
             "title": "Body Care",
             "description": "Soaps, scrubs & body oils",
-            "overlay_text": "Shop Now"
+            "overlay_text": "Coming Soon",
+            "link": ""
           }
         },
         "category_4": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/Azure1.png",
             "title": "Fragrance",
             "description": "Colognes & body sprays",
-            "overlay_text": "Shop Now"
+            "overlay_text": "Shop Now",
+            "link": "shopify://collections/perfumes"
           }
         }
       },
@@ -101,7 +126,8 @@
       "type": "image-with-text",
       "settings": {
         "image_position": "right",
-        "background_color": "oxford-blue",
+        "background_color": "sea-salt",
+        "image": "shopify://shop_images/Ember1.png",
         "subheading": "Crafted with Care",
         "heading": "Premium Ingredients. Proven Results.",
         "text": "<p>Every product is formulated with the finest natural ingredients, rigorously tested to deliver exceptional results without compromise.</p>",

@@ -14,7 +14,15 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "menu": "",
+        "logo": "shopify://shop_images/SOA-logo-PNG---5.png",
+        "tagline": "Grooming as timeless as man.",
+        "show_social": true,
+        "social_facebook": "",
+        "social_instagram": "",
+        "social_twitter": "",
+        "menu_shop": "main-menu",
+        "menu_about": "customer-account-main-menu",
+        "menu_support": "footer",
         "show_payment_icons": true
       }
     }

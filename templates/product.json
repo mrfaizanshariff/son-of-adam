@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "product": {
@@ -5,16 +14,21 @@
       "settings": {
         "show_rating": true,
         "show_dynamic_checkout": true,
-        "show_benefits": true,
-        "show_ingredients": true,
-        "show_how_to_use": true,
+        "show_benefits": false,
+        "benefits_content": "<p>Enter your product benefits here. This content will appear in the Benefits accordion.</p>",
+        "show_ingredients": false,
+        "ingredients_content": "<p>List your product ingredients here. This content will appear in the Ingredients accordion.</p>",
+        "show_how_to_use": false,
+        "how_to_use_content": "<p>Provide usage instructions here. This content will appear in the How to Use accordion.</p>",
         "show_brand_section": true,
         "brand_title": "CRAFTED FOR THE DISCERNING FEW.",
         "brand_description": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.",
         "brand_button_text": "EXPLORE OUR PHILOSOPHY",
         "brand_button_url": "/pages/about",
         "show_related_products": true,
-        "related_products_collection": ""
+        "related_products_collection": "",
+        "show_reviews": false,
+        "show_review_form": false
       }
     }
   },
