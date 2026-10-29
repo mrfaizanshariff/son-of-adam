@@ -1,6 +1,9 @@
 {
   "general": {
     "404": "Not found",
+    "favicon": "Favicon",
+    "logo": "Logo",
+    "logo_and_favicon": "Logo & favicon",
     "article": "Article",
     "block": "Block",
     "blog": "Blog",
@@ -48,6 +51,9 @@
     "page_width": "Page width",
     "show_payment_icons": "Show payment icons",
     "text_style": "Text style",
+    "favicon_image": "Favicon image",
+    "logo_image": "Logo image",
+    "logo_width": "Logo width",
     "text": "Text"
   },
   "options": {

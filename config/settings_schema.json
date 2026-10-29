@@ -8,6 +8,42 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "Logo & Favicon",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Favicon"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "Will be scaled to 32×32px. Use a square .png or .ico file."
+      },
+      {
+        "type": "header",
+        "content": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo image",
+        "info": "Displayed in the header and footer when no section-level logo is set."
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "min": 60,
+        "max": 300,
+        "step": 10,
+        "unit": "px",
+        "label": "Logo width",
+        "default": 140,
+        "info": "Maximum display width of the global logo."
+      }
+    ]
+  },
+  {
     "name": "Typography",
     "settings": [
       {

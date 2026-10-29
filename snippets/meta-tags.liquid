@@ -97,6 +97,19 @@
   href="{{ canonical_url }}"
 >
 
+{%- if settings.favicon != blank -%}
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ settings.favicon | image_url: width: 32, height: 32, crop: 'center' }}"
+  >
+  <link
+    rel="shortcut icon"
+    type="image/png"
+    href="{{ settings.favicon | image_url: width: 32, height: 32, crop: 'center' }}"
+  >
+{%- endif -%}
+
 {% if page_description %}
   <meta
     name="description"
