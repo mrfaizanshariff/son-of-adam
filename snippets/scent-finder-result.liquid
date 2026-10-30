@@ -1,0 +1,189 @@
+{% doc %}
+  Renders one hidden result card for the scent finder. The finder's JavaScript reveals the card whose
+  data-handle matches the computed winner. Includes a standard product form so add to bag works
+  without any extra requests.
+
+  @param {object} product - The product to show
+  @param {string} [reasoning] - One line explaining the match
+  @param {boolean} [is_discovery] - True for the discovery set fallback card
+  @param {string} [discovery_url] - URL of the discovery set, for the "Not sure?" link
+  @param {string} [form_id] - Unique id for the product form
+
+  @example
+  {% render 'scent-finder-result', product: product, reasoning: 'Fresh and clean.', discovery_url: '/products/discovery-set', form_id: 'finder-1' %}
+{% enddoc %}
+
+{%- liquid
+  assign result_variant = product.selected_or_first_available_variant
+  assign result_tagline = product.metafields.custom.tagline.value | default: product.metafields.custom.tagline
+  assign result_top_notes = product.metafields.custom.top_notes.value | default: product.metafields.custom.top_notes
+  assign result_notes_text = ''
+  if result_top_notes != blank
+    assign result_notes_text = result_top_notes | join: ', '
+  endif
+-%}
+
+<article
+  class="scent-finder-card"
+  data-handle="{{ product.handle }}"
+  {% if is_discovery %}data-discovery{% endif %}
+  hidden
+>
+  <div class="scent-finder-card__media">
+    {%- if product.featured_image -%}
+      <img
+        src="{{ product.featured_image | image_url: width: 600 }}"
+        srcset="{{ product.featured_image | image_url: width: 300 }} 300w,
+                {{ product.featured_image | image_url: width: 600 }} 600w,
+                {{ product.featured_image | image_url: width: 900 }} 900w"
+        sizes="(min-width: 768px) 320px, 100vw"
+        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+        width="{{ product.featured_image.width }}"
+        height="{{ product.featured_image.height }}"
+        loading="lazy"
+        class="scent-finder-card__image"
+      >
+    {%- else -%}
+      <div class="scent-finder-card__placeholder">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+    {%- endif -%}
+  </div>
+
+  <div class="scent-finder-card__body">
+    <h4 class="scent-finder-card__title">
+      <a class="scent-finder-card__title-link" href="{{ product.url }}">{{ product.title | escape }}</a>
+    </h4>
+
+    {%- if result_tagline != blank -%}
+      <p class="scent-finder-card__tagline">{{ result_tagline | escape }}</p>
+    {%- endif -%}
+
+    {%- if result_notes_text != blank -%}
+      <p class="scent-finder-card__notes">
+        <span class="scent-finder-card__notes-label">{{ 'products.product.notes.top' | t }}:</span>
+        {{ result_notes_text | escape }}
+      </p>
+    {%- endif -%}
+
+    {%- if is_discovery -%}
+      <p class="scent-finder-card__reason">{{ 'scent_finder.discovery_reason' | t }}</p>
+    {%- elsif reasoning != blank -%}
+      <p class="scent-finder-card__reason">{{ reasoning | escape }}</p>
+    {%- endif -%}
+
+    <p class="scent-finder-card__price">{{ result_variant.price | money }}</p>
+
+    {%- form 'product', product, id: form_id, class: 'scent-finder-card__form' -%}
+      <input type="hidden" name="id" value="{{ result_variant.id }}">
+      {%- if result_variant.available -%}
+        <button type="submit" class="btn btn-primary scent-finder-card__button">{{ 'products.add_to_cart' | t }}</button>
+      {%- else -%}
+        <button type="submit" class="btn btn-primary scent-finder-card__button" disabled aria-disabled="true">{{ 'products.sold_out' | t }}</button>
+      {%- endif -%}
+    {%- endform -%}
+
+    {%- if is_discovery == false and discovery_url != blank -%}
+      <a class="scent-finder-card__alt-link" href="{{ discovery_url }}">{{ 'scent_finder.not_sure' | t }}</a>
+    {%- endif -%}
+  </div>
+</article>
+
+{% stylesheet %}
+  .scent-finder-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md, 24px);
+    align-items: start;
+  }
+
+  .scent-finder-card[hidden] {
+    display: none;
+  }
+
+  .scent-finder-card__media {
+    position: relative;
+    inline-size: 100%;
+    overflow: hidden;
+    background-color: var(--color-sea-salt);
+  }
+
+  .scent-finder-card__image {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .scent-finder-card__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: 240px;
+  }
+
+  .scent-finder-card__title {
+    margin: 0 0 var(--spacing-xs, 8px);
+    font-family: var(--font-header);
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .scent-finder-card__title-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .scent-finder-card__tagline,
+  .scent-finder-card__notes,
+  .scent-finder-card__reason {
+    margin: 0 0 var(--spacing-sm, 16px);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body, 16px);
+    line-height: var(--line-height-loose, 1.6);
+  }
+
+  .scent-finder-card__tagline {
+    color: var(--color-dim-grey);
+  }
+
+  .scent-finder-card__notes-label {
+    font-weight: 700;
+  }
+
+  .scent-finder-card__price {
+    margin: 0 0 var(--spacing-md, 24px);
+    font-family: var(--font-header);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--color-harvest-gold);
+  }
+
+  .scent-finder-card__button {
+    inline-size: 100%;
+  }
+
+  .scent-finder-card__button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .scent-finder-card__alt-link {
+    display: inline-block;
+    margin-block-start: var(--spacing-sm, 16px);
+    font-family: var(--font-body);
+    font-size: var(--font-size-small, 14px);
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (min-width: 768px) {
+    .scent-finder-card {
+      grid-template-columns: 280px 1fr;
+      gap: var(--spacing-lg, 32px);
+    }
+
+    .scent-finder-card__button {
+      inline-size: auto;
+      min-inline-size: 240px;
+    }
+  }
+{% endstylesheet %}

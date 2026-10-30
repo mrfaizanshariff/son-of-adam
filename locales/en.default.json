@@ -2,6 +2,20 @@
   "set_credit": {
     "note": "Buy the discovery set and get {{ amount }} off your first full bottle within {{ days }} days."
   },
+  "scent_finder": {
+    "find_scent": "Find your scent",
+    "progress": "Question {{ current }} of {{ total }}",
+    "back": "Back",
+    "next": "Next",
+    "see_result": "See my match",
+    "browse": "Browse the perfumes",
+    "choose_answer": "Choose an answer to continue.",
+    "your_match": "Your match",
+    "match_announce": "Your match is {{ title }}.",
+    "discovery_reason": "No single scent stood out for you, so try them all with the discovery set.",
+    "not_sure": "Not sure? Try the discovery set",
+    "start_again": "Start again"
+  },
   "store_info": {
     "hours": "Opening hours",
     "directions": "Get directions",

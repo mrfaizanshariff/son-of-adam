@@ -1,0 +1,485 @@
+{% comment %}
+  SON OF ADAM - Scent Finder Section
+  A short quiz that recommends one scent. Works without JavaScript (all questions shown, form GETs to
+  /collections/perfumes) and is enhanced with JavaScript (one question at a time, result card).
+  Stores nothing. Fires document event "soa:scent_finder_complete" with detail { handle }.
+{% endcomment %}
+
+{%- liquid
+  assign discovery_product = all_products['discovery-set']
+  assign question_count = 0
+  assign result_count = 0
+-%}
+
+{%- capture questions_html -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'question' and block.settings.text != blank -%}
+      {%- assign answer_count = 0 -%}
+      {%- assign question_number = question_count | plus: 1 -%}
+      {%- capture answers_html -%}
+        {%- for i in (1..4) -%}
+          {%- assign label_key = 'label_' | append: i -%}
+          {%- assign tags_key = 'tags_' | append: i -%}
+          {%- assign answer_label = block.settings[label_key] | strip -%}
+          {%- if answer_label != blank -%}
+            {%- assign answer_count = answer_count | plus: 1 -%}
+            {%- assign answer_tags = block.settings[tags_key] | downcase | remove: ' ' -%}
+            <label class="scent-finder__option" for="finder-{{ section.id }}-q{{ question_number }}-a{{ i }}">
+              <input
+                type="radio"
+                class="scent-finder__radio"
+                id="finder-{{ section.id }}-q{{ question_number }}-a{{ i }}"
+                name="q{{ question_number }}"
+                value="{{ i }}"
+                data-tags="{{ answer_tags | escape }}"
+                {% if answer_count == 1 %}required{% endif %}
+              >
+              <span class="scent-finder__option-label">{{ answer_label | escape }}</span>
+            </label>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if answer_count >= 2 -%}
+        {%- assign question_count = question_count | plus: 1 -%}
+        <fieldset class="scent-finder__fieldset" data-finder-fieldset {{ block.shopify_attributes }}>
+          <legend class="scent-finder__legend" tabindex="-1" data-finder-legend>{{ block.settings.text | escape }}</legend>
+          <div class="scent-finder__options">
+            {{ answers_html }}
+          </div>
+        </fieldset>
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- capture results_html -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'scent' and block.settings.product != blank -%}
+      {%- assign result_count = result_count | plus: 1 -%}
+      {%- assign card_form_id = 'finder-form-' | append: section.id | append: '-' | append: result_count -%}
+      {%- render 'scent-finder-result',
+        product: block.settings.product,
+        reasoning: block.settings.reasoning,
+        discovery_url: discovery_product.url,
+        form_id: card_form_id
+      -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if discovery_product != blank -%}
+    {%- assign result_count = result_count | plus: 1 -%}
+    {%- assign discovery_form_id = 'finder-form-' | append: section.id | append: '-discovery' -%}
+    {%- render 'scent-finder-result',
+      product: discovery_product,
+      is_discovery: true,
+      form_id: discovery_form_id
+    -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if question_count > 0 and result_count > 0 -%}
+  <section class="scent-finder full-width section-spacing" aria-labelledby="scent-finder-heading-{{ section.id }}">
+    <scent-finder
+      class="scent-finder__inner"
+      data-progress-template="{{ 'scent_finder.progress' | t: current: '%CURRENT%', total: '%TOTAL%' | escape }}"
+      data-next-label="{{ 'scent_finder.next' | t | escape }}"
+      data-result-label="{{ 'scent_finder.see_result' | t | escape }}"
+      data-need-answer="{{ 'scent_finder.choose_answer' | t | escape }}"
+      data-match-template="{{ 'scent_finder.match_announce' | t: title: '%TITLE%' | escape }}"
+    >
+      {%- if section.settings.heading != blank -%}
+        <h2 class="scent-finder__heading" id="scent-finder-heading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      {%- else -%}
+        <h2 class="visually-hidden" id="scent-finder-heading-{{ section.id }}">{{ 'scent_finder.find_scent' | t }}</h2>
+      {%- endif -%}
+
+      <form class="scent-finder__form" action="{{ routes.collections_url }}/perfumes" method="get" data-finder-form>
+        <p class="scent-finder__progress" data-finder-progress hidden></p>
+
+        {{ questions_html }}
+
+        <div class="scent-finder__nav" data-finder-nav hidden>
+          <button type="button" class="btn btn-secondary" data-finder-back>{{ 'scent_finder.back' | t }}</button>
+          <button type="button" class="btn btn-primary" data-finder-next>{{ 'scent_finder.next' | t }}</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary scent-finder__submit" data-finder-submit>{{ 'scent_finder.browse' | t }}</button>
+      </form>
+
+      <div class="scent-finder__results" data-finder-results hidden>
+        <h3 class="scent-finder__results-heading" tabindex="-1" data-finder-result-heading>{{ 'scent_finder.your_match' | t }}</h3>
+        {{ results_html }}
+        <button type="button" class="btn btn-secondary scent-finder__restart" data-finder-restart>{{ 'scent_finder.start_again' | t }}</button>
+      </div>
+
+      <p class="visually-hidden" aria-live="polite" data-finder-live></p>
+    </scent-finder>
+  </section>
+{%- endif -%}
+
+{% stylesheet %}
+  .scent-finder {
+    inline-size: 100%;
+  }
+
+  .scent-finder__inner {
+    display: block;
+    max-inline-size: 720px;
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .scent-finder__heading {
+    margin: 0 0 var(--spacing-lg, 32px);
+  }
+
+  .scent-finder__progress {
+    margin: 0 0 var(--spacing-sm, 16px);
+    font-family: var(--font-header);
+    font-size: var(--font-size-caption, 12px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-harvest-gold);
+  }
+
+  .scent-finder__fieldset {
+    margin: 0 0 var(--spacing-lg, 32px);
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+  }
+
+  .scent-finder__legend {
+    padding: 0;
+    margin-block-end: var(--spacing-sm, 16px);
+    font-family: var(--font-header);
+    font-size: var(--font-size-subheading, 24px);
+    font-weight: 600;
+  }
+
+  .scent-finder__legend:focus-visible {
+    outline: 2px solid var(--color-harvest-gold);
+    outline-offset: 4px;
+  }
+
+  .scent-finder__options {
+    display: grid;
+    gap: var(--spacing-xs, 8px);
+  }
+
+  .scent-finder__option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm, 16px);
+    padding: var(--spacing-sm, 16px);
+    border: 1px solid var(--color-silver);
+    cursor: pointer;
+  }
+
+  .scent-finder__option:has(:checked) {
+    border-color: var(--color-harvest-gold);
+    background-color: var(--color-sea-salt);
+  }
+
+  .scent-finder__option:has(:focus-visible) {
+    outline: 2px solid var(--color-harvest-gold);
+    outline-offset: 2px;
+  }
+
+  .scent-finder__option-label {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body, 16px);
+  }
+
+  .scent-finder__nav {
+    display: flex;
+    gap: var(--spacing-sm, 16px);
+  }
+
+  .scent-finder__nav[hidden],
+  .scent-finder__submit[hidden],
+  .scent-finder__progress[hidden],
+  .scent-finder__results[hidden],
+  .scent-finder__form[hidden] {
+    display: none;
+  }
+
+  .scent-finder__results-heading {
+    margin: 0 0 var(--spacing-md, 24px);
+    font-family: var(--font-header);
+    font-size: var(--font-size-subheading, 24px);
+  }
+
+  .scent-finder__results-heading:focus-visible {
+    outline: 2px solid var(--color-harvest-gold);
+    outline-offset: 4px;
+  }
+
+  .scent-finder__restart {
+    margin-block-start: var(--spacing-lg, 32px);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('scent-finder')) {
+    class ScentFinder extends HTMLElement {
+      connectedCallback() {
+        if (this.initialised) return;
+        this.initialised = true;
+
+        this.form = this.querySelector('[data-finder-form]');
+        this.fieldsets = Array.from(this.querySelectorAll('[data-finder-fieldset]'));
+        this.progress = this.querySelector('[data-finder-progress]');
+        this.nav = this.querySelector('[data-finder-nav]');
+        this.backButton = this.querySelector('[data-finder-back]');
+        this.nextButton = this.querySelector('[data-finder-next]');
+        this.submitButton = this.querySelector('[data-finder-submit]');
+        this.results = this.querySelector('[data-finder-results]');
+        this.resultHeading = this.querySelector('[data-finder-result-heading]');
+        this.restartButton = this.querySelector('[data-finder-restart]');
+        this.live = this.querySelector('[data-finder-live]');
+        this.cards = Array.from(this.querySelectorAll('.scent-finder-card'));
+
+        if (!this.form || this.fieldsets.length === 0 || this.cards.length === 0) return;
+
+        this.current = 0;
+        this.form.noValidate = true;
+        this.submitButton.hidden = true;
+        this.nav.hidden = false;
+        this.progress.hidden = false;
+
+        this.backButton.addEventListener('click', () => this.show(this.current - 1, true));
+        this.nextButton.addEventListener('click', () => this.next());
+        this.restartButton.addEventListener('click', () => this.restart());
+        this.form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          this.next();
+        });
+
+        this.show(0, false);
+      }
+
+      announce(message) {
+        this.live.textContent = '';
+        window.setTimeout(() => {
+          this.live.textContent = message;
+        }, 50);
+      }
+
+      show(index, moveFocus) {
+        this.current = index;
+        const total = this.fieldsets.length;
+
+        this.fieldsets.forEach((fieldset, i) => {
+          fieldset.hidden = i !== index;
+        });
+
+        const progressText = this.dataset.progressTemplate
+          .replace('%CURRENT%', index + 1)
+          .replace('%TOTAL%', total);
+        this.progress.textContent = progressText;
+
+        this.backButton.hidden = index === 0;
+        this.nextButton.textContent = index === total - 1 ? this.dataset.resultLabel : this.dataset.nextLabel;
+
+        if (moveFocus) {
+          const legend = this.fieldsets[index].querySelector('[data-finder-legend]');
+          legend.focus();
+          this.announce(progressText + ': ' + legend.textContent);
+        }
+      }
+
+      next() {
+        const fieldset = this.fieldsets[this.current];
+        if (!fieldset.querySelector('input[type="radio"]:checked')) {
+          this.announce(this.dataset.needAnswer);
+          return;
+        }
+        if (this.current === this.fieldsets.length - 1) {
+          this.complete();
+        } else {
+          this.show(this.current + 1, true);
+        }
+      }
+
+      computeWinner() {
+        const scoring = this.cards.filter((card) => !card.hasAttribute('data-discovery'));
+        const discovery = this.cards.find((card) => card.hasAttribute('data-discovery'));
+        const scores = {};
+        scoring.forEach((card) => {
+          scores[card.dataset.handle] = 0;
+        });
+
+        this.form.querySelectorAll('input[type="radio"]:checked').forEach((radio) => {
+          const tags = new Set((radio.dataset.tags || '').split(',').filter(Boolean));
+          tags.forEach((tag) => {
+            if (tag in scores) scores[tag] += 1;
+          });
+        });
+
+        const best = Math.max(0, ...Object.values(scores));
+        const leaders = Object.keys(scores).filter((handle) => scores[handle] === best);
+
+        if (best > 0 && leaders.length === 1) return leaders[0];
+        if (discovery) return discovery.dataset.handle;
+        return leaders.length ? leaders[0] : this.cards[0].dataset.handle;
+      }
+
+      complete() {
+        const handle = this.computeWinner();
+        let title = '';
+
+        this.cards.forEach((card) => {
+          const isWinner = card.dataset.handle === handle;
+          card.hidden = !isWinner;
+          if (isWinner) {
+            const link = card.querySelector('.scent-finder-card__title-link');
+            title = link ? link.textContent.trim() : '';
+          }
+        });
+
+        this.form.hidden = true;
+        this.progress.hidden = true;
+        this.results.hidden = false;
+        this.resultHeading.focus();
+        this.announce(this.dataset.matchTemplate.replace('%TITLE%', title));
+
+        document.dispatchEvent(new CustomEvent('soa:scent_finder_complete', { detail: { handle: handle } }));
+      }
+
+      restart() {
+        this.form.reset();
+        this.cards.forEach((card) => {
+          card.hidden = true;
+        });
+        this.results.hidden = true;
+        this.form.hidden = false;
+        this.progress.hidden = false;
+        this.show(0, true);
+      }
+    }
+
+    customElements.define('scent-finder', ScentFinder);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Scent finder",
+  "max_blocks": 9,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Find your scent"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Question",
+          "default": "When will you wear it most?"
+        },
+        {
+          "type": "header",
+          "content": "Answers (leave a label empty to skip it; at least 2 are needed)"
+        },
+        {
+          "type": "paragraph",
+          "content": "Tags are scent product handles, comma-separated (for example: scent-1, scent-2). Each handle listed under the chosen answer scores one point for that scent. Replace the starter handles with your real product handles."
+        },
+        { "type": "text", "id": "label_1", "label": "Answer 1" },
+        { "type": "text", "id": "tags_1", "label": "Answer 1 scent handles", "info": "Comma-separated product handles." },
+        { "type": "text", "id": "label_2", "label": "Answer 2" },
+        { "type": "text", "id": "tags_2", "label": "Answer 2 scent handles", "info": "Comma-separated product handles." },
+        { "type": "text", "id": "label_3", "label": "Answer 3" },
+        { "type": "text", "id": "tags_3", "label": "Answer 3 scent handles", "info": "Comma-separated product handles." },
+        { "type": "text", "id": "label_4", "label": "Answer 4" },
+        { "type": "text", "id": "tags_4", "label": "Answer 4 scent handles", "info": "Comma-separated product handles." }
+      ]
+    },
+    {
+      "type": "scent",
+      "name": "Scent",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product",
+          "info": "The product handle is what the answer tags are matched against."
+        },
+        {
+          "type": "text",
+          "id": "reasoning",
+          "label": "Reasoning",
+          "info": "One line explaining the match."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scent finder",
+      "category": "Content",
+      "blocks": [
+        {
+          "type": "question",
+          "settings": {
+            "text": "When will you wear it most?",
+            "label_1": "Office and daytime",
+            "tags_1": "scent-1, scent-2",
+            "label_2": "Evenings out",
+            "tags_2": "scent-4, scent-5",
+            "label_3": "Weekends and casual",
+            "tags_3": "scent-3, scent-1",
+            "label_4": "Special occasions",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "text": "Which describes you best?",
+            "label_1": "Fresh and clean",
+            "tags_1": "scent-1, scent-3",
+            "label_2": "Warm and spicy",
+            "tags_2": "scent-4, scent-6",
+            "label_3": "Woody and earthy",
+            "tags_3": "scent-2, scent-5",
+            "label_4": "Smooth and sweet",
+            "tags_4": "scent-3, scent-6"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "text": "How strong do you like it?",
+            "label_1": "Subtle",
+            "tags_1": "scent-1, scent-3",
+            "label_2": "Noticeable but soft",
+            "tags_2": "scent-2, scent-3",
+            "label_3": "Bold",
+            "tags_3": "scent-4, scent-5",
+            "label_4": "A statement",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        { "type": "scent", "settings": { "reasoning": "Fresh and easy, made for daytime." } },
+        { "type": "scent", "settings": { "reasoning": "Light woods that stay quiet and clean." } },
+        { "type": "scent", "settings": { "reasoning": "Smooth and soft, an easy everyday wear." } },
+        { "type": "scent", "settings": { "reasoning": "Warm spice that suits an evening out." } },
+        { "type": "scent", "settings": { "reasoning": "Deep woods with a bold, lasting trail." } },
+        { "type": "scent", "settings": { "reasoning": "Rich and sweet, made for special occasions." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
