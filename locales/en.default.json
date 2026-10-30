@@ -2,6 +2,11 @@
   "set_credit": {
     "note": "Buy the discovery set and get {{ amount }} off your first full bottle within {{ days }} days."
   },
+  "store_info": {
+    "hours": "Opening hours",
+    "directions": "Get directions",
+    "new_tab": "(opens in a new tab)"
+  },
   "accessibility": {
     "skip_to_content": "Skip to main content",
     "main_navigation": "Main navigation",

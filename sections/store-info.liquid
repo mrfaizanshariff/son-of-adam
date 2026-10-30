@@ -1,0 +1,420 @@
+{% comment %}
+  SON OF ADAM - Store Info Section
+  Image and details for a physical store, with LocalBusiness JSON-LD.
+  Renders nothing unless "Show section" is on (and there is something to show).
+  JSON-LD fields that cannot be parsed from the settings are omitted, never guessed.
+{% endcomment %}
+
+{%- liquid
+  assign store_name = section.settings.store_name | strip
+  assign address_text = section.settings.address | strip
+  assign phone_text = section.settings.phone | strip
+  assign landmark_text = section.settings.landmark | strip
+  assign hours_lines = section.settings.hours | strip | newline_to_br | split: '<br />'
+
+  # Phone number for the tel: link
+  assign phone_href = phone_text | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '.'
+
+  # Hours: <dl> rows and schema.org openingHours strings
+  capture hours_dl
+    for hours_line in hours_lines
+      assign line_text = hours_line | strip
+      if line_text contains ':'
+        assign line_pieces = line_text | split: ':'
+        assign day_label = line_pieces.first | strip
+        assign time_label = line_text | remove_first: line_pieces.first | remove_first: ':' | strip
+        if day_label != blank and time_label != blank
+          echo '<div class="store-info__hours-row"><dt class="store-info__hours-days">'
+          echo day_label | escape
+          echo '</dt><dd class="store-info__hours-times">'
+          echo time_label | escape
+          echo '</dd></div>'
+        endif
+      endif
+    endfor
+  endcapture
+
+  capture ld_hours
+    for hours_line in hours_lines
+      assign line_text = hours_line | strip
+      if line_text contains ':'
+        assign line_pieces = line_text | split: ':'
+        assign day_label = line_pieces.first | strip
+        assign time_label = line_text | remove_first: line_pieces.first | remove_first: ':' | strip
+        if day_label != blank and time_label != blank
+          capture hours_spec
+            render 'store-hours-spec', days: day_label, times: time_label
+          endcapture
+          if hours_spec != blank
+            echo ','
+            echo hours_spec | json
+          endif
+        endif
+      endif
+    endfor
+  endcapture
+
+  # Address: split on commas. Needs street part(s), a locality and a final "[region] postal code" part.
+  assign address_ok = false
+  assign address_flat = address_text | newline_to_br | replace: '<br />', ','
+  assign raw_parts = address_flat | split: ','
+  capture address_joined
+    for raw_part in raw_parts
+      assign clean_part = raw_part | strip
+      if clean_part != blank
+        echo clean_part
+        echo '|'
+      endif
+    endfor
+  endcapture
+  assign address_parts = address_joined | split: '|'
+  assign part_count = address_parts.size
+  if part_count >= 3
+    assign last_index = part_count | minus: 1
+    assign locality_index = part_count | minus: 2
+    assign last_part = address_parts[last_index]
+    assign ld_locality = address_parts[locality_index]
+    assign last_word = last_part | split: ' ' | last
+    assign postal_number = last_word | plus: 0
+    assign postal_check = postal_number | append: ''
+    if last_word.size >= 4 and postal_check == last_word
+      assign address_ok = true
+      assign ld_postal = last_word
+      assign ld_region = last_part | remove_last: last_word | strip
+      assign street_count = part_count | minus: 2
+      capture ld_street
+        for street_part in address_parts limit: street_count
+          unless forloop.first
+            echo ', '
+          endunless
+          echo street_part
+        endfor
+      endcapture
+    endif
+  endif
+
+  # Geo: only when both coordinates are present and numeric within range
+  assign geo_ok = false
+  assign lat_text = section.settings.latitude | strip
+  assign lon_text = section.settings.longitude | strip
+  if lat_text != blank and lon_text != blank
+    assign lat_number = lat_text | plus: 0
+    assign lon_number = lon_text | plus: 0
+    if lat_number != 0 and lon_number != 0
+      if lat_number >= -90 and lat_number <= 90 and lon_number >= -180 and lon_number <= 180
+        assign geo_ok = true
+      endif
+    endif
+  endif
+
+  assign has_content = false
+  if store_name != blank or address_text != blank or phone_text != blank or landmark_text != blank or hours_dl != blank or section.settings.image != blank
+    assign has_content = true
+  endif
+-%}
+
+{%- if section.settings.show_section and has_content -%}
+  <section class="store-info full-width section-spacing"{% if store_name != blank %} aria-labelledby="store-info-heading-{{ section.id }}"{% endif %}>
+    <div class="store-info__container">
+      <div class="store-info__media">
+        {%- if section.settings.image != blank -%}
+          <img
+            src="{{ section.settings.image | image_url: width: 1200 }}"
+            srcset="{{ section.settings.image | image_url: width: 600 }} 600w,
+                    {{ section.settings.image | image_url: width: 900 }} 900w,
+                    {{ section.settings.image | image_url: width: 1200 }} 1200w"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            alt="{{ section.settings.image.alt | escape }}"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+            loading="lazy"
+            class="store-info__image"
+          >
+        {%- else -%}
+          <div class="store-info__placeholder">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="store-info__details">
+        {%- if store_name != blank -%}
+          <h2 class="store-info__name" id="store-info-heading-{{ section.id }}">{{ store_name | escape }}</h2>
+        {%- endif -%}
+
+        {%- if address_text != blank -%}
+          <address class="store-info__address">{{ address_text | escape | newline_to_br }}</address>
+        {%- endif -%}
+
+        {%- if landmark_text != blank -%}
+          <p class="store-info__landmark">{{ landmark_text | escape }}</p>
+        {%- endif -%}
+
+        {%- if phone_text != blank -%}
+          <p class="store-info__phone">
+            <a class="store-info__link" href="tel:{{ phone_href }}">{{ phone_text | escape }}</a>
+          </p>
+        {%- endif -%}
+
+        {%- if hours_dl != blank -%}
+          <h3 class="store-info__hours-heading">{{ 'store_info.hours' | t }}</h3>
+          <dl class="store-info__hours">
+            {{ hours_dl }}
+          </dl>
+        {%- endif -%}
+
+        {%- if section.settings.directions_url != blank -%}
+          <a class="btn btn-secondary store-info__directions" href="{{ section.settings.directions_url }}" target="_blank" rel="noopener">
+            {{- 'store_info.directions' | t -}}
+            <span class="visually-hidden"> {{ 'store_info.new_tab' | t }}</span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+
+  {%- if store_name != blank -%}
+    {%- capture local_business_json -%}
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": {{ store_name | json }}
+        {%- if address_ok -%}
+          ,
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": {{ ld_street | json }},
+            "addressLocality": {{ ld_locality | json }}
+            {%- if ld_region != blank -%}
+              ,
+              "addressRegion": {{ ld_region | json }}
+            {%- endif -%}
+            ,
+            "postalCode": {{ ld_postal | json }}
+          }
+        {%- endif -%}
+        {%- if phone_text != blank -%}
+          ,
+          "telephone": {{ phone_text | json }}
+        {%- endif -%}
+        {%- if ld_hours != blank -%}
+          ,
+          "openingHours": [{{ ld_hours | remove_first: ',' }}]
+        {%- endif -%}
+        {%- if geo_ok -%}
+          ,
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": {{ lat_number }},
+            "longitude": {{ lon_number }}
+          }
+        {%- endif -%}
+      }
+    {%- endcapture -%}
+    <script type="application/ld+json">
+      {{ local_business_json | replace: '</', '<\/' }}
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .store-info {
+    inline-size: 100%;
+  }
+
+  .store-info__container {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    max-inline-size: var(--container-max-width);
+    margin-inline: auto;
+  }
+
+  .store-info__media {
+    position: relative;
+    inline-size: 100%;
+    min-block-size: 300px;
+    overflow: hidden;
+  }
+
+  .store-info__image {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .store-info__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 300px;
+    background-color: var(--color-sea-salt);
+  }
+
+  .store-info__details {
+    padding: var(--spacing-xl, 48px) var(--page-margin);
+  }
+
+  .store-info__name {
+    margin: 0 0 var(--spacing-sm, 16px);
+  }
+
+  .store-info__address {
+    margin: 0 0 var(--spacing-sm, 16px);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body, 16px);
+    font-style: normal;
+    line-height: var(--line-height-loose, 1.6);
+  }
+
+  .store-info__landmark {
+    margin: 0 0 var(--spacing-sm, 16px);
+    font-family: var(--font-body);
+    font-size: var(--font-size-small, 14px);
+    color: var(--color-dim-grey);
+  }
+
+  .store-info__phone {
+    margin: 0 0 var(--spacing-md, 24px);
+    font-family: var(--font-body);
+  }
+
+  .store-info__link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .store-info__hours-heading {
+    margin: 0 0 var(--spacing-xs, 8px);
+    font-family: var(--font-header);
+    font-size: var(--font-size-caption, 12px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-harvest-gold);
+  }
+
+  .store-info__hours {
+    margin: 0 0 var(--spacing-lg, 32px);
+    padding: 0;
+  }
+
+  .store-info__hours-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs, 8px) var(--spacing-md, 24px);
+    padding-block: var(--spacing-xs, 8px);
+    border-block-end: 1px solid var(--color-silver);
+  }
+
+  .store-info__hours-row:last-child {
+    border-block-end: none;
+  }
+
+  .store-info__hours-days {
+    min-inline-size: 120px;
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+
+  .store-info__hours-times {
+    margin: 0;
+    font-family: var(--font-body);
+  }
+
+  .store-info__directions {
+    display: inline-block;
+  }
+
+  @media (min-width: 768px) {
+    .store-info__details {
+      padding: var(--spacing-2xl, 64px) var(--spacing-xl, 48px);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .store-info__container {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .store-info__media {
+      block-size: 100%;
+      min-block-size: 480px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Store info",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_section",
+      "label": "Show section",
+      "default": false,
+      "info": "Off by default. Nothing renders, and no structured data is added, until this is on."
+    },
+    {
+      "type": "text",
+      "id": "store_name",
+      "label": "Store name",
+      "info": "Needed for the structured data."
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "Address",
+      "info": "Separate parts with commas, ending with the state and postal code. Example: 12 MG Road, Indiranagar, Bengaluru, Karnataka 560038"
+    },
+    {
+      "type": "textarea",
+      "id": "hours",
+      "label": "Opening hours",
+      "info": "One line per day range, as 'days: times'. Example: Mon-Sat: 10:00-20:00. Use 24-hour times for structured data."
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone"
+    },
+    {
+      "type": "text",
+      "id": "landmark",
+      "label": "Landmark"
+    },
+    {
+      "type": "url",
+      "id": "directions_url",
+      "label": "Directions link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "latitude",
+      "label": "Latitude",
+      "info": "Optional. Used only if latitude and longitude are both set."
+    },
+    {
+      "type": "text",
+      "id": "longitude",
+      "label": "Longitude",
+      "info": "Optional."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Store info",
+      "category": "Content"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,105 @@
+{% doc %}
+  Converts one opening-hours line (day range plus time range) into a schema.org openingHours string.
+  Outputs nothing when the day or time text cannot be parsed, so callers can omit the entry.
+
+  Supported days: Mon/Tue/Wed/Thu/Fri/Sat/Sun (full or abbreviated), as a single day,
+  a range "Mon-Fri", or a comma list "Mon, Wed".
+  Supported times: 24-hour "10:00-20:00" (a single-digit hour such as "9:00" is padded).
+
+  @param {string} days - Day text, for example "Mon-Sat"
+  @param {string} times - Time text, for example "10:00-20:00"
+
+  @example
+  {% render 'store-hours-spec', days: 'Mon-Sat', times: '10:00-20:00' %}
+{% enddoc %}
+
+{%- liquid
+  assign hours_ok = true
+
+  assign day_text = days | downcase | replace: '–', '-' | replace: '—', '-' | remove: ' '
+  assign day_groups = day_text | split: ','
+  if day_groups.size == 0
+    assign hours_ok = false
+  endif
+
+  capture days_spec
+    for group in day_groups
+      assign ends = group | split: '-'
+      if ends.size == 0 or ends.size > 2
+        assign hours_ok = false
+      endif
+      unless forloop.first
+        echo ','
+      endunless
+      for day_name in ends
+        assign day_key = day_name | slice: 0, 3
+        case day_key
+          when 'mon'
+            assign day_code = 'Mo'
+          when 'tue'
+            assign day_code = 'Tu'
+          when 'wed'
+            assign day_code = 'We'
+          when 'thu'
+            assign day_code = 'Th'
+          when 'fri'
+            assign day_code = 'Fr'
+          when 'sat'
+            assign day_code = 'Sa'
+          when 'sun'
+            assign day_code = 'Su'
+          else
+            assign day_code = ''
+            assign hours_ok = false
+        endcase
+        unless forloop.first
+          echo '-'
+        endunless
+        echo day_code
+      endfor
+    endfor
+  endcapture
+
+  assign time_text = times | replace: '–', '-' | replace: '—', '-' | remove: ' '
+  assign time_ends = time_text | split: '-'
+  if time_ends.size != 2
+    assign hours_ok = false
+  endif
+
+  capture times_spec
+    for time_end in time_ends
+      assign time_value = time_end
+      if time_value.size == 4
+        assign time_value = time_value | prepend: '0'
+      endif
+      assign hour_text = time_value | slice: 0, 2
+      assign minute_text = time_value | slice: 3, 2
+      assign hour_number = hour_text | plus: 0
+      assign minute_number = minute_text | plus: 0
+      assign hour_ok = false
+      if hour_text == '00' or hour_number > 0
+        if hour_number <= 24
+          assign hour_ok = true
+        endif
+      endif
+      assign minute_ok = false
+      if minute_text == '00' or minute_number > 0
+        if minute_number < 60
+          assign minute_ok = true
+        endif
+      endif
+      assign colon = time_value | slice: 2, 1
+      if time_value.size != 5 or colon != ':' or hour_ok == false or minute_ok == false
+        assign hours_ok = false
+      endif
+      unless forloop.first
+        echo '-'
+      endunless
+      echo time_value
+    endfor
+  endcapture
+
+  if hours_ok
+    echo days_spec | append: ' ' | append: times_spec
+  endif
+-%}
