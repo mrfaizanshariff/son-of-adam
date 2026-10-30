@@ -1,34 +1,55 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "product": {
       "type": "product",
+      "blocks": {
+        "trust_line_1": {
+          "type": "trust_line",
+          "settings": {
+            "icon": "shield",
+            "text": "Secure payment"
+          }
+        },
+        "trust_line_2": {
+          "type": "trust_line",
+          "settings": {
+            "icon": "truck",
+            "text": "Ships from Bengaluru"
+          }
+        },
+        "trust_line_3": {
+          "type": "trust_line",
+          "settings": {
+            "icon": "return",
+            "text": "Sealed bottles can be returned"
+          }
+        }
+      },
+      "block_order": [
+        "trust_line_1",
+        "trust_line_2",
+        "trust_line_3"
+      ],
       "settings": {
         "show_rating": true,
         "show_dynamic_checkout": true,
-        "show_benefits": false,
-        "benefits_content": "<p>Enter your product benefits here. This content will appear in the Benefits accordion.</p>",
-        "show_ingredients": false,
-        "ingredients_content": "<p>List your product ingredients here. This content will appear in the Ingredients accordion.</p>",
-        "show_how_to_use": false,
-        "how_to_use_content": "<p>Provide usage instructions here. This content will appear in the How to Use accordion.</p>",
+        "show_gift_options": true,
+        "set_credit": 500,
+        "set_credit_days": 60,
+        "how_to_wear": "<p>Apply on pulse points: wrists, inner elbows, and neck. Allow the fragrance to settle on your skin without rubbing.</p>",
+        "shipping_returns": "<p>Complimentary shipping across India. Unopened, sealed bottles may be returned within 7 days of delivery.</p>",
         "show_brand_section": true,
+        "ritual_heading": "THE RITUAL",
         "brand_title": "CRAFTED FOR THE DISCERNING FEW.",
         "brand_description": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.",
         "brand_button_text": "EXPLORE OUR PHILOSOPHY",
         "brand_button_url": "/pages/about",
         "show_related_products": true,
+        "related_heading": "YOU MAY ALSO LIKE",
         "related_products_collection": "",
         "show_reviews": false,
-        "show_review_form": false
+        "show_review_form": false,
+        "allow_review_submission": false
       }
     }
   },

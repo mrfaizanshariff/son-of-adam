@@ -57,11 +57,28 @@
       "max_quantity": "Cannot add that amount. You have {{ cart_quantity }} in cart and only {{ available }} more available.",
       "the_ritual": "The ritual",
       "you_may_also_like": "You may also like",
+      "try_first": "Try our Discovery Set first",
       "notes": {
         "top": "Top notes",
         "heart": "Heart notes",
         "base": "Base notes"
-      }
+      },
+      "gift": {
+        "title": "This is a gift",
+        "wrap_label": "Add gift wrap",
+        "message_label": "Gift message",
+        "message_placeholder": "Write your personal message here...",
+        "characters_remaining": "characters remaining"
+      },
+      "restock": {
+        "label": "Notify me when available",
+        "description": "Leave your email to get notified when this scent is back in stock.",
+        "placeholder": "Enter your email address",
+        "button": "Notify me",
+        "success": "Thank you! We will notify you when this item is back in stock."
+      },
+      "faq_note": "Have questions about our scents or orders?",
+      "faq_link_text": "View our Frequently Asked Questions"
     },
     "reviews": {
       "title": "Customer reviews",
