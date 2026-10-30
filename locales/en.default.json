@@ -50,6 +50,7 @@
       "only_n_left": "Only {{ count }} left in stock",
       "in_stock": "In stock",
       "out_of_stock": "Out of stock",
+      "max_quantity": "Cannot add that amount. You have {{ cart_quantity }} in cart and only {{ available }} more available.",
       "the_ritual": "The ritual",
       "you_may_also_like": "You may also like"
     },

@@ -30,10 +30,10 @@
         
         {%- comment -%} Star Rating {%- endcomment -%}
         {%- liquid
-          assign product_review_count = product.metafields.reviews.rating_count | default: 0
-          assign product_review_rating = product.metafields.reviews.rating | default: 0
+          assign product_review_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0
+          assign product_review_rating = product.metafields.reviews.rating.value | default: product.metafields.reviews.rating | default: 0
         -%}
-        {% if section.settings.show_rating and product_review_count > 0 %}
+        {% if section.settings.show_rating and product.metafields.reviews.rating_count != blank and product_review_count > 0 %}
           <div class="product-main__rating">
             {% render 'star-rating', rating: product_review_rating, count: product_review_count %}
           </div>
@@ -69,14 +69,15 @@
           
           {%- comment -%} Variant Selector {%- endcomment -%}
           {% unless product.has_only_default_variant %}
+            {% assign option = product.options_with_values.first %}
             <div class="product-form__variants">
               <label for="variant-selector" class="product-form__label">
-                {{ 'products.product.variant' | t | default: 'Variant' | upcase }}
+                {{ option.name }}
               </label>
               <select
                 id="variant-selector"
                 class="product-form__select"
-                aria-label="{{ 'products.product.variant' | t | default: 'Variant' }}"
+                aria-label="{{ option.name }}"
                 data-variant-select
               >
                 {% for variant in product.variants %}
@@ -107,8 +108,8 @@
           </div>
           
           {%- comment -%} Add to Cart Button {%- endcomment -%}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             name="add"
             class="product-form__submit btn btn-primary"
             {% unless current_variant.available %}disabled{% endunless %}
@@ -119,6 +120,8 @@
               {{ 'products.product.sold_out' | t | upcase }}
             {% endif %}
           </button>
+
+          <p class="product__message" role="status" aria-live="polite" data-message-template="{{ 'products.product.max_quantity' | t: cart_quantity: '[cart_quantity]', available: '[available]' }}"></p>
           
           {%- comment -%} Dynamic Checkout Buttons {%- endcomment -%}
           {% if section.settings.show_dynamic_checkout %}
@@ -178,7 +181,7 @@
   <div class="product-brand-section full-width">
     <div class="product-brand-section__container">
       <div class="product-brand-section__content">
-        <p class="product-brand-section__label">THE RITUAL</p>
+        <p class="product-brand-section__label">{{ section.settings.ritual_heading | default: 'products.product.the_ritual' | t }}</p>
         <h2 class="product-brand-section__title">
           {{ section.settings.brand_title | default: 'CRAFTED FOR THE DISCERNING FEW.' }}
         </h2>
@@ -203,7 +206,7 @@
 {% if section.settings.show_related_products %}
   <div class="product-related full-width section-spacing">
     <div class="product-related__container">
-      <h2 class="product-related__title">YOU MAY ALSO LIKE</h2>
+      <h2 class="product-related__title">{{ section.settings.related_heading | default: 'products.product.you_may_also_like' | t }}</h2>
       
       <div class="product-related__grid">
         {% if section.settings.related_products_collection != blank %}
@@ -231,7 +234,7 @@
 
 {%- comment -%} Product Reviews Section {%- endcomment -%}
 {% if section.settings.show_reviews %}
-  {% render 'product-reviews', product: product, show_form: section.settings.show_review_form %}
+  {% render 'product-reviews', product: product, show_form: section.settings.show_review_form, allow_review_submission: section.settings.allow_review_submission %}
 {% endif %}
 
 <script>
@@ -366,7 +369,13 @@
       // Validate total quantity against inventory
       if (totalQuantity > inventory) {
         const availableToAdd = Math.max(0, inventory - cartQuantity);
-        alert(`Cannot add ${requestedQuantity} items. You have ${cartQuantity} in cart and only ${availableToAdd} more available.`);
+        const messageEl = productForm.querySelector('.product__message') || document.querySelector('.product__message');
+        if (messageEl) {
+          const template = messageEl.dataset.messageTemplate || 'Cannot add that amount. Maximum available quantity reached.';
+          messageEl.textContent = template
+            .replace('[cart_quantity]', cartQuantity)
+            .replace('[available]', availableToAdd);
+        }
         if (quantityInput) {
           quantityInput.value = availableToAdd;
         }
@@ -406,6 +415,12 @@
         
         currentVariantId = variantId;
         
+        // Clear message
+        const messageEl = document.querySelector('.product__message');
+        if (messageEl) {
+          messageEl.textContent = '';
+        }
+
         // Update hidden input
         variantIdInput.value = variantId;
         
@@ -607,6 +622,18 @@
     opacity: 0.6;
   }
   
+  .product__message {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: #991B1B;
+    margin-top: var(--spacing-xs);
+    margin-bottom: 0;
+  }
+  
+  .product__message:empty {
+    display: none;
+  }
+
   .product-availability-message {
     font-family: var(--font-body);
     font-size: 14px;
@@ -842,6 +869,12 @@
     },
     {
       "type": "text",
+      "id": "ritual_heading",
+      "label": "Ritual Heading",
+      "default": "THE RITUAL"
+    },
+    {
+      "type": "text",
       "id": "brand_title",
       "label": "Brand Title",
       "default": "CRAFTED FOR THE DISCERNING FEW."
@@ -874,6 +907,12 @@
       "default": true
     },
     {
+      "type": "text",
+      "id": "related_heading",
+      "label": "Related Products Heading",
+      "default": "YOU MAY ALSO LIKE"
+    },
+    {
       "type": "collection",
       "id": "related_products_collection",
       "label": "Related Products Collection",
@@ -895,6 +934,13 @@
       "id": "show_review_form",
       "label": "Show Review Form",
       "default": true,
+      "info": "Display review form section"
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_review_submission",
+      "label": "Allow Review Submission",
+      "default": false,
       "info": "Allow customers to submit reviews"
     }
   ],

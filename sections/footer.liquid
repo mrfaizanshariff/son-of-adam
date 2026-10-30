@@ -27,7 +27,13 @@
           <p class="footer__tagline">{{ section.settings.tagline }}</p>
         {% endif %}
         
-        {% if section.settings.show_social %}
+        {%- liquid
+          assign has_social = false
+          if section.settings.social_facebook != blank or section.settings.social_instagram != blank or section.settings.social_twitter != blank
+            assign has_social = true
+          endif
+        -%}
+        {% if section.settings.show_social and has_social %}
           <div class="footer__social">
             {% if section.settings.social_facebook != blank %}
               <a href="{{ section.settings.social_facebook }}" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener">
