@@ -16,133 +16,204 @@
         "video_url": "",
         "overlay_opacity": 40,
         "text_alignment": "left",
-        "subheading": "Premium Grooming",
-        "subheading_font_size": 14,
-        "heading": "GROOMING AS [gold]TIMELESS[/gold] AS MAN",
-        "heading_font_size": 80,
-        "text": "<p>Clearly natural grooming essentials made to protect your skin and refine your style.</p>",
+        "subheading": "Natural fragrance for men",
+        "subheading_font_size": 13,
+        "heading": "Natural fragrance for men, [gold]made for India[/gold]",
+        "heading_font_size": 72,
+        "text": "<p>Six scents. Try them all before you choose.</p>",
         "description_font_size": 16,
-        "button_text": "Shop Essentials",
-        "button_url": "/collections/all",
-        "button_text_2": "Discover the Brand",
-        "button_url_2": "/pages/about"
+        "button_text": "Try the discovery set",
+        "button_url": "/products/discovery-set",
+        "button_text_2": "Shop the six",
+        "button_url_2": "/collections/perfumes"
       }
     },
-    "featured_products": {
-      "type": "featured-collection",
-      "settings": {
-        "heading": "Featured Products",
-        "collection": "featured-collection",
-        "products_to_show": 4,
-        "products_per_row": "4",
-        "view_all_text": "View All"
-      }
-    },
-    "image_with_text_1": {
-      "type": "image-with-text",
-      "settings": {
-        "image_position": "left",
-        "background_color": "oxford-blue",
-        "image": "shopify://shop_images/Wildfire1.png",
-        "subheading": "Our Philosophy",
-        "heading": "Simple. Honest. Effective Grooming.",
-        "text": "<p>We believe in transparency. No fillers, no synthetic fragrances, just the power of nature refined for the modern man. Our mission is to provide you with the tools to master your routine and protect your skin.</p>",
-        "button_text": "Our Story",
-        "button_url": "/pages/about",
-        "button_style": "secondary"
-      }
-    },
-    "browse_categories": {
-      "type": "multicolumn-categories",
+    "proof_strip": {
+      "type": "proof-strip",
       "blocks": {
-        "category_1": {
-          "type": "category",
+        "claim_fixatives": {
+          "type": "claim",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_sgy728sgy728sgy7.png",
-            "title": "Beard Care",
-            "description": "Oils, balms & grooming tools",
-            "overlay_text": "Coming Soon",
-            "link": ""
+            "icon": "leaf",
+            "heading": "No synthetic fixatives",
+            "text": "Natural fixatives only: sandalwood, labdanum, benzoin, vetiver.",
+            "enabled": true
           }
         },
-        "category_2": {
-          "type": "category",
+        "claim_parabens": {
+          "type": "claim",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_nprtdonprtdonprt.png",
-            "title": "Face Care",
-            "description": "Cleansers, moisturizers & serums",
-            "overlay_text": "Coming Soon",
-            "link": ""
+            "icon": "flask",
+            "heading": "No parabens or phthalates",
+            "text": "Full ingredient list on every product.",
+            "enabled": true
           }
         },
-        "category_3": {
-          "type": "category",
+        "claim_docs": {
+          "type": "claim",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_t7jttvt7jttvt7jt.png",
-            "title": "Body Care",
-            "description": "Soaps, scrubs & body oils",
-            "overlay_text": "Coming Soon",
-            "link": ""
+            "icon": "document",
+            "heading": "Lab documents",
+            "text": "IFRA certificate and GC-MS report, batch by batch.",
+            "enabled": false,
+            "link": "/pages/lab-reports"
           }
         },
-        "category_4": {
-          "type": "category",
+        "claim_origin": {
+          "type": "claim",
           "settings": {
-            "image": "shopify://shop_images/Azure1.png",
-            "title": "Fragrance",
-            "description": "Colognes & body sprays",
-            "overlay_text": "Shop Now",
-            "link": "shopify://collections/perfumes"
+            "icon": "flag",
+            "heading": "Crafted in India",
+            "text": "Fragrance for men, made for Indian summers.",
+            "enabled": true
           }
         }
       },
       "block_order": [
-        "category_1",
-        "category_2",
-        "category_3",
-        "category_4"
+        "claim_fixatives",
+        "claim_parabens",
+        "claim_docs",
+        "claim_origin"
+      ],
+      "settings": {}
+    },
+    "scent_grid": {
+      "type": "scent-grid",
+      "settings": {
+        "heading": "The six",
+        "collection": "perfumes",
+        "limit": 6,
+        "columns_desktop": "3",
+        "show_family": true,
+        "show_notes": true,
+        "background_color": "white"
+      }
+    },
+    "discovery_set": {
+      "type": "discovery-set",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "icon": "flask",
+            "title": "Order the set",
+            "text": "Six vials, one for each scent."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "icon": "leaf",
+            "title": "Wear each for a day",
+            "text": "Find the one that fits you."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "icon": "document",
+            "title": "Get credit on a full bottle"
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
       ],
       "settings": {
-        "heading": "Browse Categories",
-        "columns": "4"
+        "product": "discovery-set",
+        "heading": "Try all six before you choose",
+        "credit_amount": 500,
+        "credit_days": 60
       }
     },
-    "testimonial_newsletter": {
-      "type": "newsletter-signup",
+    "image_with_text_ingredients": {
+      "type": "image-with-text",
       "settings": {
-        "show_testimonial": true,
-        "testimonial_text": "The only brand that understands the balance between traditional grooming and modern skin protection. My skin has never looked better.",
-        "testimonial_author": "James P. — London, UK",
-        "heading": "Upgrade Your Grooming Game.",
-        "text": "Subscribe for exclusive offers, grooming tips, and 10% off your first order.",
-        "placeholder": "Enter your email",
-        "button_text": "Join Now",
-        "success_message": "Thanks for subscribing!",
-        "show_privacy_notice": true,
-        "privacy_text": "We respect your privacy. Unsubscribe anytime. <a href=\"/pages/privacy-policy\">Privacy Policy</a>"
+        "image_position": "left",
+        "background_color": "sea-salt",
+        "image": "shopify://shop_images/Wildfire1.png",
+        "subheading": "Transparency",
+        "heading": "What is in the bottle",
+        "text": "<p>Every batch is IFRA certified and GC-MS tested. The full ingredient list and lab reports are published and updated with each batch.</p>",
+        "button_text": "Read the lab reports",
+        "button_url": "/pages/lab-reports",
+        "button_style": "secondary"
       }
     },
-    "image_with_text_2": {
+    "image_with_text_finder": {
       "type": "image-with-text",
       "settings": {
         "image_position": "right",
-        "background_color": "sea-salt",
-        "image": "shopify://shop_images/Ember1.png",
-        "subheading": "Crafted with Care",
-        "heading": "Premium Ingredients. Proven Results.",
-        "text": "<p>Every product is formulated with the finest natural ingredients, rigorously tested to deliver exceptional results without compromise.</p>",
-        "button_text": "Shop Now",
-        "button_url": "/collections/all",
+        "background_color": "none",
+        "subheading": "Find your match",
+        "heading": "Not sure where to start?",
+        "text": "<p>Answer four short questions and we will point you toward the scent that suits you best.</p>",
+        "button_text": "Take the scent finder",
+        "button_url": "/pages/scent-finder",
         "button_style": "primary"
+      }
+    },
+    "image_with_text_gifting": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "left",
+        "background_color": "oxford-blue",
+        "image": "shopify://shop_images/Ember1.png",
+        "subheading": "Gifting",
+        "heading": "A gift he will wear",
+        "text": "<p>Gift wrap, a printed note, and no prices on the invoice — every order is ready to give. Not sure which scent? Start with the discovery set.</p>",
+        "button_text": "Gifting guide",
+        "button_url": "/pages/gifting",
+        "button_style": "secondary"
+      }
+    },
+    "store_info": {
+      "type": "store-info",
+      "settings": {
+        "show_section": false
+      }
+    },
+    "image_with_text_story": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "right",
+        "background_color": "none",
+        "subheading": "Our philosophy",
+        "heading": "Simple. Honest. Effective.",
+        "text": "<p>No fillers, no synthetic fragrances. We publish every ingredient and every batch document so you know exactly what you are wearing.</p>",
+        "button_text": "Our story",
+        "button_url": "/pages/about",
+        "button_style": "secondary"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter-signup",
+      "settings": {
+        "show_testimonial": false,
+        "testimonial_text": "",
+        "testimonial_author": "",
+        "heading": "Stay in the loop.",
+        "text": "New scents, batch releases, and early access — straight to your inbox.",
+        "placeholder": "Enter your email",
+        "button_text": "Subscribe",
+        "success_message": "Thanks for subscribing!",
+        "show_privacy_notice": true,
+        "privacy_text": "We respect your privacy. Unsubscribe anytime. <a href=\"/pages/privacy-policy\">Privacy Policy</a>"
       }
     }
   },
   "order": [
     "editorial_hero",
-    "featured_products",
-    "image_with_text_1",
-    "browse_categories",
-    "testimonial_newsletter",
-    "image_with_text_2"
+    "proof_strip",
+    "scent_grid",
+    "discovery_set",
+    "image_with_text_ingredients",
+    "image_with_text_finder",
+    "image_with_text_gifting",
+    "store_info",
+    "image_with_text_story",
+    "newsletter"
   ]
 }

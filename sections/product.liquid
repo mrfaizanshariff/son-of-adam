@@ -307,7 +307,10 @@
         </div>
 
         {%- comment -%} Try First Discovery Set Row {%- endcomment -%}
-        {% assign set_credit_val = section.settings.set_credit | default: 0 %}
+        {%- liquid
+          assign set_credit_val = section.settings.set_credit | default: settings.set_credit | default: 0
+          assign set_credit_days_val = section.settings.set_credit_days | default: settings.set_credit_days | default: 60
+        -%}
         {% if set_credit_val > 0 and product.handle != 'discovery-set' and section.settings.hide_try_first == false %}
           <div class="product-try-first">
             <div class="product-try-first__header">
@@ -316,8 +319,8 @@
               </a>
             </div>
             {% render 'set-credit-note',
-              credit_amount: section.settings.set_credit,
-              days: section.settings.set_credit_days,
+              credit_amount: set_credit_val,
+              days: set_credit_days_val,
               style: 'box'
             %}
           </div>
@@ -1524,15 +1527,16 @@
     {
       "type": "number",
       "id": "set_credit",
-      "label": "Discovery Set Credit Amount",
+      "label": "Credit amount override (₹)",
       "default": 0,
-      "info": "Credit amount in rupees (e.g. 500). Set to 0 to hide."
+      "info": "Leave at 0 to use the global value set in Theme settings › Cart & Promotions."
     },
     {
       "type": "number",
       "id": "set_credit_days",
-      "label": "Credit Validity Days",
-      "default": 60
+      "label": "Credit validity override (days)",
+      "default": 0,
+      "info": "Leave at 0 to use the global value set in Theme settings › Cart & Promotions."
     },
     {
       "type": "checkbox",

@@ -199,6 +199,43 @@
     ]
   },
   {
+    "name": "Cart & Promotions",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Discovery Set credit"
+      },
+      {
+        "type": "paragraph",
+        "content": "Sets the default for the product page section. Change it here and every product page updates automatically."
+      },
+      {
+        "type": "number",
+        "id": "set_credit",
+        "label": "Credit amount (₹)",
+        "default": 0,
+        "info": "Amount in rupees, e.g. 500. Set to 0 to hide the credit note on product pages."
+      },
+      {
+        "type": "number",
+        "id": "set_credit_days",
+        "label": "Credit validity (days)",
+        "default": 60
+      },
+      {
+        "type": "header",
+        "content": "Free shipping"
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold (₹)",
+        "default": 0,
+        "info": "Order subtotal in rupees above which shipping is free. Set to 0 to hide the progress bar."
+      }
+    ]
+  },
+  {
     "name": "Buttons",
     "settings": [
       {

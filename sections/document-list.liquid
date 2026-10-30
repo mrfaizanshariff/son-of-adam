@@ -13,11 +13,11 @@
         {%- endif -%}
         <thead>
           <tr>
-            <th scope="col" class="document-list__th" data-col="product">{{ 'sections.document_list.col_product' | t }}</th>
-            <th scope="col" class="document-list__th" data-col="batch">{{ 'sections.document_list.col_batch' | t }}</th>
-            <th scope="col" class="document-list__th" data-col="type">{{ 'sections.document_list.col_type' | t }}</th>
-            <th scope="col" class="document-list__th" data-col="date">{{ 'sections.document_list.col_date' | t }}</th>
-            <th scope="col" class="document-list__th" data-col="document">{{ 'sections.document_list.col_document' | t }}</th>
+            <th scope="col" class="document-list__th">{{ 'sections.document_list.col_product' | t }}</th>
+            <th scope="col" class="document-list__th">{{ 'sections.document_list.col_batch' | t }}</th>
+            <th scope="col" class="document-list__th">{{ 'sections.document_list.col_type' | t }}</th>
+            <th scope="col" class="document-list__th">{{ 'sections.document_list.col_date' | t }}</th>
+            <th scope="col" class="document-list__th">{{ 'sections.document_list.col_document' | t }}</th>
           </tr>
         </thead>
         <tbody>
@@ -30,29 +30,33 @@
                 endif
               -%}
               <tr class="document-list__row" {{ block.shopify_attributes }}>
-                <td class="document-list__td" data-label="{{ 'sections.document_list.col_product' | t | escape }}">
-                  {{- block.settings.product_name | escape -}}
-                </td>
-                <td class="document-list__td" data-label="{{ 'sections.document_list.col_batch' | t | escape }}">
-                  {{- block.settings.batch | escape -}}
-                </td>
-                <td class="document-list__td" data-label="{{ 'sections.document_list.col_type' | t | escape }}">
-                  {{- block.settings.document_type | escape -}}
-                </td>
-                <td class="document-list__td" data-label="{{ 'sections.document_list.col_date' | t | escape }}">
-                  {{- block.settings.date | escape -}}
-                </td>
-                <td class="document-list__td" data-label="{{ 'sections.document_list.col_document' | t | escape }}">
+                <td
+                  class="document-list__td"
+                  data-label="{{ 'sections.document_list.col_product' | t | escape }}"
+                >{{ block.settings.product_name | escape }}</td>
+                <td
+                  class="document-list__td"
+                  data-label="{{ 'sections.document_list.col_batch' | t | escape }}"
+                >{{ block.settings.batch | escape }}</td>
+                <td
+                  class="document-list__td"
+                  data-label="{{ 'sections.document_list.col_type' | t | escape }}"
+                >{{ block.settings.document_type | escape }}</td>
+                <td
+                  class="document-list__td"
+                  data-label="{{ 'sections.document_list.col_date' | t | escape }}"
+                >{{ block.settings.date | escape }}</td>
+                <td
+                  class="document-list__td"
+                  data-label="{{ 'sections.document_list.col_document' | t | escape }}"
+                >
                   {%- if block.settings.file != blank -%}
                     <a
                       class="document-list__link"
                       href="{{ block.settings.file }}"
                       target="_blank"
                       rel="noopener"
-                    >
-                      {{- link_label | escape -}}
-                      <span class="visually-hidden"> {{ 'sections.document_list.pdf_suffix' | t }}</span>
-                    </a>
+                    >{{ link_label | escape }}<span class="visually-hidden"> {{ 'sections.document_list.pdf_suffix' | t }}</span></a>
                   {%- else -%}
                     <span class="document-list__no-file">{{ 'sections.document_list.not_available' | t }}</span>
                   {%- endif -%}
@@ -94,12 +98,11 @@
   }
 
   .document-list__caption {
+    caption-side: top;
+    text-align: left;
     font-family: var(--font-body);
     font-size: var(--font-size-small, 14px);
     color: var(--color-dim-grey);
-    text-align: left;
-    margin-bottom: var(--spacing-sm);
-    caption-side: top;
     padding-bottom: var(--spacing-sm);
   }
 
@@ -123,16 +126,19 @@
     white-space: nowrap;
   }
 
-  .document-list__th:last-child,
-  .document-list__td:last-child {
+  .document-list__th:last-child {
     padding-right: 0;
   }
 
   .document-list__td {
     padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 0;
-    border-bottom: 1px solid var(--color-dim-grey, #ccc);
+    border-bottom: 1px solid var(--color-dim-grey);
     vertical-align: top;
     line-height: var(--line-height-relaxed, 1.4);
+  }
+
+  .document-list__td:last-child {
+    padding-right: 0;
   }
 
   .document-list__link {
@@ -155,15 +161,15 @@
     font-size: var(--font-size-body);
     color: var(--color-dim-grey);
     padding: var(--spacing-xl) 0;
-    border-top: 1px solid var(--color-dim-grey, #ccc);
-    border-bottom: 1px solid var(--color-dim-grey, #ccc);
+    border-top: 1px solid var(--color-dim-grey);
+    border-bottom: 1px solid var(--color-dim-grey);
   }
 
   .document-list__empty p {
     margin: 0;
   }
 
-  /* ── Mobile stacked layout ───────────────────────────────────────────── */
+  /* ── Mobile: stacked rows ─────────────────────────────────────────────── */
   @media (max-width: 767px) {
     .document-list__table thead {
       position: absolute;
@@ -186,21 +192,21 @@
     }
 
     .document-list__row {
-      border-bottom: 1px solid var(--color-dim-grey, #ccc);
       padding-bottom: var(--spacing-sm);
       margin-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--color-dim-grey);
     }
 
     .document-list__row:last-child {
-      border-bottom: none;
       margin-bottom: 0;
+      border-bottom: none;
     }
 
     .document-list__td {
       display: grid;
       grid-template-columns: 40% 1fr;
       align-items: baseline;
-      gap: var(--spacing-xs, 8px);
+      gap: 0 var(--spacing-xs, 8px);
       padding: var(--spacing-xs, 6px) 0;
       border-bottom: none;
     }
@@ -219,53 +225,53 @@
 
 {% schema %}
 {
-  "name": "Document list",
+  "name": "t:sections.document_list.name",
   "tag": "section",
   "blocks": [
     {
       "type": "document",
-      "name": "Document",
+      "name": "t:sections.document_list.blocks.document.name",
       "settings": [
         {
           "type": "text",
           "id": "product_name",
-          "label": "Product name",
+          "label": "t:sections.document_list.blocks.document.settings.product_name",
           "placeholder": "e.g. Vetiver No.1"
         },
         {
           "type": "text",
           "id": "batch",
-          "label": "Batch",
+          "label": "t:sections.document_list.blocks.document.settings.batch",
           "placeholder": "e.g. B2401"
         },
         {
           "type": "select",
           "id": "document_type",
-          "label": "Document type",
+          "label": "t:sections.document_list.blocks.document.settings.document_type",
           "options": [
-            { "value": "IFRA certificate", "label": "IFRA certificate" },
-            { "value": "GC-MS report", "label": "GC-MS report" },
-            { "value": "Skin-safety test", "label": "Skin-safety test" },
-            { "value": "Other", "label": "Other" }
+            { "value": "IFRA certificate", "label": "t:sections.document_list.blocks.document.options.ifra" },
+            { "value": "GC-MS report", "label": "t:sections.document_list.blocks.document.options.gcms" },
+            { "value": "Skin-safety test", "label": "t:sections.document_list.blocks.document.options.skin_safety" },
+            { "value": "Other", "label": "t:sections.document_list.blocks.document.options.other" }
           ],
           "default": "IFRA certificate"
         },
         {
           "type": "text",
           "id": "date",
-          "label": "Date",
+          "label": "t:sections.document_list.blocks.document.settings.date",
           "placeholder": "e.g. Jan 2025"
         },
         {
           "type": "url",
           "id": "file",
-          "label": "File (PDF link or uploaded file URL)"
+          "label": "t:sections.document_list.blocks.document.settings.file"
         },
         {
           "type": "text",
           "id": "label",
-          "label": "Link label (optional)",
-          "info": "Overrides the document type as the link text. Leave blank to use the document type."
+          "label": "t:sections.document_list.blocks.document.settings.label",
+          "info": "t:sections.document_list.blocks.document.settings.label_info"
         }
       ]
     }
@@ -274,25 +280,25 @@
     {
       "type": "text",
       "id": "heading",
-      "label": "Heading",
+      "label": "t:labels.heading",
       "default": "Lab reports & certificates"
     },
     {
       "type": "text",
       "id": "caption",
-      "label": "Table caption",
-      "info": "Appears above the table. Useful for a brief description or date of last update."
+      "label": "t:sections.document_list.settings.caption",
+      "info": "t:sections.document_list.settings.caption_info"
     },
     {
       "type": "richtext",
       "id": "empty_state",
-      "label": "Empty state message",
+      "label": "t:sections.document_list.settings.empty_state",
       "default": "<p>Batch documents will be published here as they are issued.</p>"
     }
   ],
   "presets": [
     {
-      "name": "Document list"
+      "name": "t:sections.document_list.name"
     }
   ],
   "enabled_on": {

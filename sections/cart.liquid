@@ -20,6 +20,7 @@
     </div>
     
     <div aria-live="polite" aria-atomic="true" class="visually-hidden" data-cart-status></div>
+    <div aria-live="polite" aria-atomic="false" class="visually-hidden" data-cart-total-announce data-template="{{ 'cart.total_announce' | t: total: '__TOTAL__' | escape }}"></div>
 
     {% if cart.item_count > 0 %}
       <form action="{{ routes.cart_url }}" method="post" class="cart-form">
@@ -68,19 +69,50 @@
                   {% unless item.product.has_only_default_variant %}
                     <p class="cart-item__variant">{{ item.variant.title }}</p>
                   {% endunless %}
-                  
-                  {% if item.properties.size > 0 %}
-                    <div class="cart-item__properties">
-                      {% for property in item.properties %}
-                        {% unless property.last == blank %}
-                          <p class="cart-item__property">
-                            <span>{{ property.first | escape }}:</span> {{ property.last | escape }}
-                          </p>
-                        {% endunless %}
-                      {% endfor %}
-                    </div>
-                  {% endif %}
-                  
+
+                  {%- comment -%} Line item properties — skip blank and private (_) keys {%- endcomment -%}
+                  {%- assign has_visible_props = false -%}
+                  {%- for property in item.properties -%}
+                    {%- unless property.last == blank -%}
+                      {%- unless property.first == blank -%}
+                        {%- if property.first == blank or property.first[0] == '_' -%}
+                        {%- else -%}
+                          {%- assign has_visible_props = true -%}
+                        {%- endif -%}
+                      {%- endunless -%}
+                    {%- endunless -%}
+                  {%- endfor -%}
+                  {%- if has_visible_props -%}
+                    <dl class="cart-item__props">
+                      {%- for property in item.properties -%}
+                        {%- unless property.last == blank -%}
+                          {%- unless property.first[0] == '_' -%}
+                            <div class="cart-item__prop-row">
+                              <dt class="cart-item__prop-key">{{ property.first | escape }}:</dt>
+                              <dd class="cart-item__prop-val">{{ property.last | escape }}</dd>
+                            </div>
+                          {%- endunless -%}
+                        {%- endunless -%}
+                      {%- endfor -%}
+                    </dl>
+                    <a class="cart-item__edit-props" href="{{ item.url }}">{{ 'cart.edit_properties' | t }}</a>
+                  {%- endif -%}
+
+                  {%- comment -%} Discovery set credit note {%- endcomment -%}
+                  {%- if item.product.handle == 'discovery-set' -%}
+                    {%- assign cart_credit_amount = settings.set_credit | default: 0 -%}
+                    {%- assign cart_credit_days = settings.set_credit_days | default: 60 -%}
+                    {%- if cart_credit_amount > 0 -%}
+                      <div class="cart-item__credit-note">
+                        {%- render 'set-credit-note',
+                          credit_amount: cart_credit_amount,
+                          days: cart_credit_days,
+                          style: 'box'
+                        -%}
+                      </div>
+                    {%- endif -%}
+                  {%- endif -%}
+
                   <p class="cart-item__price" data-item-price="{{ item.final_price }}">
                     <span data-price-display>{{ item.final_price | money }}</span>
                     {% if item.original_price > item.final_price %}
@@ -147,6 +179,41 @@
             {% endfor %}
           </div>
           
+          {%- comment -%} Free shipping progress bar {%- endcomment -%}
+          {%- assign free_ship_threshold = settings.free_shipping_threshold | default: 0 -%}
+          {%- if free_ship_threshold > 0 -%}
+            {%- assign threshold_cents = free_ship_threshold | times: 100 -%}
+            {%- assign cart_total_cents = cart.total_price -%}
+            {%- if cart_total_cents >= threshold_cents -%}
+              {%- assign shipping_reached = true -%}
+              {%- assign progress_pct = 100 -%}
+            {%- else -%}
+              {%- assign shipping_reached = false -%}
+              {%- assign remaining_cents = threshold_cents | minus: cart_total_cents -%}
+              {%- assign progress_pct = cart_total_cents | times: 100 | divided_by: threshold_cents -%}
+            {%- endif -%}
+            <div
+              class="cart-shipping-progress"
+              data-free-shipping-bar
+              data-threshold="{{ threshold_cents }}"
+            >
+              {%- if shipping_reached -%}
+                <p class="cart-shipping-progress__text" role="status">{{ 'cart.free_shipping.reached' | t }}</p>
+              {%- else -%}
+                <p class="cart-shipping-progress__text" role="status" data-shipping-remaining>
+                  {{ 'cart.free_shipping.remaining' | t: amount: remaining_cents | money }}
+                </p>
+              {%- endif -%}
+              <progress
+                class="cart-shipping-progress__bar"
+                value="{{ progress_pct }}"
+                max="100"
+                aria-label="{{ 'cart.free_shipping.progress_label' | t | escape }}"
+                data-shipping-progress
+              ></progress>
+            </div>
+          {%- endif -%}
+
           {%- comment -%} Cart Summary {%- endcomment -%}
           <div class="cart-summary" data-cart-summary>
             <h2 class="cart-summary__title">{{ 'cart.order_summary' | t | default: 'Order summary' }}</h2>
@@ -195,7 +262,33 @@
             <button type="submit" name="checkout" class="cart-summary__checkout btn btn-primary" data-checkout-button>
               {{ 'cart.checkout' | t | default: 'Proceed to checkout' }}
             </button>
-            
+
+            {%- comment -%} Trust lines {%- endcomment -%}
+            <ul class="cart-trust" role="list">
+              <li class="cart-trust__item">
+                <svg class="cart-trust__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                {{ 'cart.trust.secure' | t }}
+              </li>
+              <li class="cart-trust__item">
+                <svg class="cart-trust__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                {{ 'cart.trust.ships_from' | t }}
+              </li>
+              <li class="cart-trust__item">
+                <svg class="cart-trust__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="1 4 1 10 7 10"></polyline>
+                  <path d="M3.51 15a9 9 0 1 0 .49-3.9L1 10"></path>
+                </svg>
+                {{ 'cart.trust.returns' | t }}
+              </li>
+            </ul>
+
             {%- comment -%} Continue Shopping {%- endcomment -%}
             <a href="{{ routes.all_products_collection_url }}" class="cart-summary__continue">
               {{ 'cart.continue_shopping' | t | default: 'Continue shopping' }}
@@ -373,6 +466,44 @@
       const totalEl = document.querySelector('[data-cart-total]');
       if (totalEl) {
         totalEl.textContent = formatMoney(cart.total_price);
+      }
+
+      // Announce new total to screen readers
+      const announceEl = document.querySelector('[data-cart-total-announce]');
+      if (announceEl) {
+        const formatted = formatMoney(cart.total_price);
+        // Brief timeout ensures the live region change is picked up after DOM settles
+        setTimeout(function() {
+          const tpl = announceEl.getAttribute('data-template');
+          announceEl.textContent = tpl ? tpl.replace('__TOTAL__', formatted) : formatted;
+        }, 100);
+      }
+
+      // Update free-shipping progress bar
+      const bar = document.querySelector('[data-free-shipping-bar]');
+      if (bar) {
+        const threshold = parseInt(bar.dataset.threshold, 10);
+        if (threshold > 0) {
+          const total = cart.total_price;
+          const pct = Math.min(100, Math.round((total / threshold) * 100));
+          const progressEl = bar.querySelector('[data-shipping-progress]');
+          const remainingEl = bar.querySelector('[data-shipping-remaining]');
+          if (progressEl) progressEl.value = pct;
+          if (total >= threshold) {
+            bar.innerHTML = progressEl
+              ? bar.innerHTML.replace(/<p[^>]*data-shipping-remaining[^>]*>.*?<\/p>/s, '')
+              : bar.innerHTML;
+          } else if (remainingEl) {
+            const remaining = formatMoney(threshold - total);
+            // Update text content only (the template string is the initial server text)
+            const txt = remainingEl.textContent;
+            const match = txt.match(/away from/);
+            if (match) {
+              // Replace the amount before "away from"
+              remainingEl.textContent = remaining + ' away from free shipping.';
+            }
+          }
+        }
       }
       
       // Update cart badge in header
@@ -764,12 +895,55 @@
     color: var(--color-harvest-gold);
   }
   
-  .cart-item__variant,
-  .cart-item__property {
+  .cart-item__variant {
     font-family: var(--font-body);
     font-size: 14px;
     color: var(--color-dim-grey);
     margin: 0;
+  }
+
+  .cart-item__props {
+    margin: var(--spacing-xs) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cart-item__prop-row {
+    display: flex;
+    gap: 4px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-dim-grey);
+    margin: 0;
+  }
+
+  .cart-item__prop-key {
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .cart-item__prop-val {
+    margin: 0;
+  }
+
+  .cart-item__edit-props {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-dim-grey);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    display: inline-block;
+    margin-top: 2px;
+  }
+
+  .cart-item__edit-props:hover {
+    color: var(--color-oxford-blue);
+  }
+
+  .cart-item__credit-note {
+    margin-top: var(--spacing-sm);
   }
   
   .cart-item__price {
@@ -963,7 +1137,76 @@
   .cart-summary__continue:hover {
     color: var(--color-oxford-blue);
   }
-  
+
+  /* Free shipping progress bar */
+  .cart-shipping-progress {
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--color-sea-salt);
+    border: 1px solid #E5E5E5;
+  }
+
+  .cart-shipping-progress__text {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-oxford-blue);
+    margin: 0 0 var(--spacing-xs);
+  }
+
+  .cart-shipping-progress__bar {
+    display: block;
+    width: 100%;
+    height: 4px;
+    appearance: none;
+    border: none;
+    background-color: #E5E5E5;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .cart-shipping-progress__bar::-webkit-progress-bar {
+    background-color: #E5E5E5;
+    border-radius: 2px;
+  }
+
+  .cart-shipping-progress__bar::-webkit-progress-value {
+    background-color: var(--color-harvest-gold);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .cart-shipping-progress__bar::-moz-progress-bar {
+    background-color: var(--color-harvest-gold);
+    border-radius: 2px;
+  }
+
+  /* Trust lines */
+  .cart-trust {
+    list-style: none;
+    margin: var(--spacing-md) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    border-top: 1px solid #E5E5E5;
+    padding-top: var(--spacing-md);
+  }
+
+  .cart-trust__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-dim-grey);
+    margin: 0;
+  }
+
+  .cart-trust__icon {
+    flex-shrink: 0;
+    color: var(--color-harvest-gold);
+  }
+
   /* Empty Cart */
   .cart-empty {
     text-align: center;

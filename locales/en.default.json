@@ -157,7 +157,19 @@
     "shop_all": "Shop all products",
     "error_update": "Error updating cart. Please try again.",
     "only_left": "Only {{ count }} left in stock",
-    "out_of_stock": "Out of stock"
+    "out_of_stock": "Out of stock",
+    "edit_properties": "Edit",
+    "total_announce": "Cart total updated: {{ total }}",
+    "free_shipping": {
+      "reached": "You have unlocked free shipping.",
+      "remaining": "You are {{ amount }} away from free shipping.",
+      "progress_label": "Free shipping progress"
+    },
+    "trust": {
+      "secure": "Secure payment",
+      "ships_from": "Ships from Bengaluru",
+      "returns": "Unopened bottles returnable within 7 days"
+    }
   },
   "collection": {
     "title": "Collection",

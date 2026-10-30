@@ -1,0 +1,115 @@
+{
+  "sections": {
+    "hero": {
+      "type": "editorial-hero",
+      "settings": {
+        "heading": "A gift he will [gold]actually[/gold] wear",
+        "heading_font_size": 56,
+        "subheading": "Gifting",
+        "subheading_font_size": 13,
+        "text": "<p>A perfume he reaches for every morning — not one that stays on the shelf.</p>",
+        "description_font_size": 16,
+        "overlay_opacity": 35,
+        "text_alignment": "center",
+        "button_text": "Shop all perfumes",
+        "button_url": "/collections/all",
+        "button_text_2": "Try before you commit",
+        "button_url_2": "/products/discovery-set"
+      }
+    },
+    "finder": {
+      "type": "multicolumn-categories",
+      "blocks": {
+        "card_discovery": {
+          "type": "category",
+          "settings": {
+            "title": "Not sure what he likes",
+            "description": "Let him try every scent and choose his own. The discovery set includes a credit toward a full bottle.",
+            "overlay_text": "Shop the set",
+            "link": "/products/discovery-set"
+          }
+        },
+        "card_azure": {
+          "type": "category",
+          "settings": {
+            "title": "He wears fresh scents",
+            "description": "Clean, airy and easy to wear every day. A scent that never overpowers.",
+            "overlay_text": "View Azure",
+            "link": "/products/azure"
+          }
+        },
+        "card_ember": {
+          "type": "category",
+          "settings": {
+            "title": "He wears warm scents",
+            "description": "Deeper and richer, built for evenings and occasions that leave an impression.",
+            "overlay_text": "View Ember",
+            "link": "/products/ember"
+          }
+        }
+      },
+      "block_order": [
+        "card_discovery",
+        "card_azure",
+        "card_ember"
+      ],
+      "settings": {
+        "heading": "Find the right scent for him",
+        "columns": "3"
+      }
+    },
+    "gift_options": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "right",
+        "background_color": "sea-salt",
+        "subheading": "How it arrives",
+        "heading": "Every detail taken care of.",
+        "text": "<p>We gift-wrap each order at no extra cost. Add a printed message at checkout — a real note, not a slip of paper.</p><p>The invoice in the box shows no prices, so the gift lands exactly as it should.</p>",
+        "button_text": "Shop gifts",
+        "button_url": "/collections/all",
+        "button_style": "secondary"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q_what_to_buy": {
+          "type": "question",
+          "settings": {
+            "question": "I don't know which scent he would prefer — what should I do?",
+            "answer": "<p>The Discovery Set is made for exactly this. It contains a sample of every perfume in the collection so he can wear each one before choosing his favourite. It also includes a credit toward his first full bottle, so nothing goes to waste.</p>"
+          }
+        },
+        "q_gift_wrap": {
+          "type": "question",
+          "settings": {
+            "question": "Do you gift-wrap orders?",
+            "answer": "<p>Yes — every order is gift-wrapped at no extra cost. You can add a personal message at checkout and it will be printed on a card included in the box. The invoice shows no prices.</p>"
+          }
+        },
+        "q_return_gift": {
+          "type": "question",
+          "settings": {
+            "question": "What if he already has it, or it is not the right fit?",
+            "answer": "<p>If the bottle arrives unopened, please get in touch and we will sort it out. Opened perfume cannot be returned for hygiene reasons — which is why we always suggest the Discovery Set for anyone who hasn't chosen a scent yet.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q_what_to_buy",
+        "q_gift_wrap",
+        "q_return_gift"
+      ],
+      "settings": {
+        "heading": "Gifting questions"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "finder",
+    "gift_options",
+    "faq"
+  ]
+}
