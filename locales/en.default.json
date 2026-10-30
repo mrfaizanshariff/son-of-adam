@@ -36,9 +36,11 @@
     "quick_add": "Add {{ title }} to bag",
     "view": "View",
     "view_details": "View {{ title }}",
+    "view_all": "View all",
     "sold_out": "Sold out",
     "badge": {
       "new": "New",
+      "limited": "Limited",
       "sale": "Sale"
     },
     "price": {

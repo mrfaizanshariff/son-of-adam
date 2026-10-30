@@ -7,6 +7,7 @@
   @param {boolean} [show_quick_add] - Show "Add to Bag" on hover
   @param {boolean} [show_family] - Show scent family above title
   @param {boolean} [show_notes] - Show first two top notes below price
+  @param {boolean} [tag_badges_only] - Replace automatic new/sale/sold-out badges with a badge only for the tags "badge:new" or "badge:limited"
 
   @example
   {% render 'product-card', product: product, show_family: true, show_notes: true %}
@@ -67,7 +68,13 @@
           </div>
         {% endif %}
         
-        {% if product.available == false %}
+        {% if tag_badges_only %}
+          {% if product.tags contains 'badge:new' %}
+            <span class="product-card__badge badge badge--new">{{ 'products.badge.new' | t }}</span>
+          {% elsif product.tags contains 'badge:limited' %}
+            <span class="product-card__badge badge">{{ 'products.badge.limited' | t }}</span>
+          {% endif %}
+        {% elsif product.available == false %}
           <span class="product-card__badge badge badge--sold-out">{{ 'products.sold_out' | t | default: 'Sold out' }}</span>
         {% elsif show_badge and is_new %}
           <span class="product-card__badge badge badge--new">{{ 'products.badge.new' | t | default: 'New' }}</span>
