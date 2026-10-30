@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "product": {
@@ -7,21 +16,24 @@
           "type": "trust_line",
           "settings": {
             "icon": "shield",
-            "text": "Secure payment"
+            "text": "Secure payment",
+            "link": ""
           }
         },
         "trust_line_2": {
           "type": "trust_line",
           "settings": {
             "icon": "truck",
-            "text": "Ships from Bengaluru"
+            "text": "Ships from Bengaluru",
+            "link": ""
           }
         },
         "trust_line_3": {
           "type": "trust_line",
           "settings": {
             "icon": "return",
-            "text": "Sealed bottles can be returned"
+            "text": "Sealed bottles can be returned",
+            "link": ""
           }
         }
       },
@@ -36,6 +48,7 @@
         "show_gift_options": true,
         "set_credit": 500,
         "set_credit_days": 60,
+        "hide_try_first": true,
         "how_to_wear": "<p>Apply on pulse points: wrists, inner elbows, and neck. Allow the fragrance to settle on your skin without rubbing.</p>",
         "shipping_returns": "<p>Complimentary shipping across India. Unopened, sealed bottles may be returned within 7 days of delivery.</p>",
         "show_brand_section": true,
