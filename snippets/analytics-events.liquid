@@ -1,0 +1,77 @@
+{% doc %}
+  SOA Analytics Events
+  Pushes custom events to window.dataLayer without loading any third-party script.
+  Does not collect personal data (no emails, message text, or PII).
+  Does not duplicate events Shopify's sales channels already send
+  (view_item, add_to_cart, begin_checkout, purchase).
+
+  Render this snippet once, just before </body> in layout/theme.liquid.
+
+  Events pushed:
+    scent_finder_complete  { handle }          – fired by <scent-finder> on the finder page
+    discovery_set_click    {}                  – click on a discovery-set link on non-product pages
+    gift_option_selected   { checked }         – gift-wrap checkbox change on product page
+    restock_signup         { handle }          – restock notification form submit
+    pincode_check          { serviceable }     – custom soa:pincode_check event (future feature)
+{% enddoc %}
+
+<script>
+(function () {
+  'use strict';
+
+  // Initialise dataLayer once; GTM or other tag managers may have already done this.
+  window.dataLayer = window.dataLayer || [];
+
+  function push(event, params) {
+    window.dataLayer.push(Object.assign({ event: event }, params || {}));
+  }
+
+  // ── 1. Scent finder complete ──────────────────────────────────────────────
+  // The <scent-finder> custom element dispatches this on document when the
+  // quiz resolves to a winning product handle.
+  document.addEventListener('soa:scent_finder_complete', function (e) {
+    var handle = e.detail && e.detail.handle ? String(e.detail.handle) : '';
+    if (!handle) return;
+    push('scent_finder_complete', { handle: handle });
+  });
+
+  // ── 2. Discovery-set link clicks (non-product pages only) ────────────────
+  // Guard is rendered by Liquid so the listener is never attached on product pages,
+  // avoiding a duplicate with Shopify's native add_to_cart / begin_checkout events.
+  {% unless request.page_type == 'product' %}
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    if (link.href.indexOf('/products/discovery-set') === -1) return;
+    push('discovery_set_click');
+  });
+  {% endunless %}
+
+  // ── 3. Gift-wrap checkbox change ─────────────────────────────────────────
+  // Only relevant on the product page; the checkbox carries [data-gift-wrap-checkbox].
+  document.addEventListener('change', function (e) {
+    var checkbox = e.target.closest('[data-gift-wrap-checkbox]');
+    if (!checkbox) return;
+    push('gift_option_selected', { checked: checkbox.checked });
+  });
+
+  // ── 4. Restock notification form submit ───────────────────────────────────
+  // The handle is stored on [data-restock-wrapper][data-product-handle].
+  // No email or personal data is included in the event.
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form || form.id !== 'restock-form') return;
+    var wrapper = document.querySelector('[data-restock-wrapper]');
+    var handle = wrapper ? String(wrapper.dataset.productHandle || '') : '';
+    push('restock_signup', { handle: handle });
+  });
+
+  // ── 5. Pincode / serviceability check ────────────────────────────────────
+  // Listens for a future soa:pincode_check event dispatched by a pincode
+  // checker component with detail { serviceable: true|false }.
+  document.addEventListener('soa:pincode_check', function (e) {
+    if (!e.detail || typeof e.detail.serviceable === 'undefined') return;
+    push('pincode_check', { serviceable: Boolean(e.detail.serviceable) });
+  });
+})();
+</script>

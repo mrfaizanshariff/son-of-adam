@@ -271,7 +271,7 @@
         {% endform %}
 
         {%- comment -%} Sold-out Restock Notification Form {%- endcomment -%}
-        <div class="product-restock-wrapper" data-restock-wrapper {% if current_variant.available %}style="display: none;"{% endif %}>
+        <div class="product-restock-wrapper" data-restock-wrapper data-product-handle="{{ product.handle | escape }}" {% if current_variant.available %}style="display: none;"{% endif %}>
           {% form 'customer', id: 'restock-form', class: 'product-restock-form' %}
             <input type="hidden" name="contact[tags]" value="restock-{{ product.handle }}">
             

@@ -199,6 +199,35 @@
     ]
   },
   {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "These URLs are used for Organisation structured data on the home page. They do not replace the footer social links."
+      },
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "url",
+        "id": "social_twitter",
+        "label": "Twitter / X URL"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "YouTube URL"
+      }
+    ]
+  },
+  {
     "name": "Cart & Promotions",
     "settings": [
       {

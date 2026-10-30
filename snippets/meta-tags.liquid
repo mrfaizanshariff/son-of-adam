@@ -85,12 +85,27 @@
   content="{{ og_description | escape }}"
 >
 
-<title>
-  {{ page_title }}
-  {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' | escape }}"{% endif -%}
-  {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-  {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
-</title>
+{%- comment -%}
+  Product pages get a bespoke pattern: "Title Eau de Parfum for Men | Shop name"
+  truncated so the full string stays under 60 characters.
+  All other pages use the standard Shopify page_title + shop name suffix.
+{%- endcomment -%}
+{%- if request.page_type == 'product' -%}
+  {%- assign product_title_suffix = ' Eau de Parfum for Men | ' | append: shop.name -%}
+  {%- assign max_title_chars = 60 -%}
+  {%- assign max_product_name_chars = max_title_chars | minus: product_title_suffix.size -%}
+  {%- if max_product_name_chars < 10 -%}{%- assign max_product_name_chars = 10 -%}{%- endif -%}
+  {%- assign truncated_product_title = product.title | truncate: max_product_name_chars, '' -%}
+  {%- assign final_title = truncated_product_title | append: product_title_suffix -%}
+  <title>{{ final_title }}</title>
+{%- else -%}
+  <title>
+    {{ page_title }}
+    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' | escape }}"{% endif -%}
+    {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  </title>
+{%- endif -%}
 
 <link
   rel="canonical"
