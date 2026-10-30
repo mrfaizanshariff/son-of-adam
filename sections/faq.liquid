@@ -1,0 +1,118 @@
+<div class="faq" id="faq">
+  {%- if section.settings.heading != blank -%}
+    <div class="faq__header">
+      <h1 class="faq__page-title">{{ section.settings.heading | escape }}</h1>
+    </div>
+  {%- endif -%}
+
+  <div class="faq__body">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'group' -%}
+        <div class="faq__group-heading" {{ block.shopify_attributes }}>
+          {%- if block.settings.heading != blank -%}
+            <h2 class="faq__group-title">{{ block.settings.heading | escape }}</h2>
+          {%- endif -%}
+        </div>
+      {%- elsif block.type == 'question' -%}
+        {%- render 'product-accordion',
+          title: block.settings.question,
+          content: block.settings.answer
+        -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  {%- assign question_blocks = section.blocks | where: 'type', 'question' -%}
+  {%- render 'faq-schema', items: question_blocks -%}
+</div>
+
+{% stylesheet %}
+  .faq {
+    max-width: var(--content-width, 760px);
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .faq__header {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+  }
+
+  .faq__page-title {
+    font-family: var(--font-header);
+    font-size: var(--font-size-h1);
+    color: var(--color-oxford-blue);
+    margin: 0;
+  }
+
+  .faq__group-heading {
+    margin-top: var(--spacing-xl);
+  }
+
+  .faq__group-heading:first-child {
+    margin-top: 0;
+  }
+
+  .faq__group-title {
+    font-family: var(--font-header);
+    font-size: var(--font-size-h2);
+    color: var(--color-oxford-blue);
+    margin: 0 0 var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-oxford-blue);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.faq.name",
+  "tag": "section",
+  "blocks": [
+    {
+      "type": "group",
+      "name": "t:sections.faq.blocks.group.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:labels.heading",
+          "default": "Group heading"
+        }
+      ]
+    },
+    {
+      "type": "question",
+      "name": "t:sections.faq.blocks.question.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "t:sections.faq.blocks.question.settings.question",
+          "placeholder": "e.g. How long does the scent last?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "t:sections.faq.blocks.question.settings.answer"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Frequently asked questions"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.faq.name"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["page"]
+  }
+}
+{% endschema %}

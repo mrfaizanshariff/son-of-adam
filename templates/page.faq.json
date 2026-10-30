@@ -1,0 +1,186 @@
+{
+  "sections": {
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "group_scent": {
+          "type": "group",
+          "settings": {
+            "heading": "Scent and wear"
+          }
+        },
+        "q_wear_time": {
+          "type": "question",
+          "settings": {
+            "question": "How long does the scent last?",
+            "answer": "<p>Our perfumes are formulated to wear for 6 to 10 hours on skin. Longevity varies with body chemistry, skin type, and application — dry skin tends to absorb fragrance faster, so applying to moisturised skin or pulse points helps. Spraying on clothing generally extends projection.</p>"
+          }
+        },
+        "q_notes": {
+          "type": "question",
+          "settings": {
+            "question": "What are the notes listed on each perfume?",
+            "answer": "<p>The notes we list are <em>accords</em> — blended aromatic impressions rather than single raw materials. They describe what you will smell at each stage of wear (top, heart, base), not a list of individual ingredients. This is standard practice in fine fragrance.</p>"
+          }
+        },
+        "q_batch_vary": {
+          "type": "question",
+          "settings": {
+            "question": "I ordered before — will this bottle smell exactly the same?",
+            "answer": "<p>We aim for consistency across every batch, and the character and profile of each scent remains the same. However, natural raw materials can vary slightly by harvest and origin, so there may be subtle differences between batches. These are normal in craft perfumery and do not indicate a fault.</p>"
+          }
+        },
+        "q_concentration": {
+          "type": "question",
+          "settings": {
+            "question": "What concentration are your perfumes?",
+            "answer": "<p>[CONFIRM] Please ask the founder to confirm the concentration (e.g. Eau de Parfum, Parfum, Extrait) and the typical fragrance oil percentage for each product so we can answer accurately here.</p>"
+          }
+        },
+        "q_vegan": {
+          "type": "question",
+          "settings": {
+            "question": "Are your perfumes vegan and cruelty-free?",
+            "answer": "<p>[CONFIRM] Please ask the founder to confirm vegan and cruelty-free status, any relevant certifications, and whether any animal-derived raw materials (e.g. ambergris, musk) are used.</p>"
+          }
+        },
+        "group_orders": {
+          "type": "group",
+          "settings": {
+            "heading": "Orders and delivery"
+          }
+        },
+        "q_shipping_time": {
+          "type": "question",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>[CONFIRM] Please ask the founder to provide standard and express delivery timeframes, the couriers used, and whether free shipping thresholds apply. Update this answer before launch.</p>"
+          }
+        },
+        "q_order_track": {
+          "type": "question",
+          "settings": {
+            "question": "Can I track my order?",
+            "answer": "<p>[CONFIRM] Confirm whether tracking is included as standard or only with express shipping, and which carrier portal customers should use.</p>"
+          }
+        },
+        "q_order_change": {
+          "type": "question",
+          "settings": {
+            "question": "Can I change or cancel my order after placing it?",
+            "answer": "<p>[CONFIRM] Describe your order processing window (e.g. changes possible within 1 hour of placing). Update before launch.</p>"
+          }
+        },
+        "group_returns": {
+          "type": "group",
+          "settings": {
+            "heading": "Returns"
+          }
+        },
+        "q_return_opened": {
+          "type": "question",
+          "settings": {
+            "question": "Can I return a perfume I have already opened?",
+            "answer": "<p>For hygiene and safety reasons, we cannot accept returns on opened or used perfume. If your bottle arrived damaged or there is a genuine quality fault, please contact us within 14 days of delivery and we will make it right.</p>"
+          }
+        },
+        "q_return_unopened": {
+          "type": "question",
+          "settings": {
+            "question": "What if I change my mind about an unopened bottle?",
+            "answer": "<p>[CONFIRM] Confirm your returns policy for sealed, unopened product — timeframe, who pays return postage, and the refund process. Update before launch.</p>"
+          }
+        },
+        "q_return_wrong": {
+          "type": "question",
+          "settings": {
+            "question": "I received the wrong item — what do I do?",
+            "answer": "<p>We are sorry to hear that. Please get in touch with our customer care team with your order number and a photo of what you received. We will arrange a replacement or refund as quickly as possible.</p>"
+          }
+        },
+        "group_gifting": {
+          "type": "group",
+          "settings": {
+            "heading": "Gifting"
+          }
+        },
+        "q_gift_wrap": {
+          "type": "question",
+          "settings": {
+            "question": "Do you offer gift wrapping?",
+            "answer": "<p>[CONFIRM] Describe gift wrap options, whether there is an additional charge, and how to add it at checkout.</p>"
+          }
+        },
+        "q_gift_discovery": {
+          "type": "question",
+          "settings": {
+            "question": "I want to buy a gift but I am not sure which scent they would like — what do you suggest?",
+            "answer": "<p>Our Discovery Set is the ideal gift for someone new to Son of Adam. It lets the recipient try each fragrance before committing to a full bottle, and includes a credit towards their first full-size purchase. It removes all the guesswork.</p>"
+          }
+        },
+        "q_gift_note": {
+          "type": "question",
+          "settings": {
+            "question": "Can I include a personal message with my order?",
+            "answer": "<p>[CONFIRM] Confirm whether a gift message can be added at checkout, and whether it appears on a physical card, printed on the packing slip, or both.</p>"
+          }
+        },
+        "group_store": {
+          "type": "group",
+          "settings": {
+            "heading": "Store"
+          }
+        },
+        "q_try_instore": {
+          "type": "question",
+          "settings": {
+            "question": "Where can I smell your perfumes before buying?",
+            "answer": "<p>[CONFIRM] List any stockists, pop-ups, or the physical store address where customers can try the range in person. If no retail presence exists yet, remove this question or update it with the Discovery Set recommendation.</p>"
+          }
+        },
+        "q_discovery_set": {
+          "type": "question",
+          "settings": {
+            "question": "What is the Discovery Set?",
+            "answer": "<p>The Discovery Set contains a sample of every perfume in the current collection. It is the best way to find your scent without committing to a full bottle. Once you know your favourite, the credit included with the set goes towards your full-size purchase.</p>"
+          }
+        },
+        "q_wholesale": {
+          "type": "question",
+          "settings": {
+            "question": "Do you offer wholesale or trade accounts?",
+            "answer": "<p>[CONFIRM] Confirm whether trade or wholesale enquiries are accepted, and provide a contact email or link to a wholesale application form.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "group_scent",
+        "q_wear_time",
+        "q_notes",
+        "q_batch_vary",
+        "q_concentration",
+        "q_vegan",
+        "group_orders",
+        "q_shipping_time",
+        "q_order_track",
+        "q_order_change",
+        "group_returns",
+        "q_return_opened",
+        "q_return_unopened",
+        "q_return_wrong",
+        "group_gifting",
+        "q_gift_wrap",
+        "q_gift_discovery",
+        "q_gift_note",
+        "group_store",
+        "q_try_instore",
+        "q_discovery_set",
+        "q_wholesale"
+      ],
+      "settings": {
+        "heading": "Frequently asked questions"
+      }
+    }
+  },
+  "order": ["faq"]
+}

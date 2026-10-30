@@ -42,6 +42,7 @@
     "foreground": "Foreground",
     "grid_gap": "Grid spacing",
     "grid_item_width": "Grid item width",
+    "heading": "Heading",
     "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
     "menu": "Menu",
@@ -55,6 +56,23 @@
     "logo_image": "Logo image",
     "logo_width": "Logo width",
     "text": "Text"
+  },
+  "sections": {
+    "faq": {
+      "name": "FAQ",
+      "blocks": {
+        "group": {
+          "name": "Group heading"
+        },
+        "question": {
+          "name": "Question",
+          "settings": {
+            "question": "Question",
+            "answer": "Answer"
+          }
+        }
+      }
+    }
   },
   "options": {
     "alignment": {

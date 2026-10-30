@@ -212,5 +212,40 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "sections": {
+    "document_list": {
+      "col_product": "Product",
+      "col_batch": "Batch",
+      "col_type": "Document type",
+      "col_date": "Date",
+      "col_document": "Document",
+      "pdf_suffix": "(PDF)",
+      "not_available": "—"
+    },
+    "faq": {
+      "name": "FAQ",
+      "blocks": {
+        "group": {
+          "name": "Group heading"
+        },
+        "question": {
+          "name": "Question",
+          "settings": {
+            "question": "Question",
+            "answer": "Answer"
+          }
+        }
+      }
+    }
+  },
+  "labels": {
+    "heading": "Heading",
+    "alignment": "Alignment",
+    "text": "Text",
+    "text_style": "Text style",
+    "layout_direction": "Layout direction",
+    "padding": "Padding",
+    "background": "Background image"
   }
 }

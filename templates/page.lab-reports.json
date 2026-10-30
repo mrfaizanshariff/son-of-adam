@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "document_list": {
+      "type": "document-list",
+      "blocks": {},
+      "block_order": [],
+      "settings": {
+        "heading": "Lab reports & certificates",
+        "caption": "",
+        "empty_state": "<p>Batch documents will be published here as they are issued.</p>"
+      }
+    }
+  },
+  "order": ["document_list"]
+}
