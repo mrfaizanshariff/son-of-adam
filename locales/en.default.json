@@ -80,6 +80,18 @@
       "faq_note": "Have questions about our scents or orders?",
       "faq_link_text": "View our Frequently Asked Questions"
     },
+    "proof": {
+      "concentration": "Concentration",
+      "wear_time": "Wear time",
+      "occasions": "Best for",
+      "profile_tags": "Profile",
+      "batch_number": "Batch",
+      "documents": "Documents",
+      "ifra_certificate": "IFRA certificate",
+      "gcms_report": "GC-MS report",
+      "patch_test_report": "Patch test report",
+      "pdf": "(PDF)"
+    },
     "reviews": {
       "title": "Customer reviews",
       "count": {

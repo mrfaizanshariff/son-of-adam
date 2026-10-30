@@ -51,9 +51,19 @@
         "show_review_form": false,
         "allow_review_submission": false
       }
+    },
+    "product_proof": {
+      "type": "product-proof",
+      "settings": {
+        "heading": "What is in the bottle",
+        "expectations": "<p>Expect 6 to 10 hours of wear; it varies with skin, weather and how you apply it.</p>",
+        "background_color": "white",
+        "padding": 64
+      }
     }
   },
   "order": [
-    "product"
+    "product",
+    "product_proof"
   ]
 }

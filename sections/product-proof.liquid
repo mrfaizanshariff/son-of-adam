@@ -1,0 +1,324 @@
+{% comment %}
+  SON OF ADAM - Product Proof Section
+  Spec list, scent pyramid, certificates and wear expectations for the current product.
+  Renders nothing when the product has no relevant metafields.
+{% endcomment %}
+
+{%- liquid
+  assign custom = product.metafields.custom
+
+  capture pyramid_html
+    render 'scent-pyramid', product: product
+  endcapture
+  assign has_pyramid = false
+  if pyramid_html contains '<dl'
+    assign has_pyramid = true
+  endif
+
+  assign spec_keys = 'concentration,wear_time,occasions,profile_tags,batch_number' | split: ','
+  capture spec_html
+    for key in spec_keys
+      assign spec_value = custom[key].value | join: ', '
+      if spec_value != blank
+        case key
+          when 'concentration'
+            assign spec_label = 'products.proof.concentration' | t
+          when 'wear_time'
+            assign spec_label = 'products.proof.wear_time' | t
+          when 'occasions'
+            assign spec_label = 'products.proof.occasions' | t
+          when 'profile_tags'
+            assign spec_label = 'products.proof.profile_tags' | t
+          else
+            assign spec_label = 'products.proof.batch_number' | t
+        endcase
+        echo '<div class="product-proof__spec"><dt class="product-proof__spec-label">'
+        echo spec_label
+        echo '</dt><dd class="product-proof__spec-value">'
+        echo spec_value | escape
+        echo '</dd></div>'
+      endif
+    endfor
+  endcapture
+  assign has_specs = false
+  if spec_html != blank
+    assign has_specs = true
+  endif
+
+  assign accord_note = custom.accord_note.value
+
+  assign doc_keys = 'ifra_certificate,gcms_report,patch_test_report' | split: ','
+  capture docs_html
+    for key in doc_keys
+      assign doc_file = custom[key].value
+      assign doc_url = doc_file.url
+      if doc_url != blank
+        case key
+          when 'ifra_certificate'
+            assign doc_label = 'products.proof.ifra_certificate' | t
+          when 'gcms_report'
+            assign doc_label = 'products.proof.gcms_report' | t
+          else
+            assign doc_label = 'products.proof.patch_test_report' | t
+        endcase
+        echo '<li class="product-proof__document"><a class="product-proof__document-link" href="'
+        echo doc_url
+        echo '" target="_blank" rel="noopener">'
+        echo doc_label
+        echo '<span class="visually-hidden"> '
+        echo 'products.proof.pdf' | t
+        echo '</span></a></li>'
+      endif
+    endfor
+  endcapture
+
+  assign has_content = false
+  if has_pyramid or has_specs or accord_note != blank or docs_html != blank
+    assign has_content = true
+  endif
+
+  assign columns_modifier = ''
+  if has_pyramid and has_specs
+    assign columns_modifier = 'product-proof__columns--two'
+  endif
+-%}
+
+{%- if has_content -%}
+  <section
+    class="product-proof full-width bg-{{ section.settings.background_color }} product-proof--{{ section.settings.background_color }}"
+    style="--proof-padding: {{ section.settings.padding }}px"
+    {% if section.settings.heading != blank %}aria-labelledby="product-proof-heading-{{ section.id }}"{% endif %}
+  >
+    <div class="product-proof__container">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="product-proof__heading" id="product-proof-heading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+
+      {%- if has_pyramid or has_specs -%}
+        <div class="product-proof__columns {{ columns_modifier }}">
+          {%- if has_pyramid -%}
+            <div class="product-proof__pyramid">
+              {{ pyramid_html }}
+            </div>
+          {%- endif -%}
+
+          {%- if has_specs -%}
+            <dl class="product-proof__specs">
+              {{ spec_html }}
+            </dl>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if accord_note != blank -%}
+        <p class="product-proof__accord-note">{{ accord_note | escape | newline_to_br }}</p>
+      {%- endif -%}
+
+      {%- if docs_html != blank -%}
+        <ul class="product-proof__documents" aria-label="{{ 'products.proof.documents' | t | escape }}">
+          {{ docs_html }}
+        </ul>
+      {%- endif -%}
+
+      {%- if section.settings.expectations != blank -%}
+        <div class="product-proof__expectations">
+          {{ section.settings.expectations }}
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}
+
+{% stylesheet %}
+  .product-proof {
+    width: 100%;
+    padding-block: var(--proof-padding, 64px);
+    color: var(--color-foreground);
+  }
+
+  .product-proof__container {
+    max-width: var(--container-max-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .product-proof__heading {
+    margin: 0 0 var(--spacing-lg, 32px);
+  }
+
+  .product-proof__columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg, 32px);
+    margin-bottom: var(--spacing-lg, 32px);
+  }
+
+  .product-proof__specs {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+  }
+
+  .product-proof__spec {
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--spacing-sm, 16px);
+    border-bottom: 1px solid var(--color-harvest-gold);
+  }
+
+  .product-proof__spec:first-child {
+    padding-top: 0;
+  }
+
+  .product-proof__spec:last-child {
+    border-bottom: none;
+  }
+
+  .product-proof__spec-label {
+    font-family: var(--font-header);
+    font-size: var(--font-size-caption, 12px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-harvest-gold);
+    margin-bottom: var(--spacing-xs, 8px);
+  }
+
+  .product-proof__spec-value {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body, 16px);
+    line-height: var(--line-height-relaxed, 1.4);
+  }
+
+  .product-proof__accord-note {
+    margin: 0 0 var(--spacing-lg, 32px);
+    font-family: var(--font-body);
+    font-size: var(--font-size-small, 14px);
+    line-height: var(--line-height-loose, 1.6);
+    color: var(--color-dim-grey);
+  }
+
+  .product-proof__documents {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs, 8px) var(--spacing-md, 24px);
+    list-style: none;
+    margin: 0 0 var(--spacing-lg, 32px);
+    padding: var(--spacing-sm, 16px) 0 0;
+    border-top: 1px solid var(--color-harvest-gold);
+  }
+
+  .product-proof__document-link {
+    font-family: var(--font-body);
+    font-size: var(--font-size-small, 14px);
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .product-proof__expectations {
+    font-family: var(--font-body);
+    font-size: var(--font-size-small, 14px);
+    line-height: var(--line-height-loose, 1.6);
+  }
+
+  .product-proof__expectations p {
+    margin: 0 0 var(--spacing-xs, 8px);
+  }
+
+  .product-proof__expectations > :last-child {
+    margin-bottom: 0;
+  }
+
+  .product-proof__container > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* Dark background: lift text colours, including the shared scent pyramid snippet */
+  .product-proof--oxford-blue,
+  .product-proof--oxford-blue .product-proof__heading,
+  .product-proof--oxford-blue .scent-pyramid__notes,
+  .product-proof--oxford-blue .product-proof__accord-note {
+    color: var(--color-white);
+  }
+
+  @media (min-width: 1024px) {
+    .product-proof__columns--two {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-2xl, 64px);
+    }
+
+    .product-proof__spec {
+      flex-direction: row;
+      align-items: baseline;
+      gap: var(--spacing-md, 24px);
+    }
+
+    .product-proof__spec-label {
+      width: 120px;
+      flex-shrink: 0;
+      margin-bottom: 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product proof",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What is in the bottle"
+    },
+    {
+      "type": "richtext",
+      "id": "expectations",
+      "label": "Expectations note",
+      "default": "<p>Expect 6 to 10 hours of wear; it varies with skin, weather and how you apply it.</p>"
+    },
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "Background Color",
+      "options": [
+        {
+          "value": "sea-salt",
+          "label": "Sea Salt"
+        },
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "oxford-blue",
+          "label": "Oxford Blue"
+        }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product proof",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
