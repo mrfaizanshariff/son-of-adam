@@ -1,20 +1,23 @@
-{% comment %}
+{% doc %}
   Minimalist Product Card for SON OF ADAM Theme
-  
-  Parameters:
-  - product: Product object (required)
-  - show_badge: Show new/sale badge (default: true)
-  - image_ratio: Image aspect ratio - '3-4' or 'square' (default: '3-4')
-  - show_quick_add: Show "Add to Bag" on hover (default: true)
-  
-  Usage:
-  {% render 'product-card', product: product %}
-{% endcomment %}
+
+  @param {object} product - Product object (required)
+  @param {boolean} [show_badge] - Show new/sale badge
+  @param {string} [image_ratio] - Image aspect ratio - '3-4' or 'square'
+  @param {boolean} [show_quick_add] - Show "Add to Bag" on hover
+  @param {boolean} [show_family] - Show scent family above title
+  @param {boolean} [show_notes] - Show first two top notes below price
+
+  @example
+  {% render 'product-card', product: product, show_family: true, show_notes: true %}
+{% enddoc %}
 
 {% liquid
   assign show_badge = show_badge | default: true
   assign image_ratio = image_ratio | default: '3-4'
   assign show_quick_add = show_quick_add | default: true
+  assign show_family = show_family | default: false
+  assign show_notes = show_notes | default: false
   
   # Determine if product is new (created within last 30 days)
   assign thirty_days_ago = 'now' | date: '%s' | minus: 2592000
@@ -31,6 +34,7 @@
   endif
 
   assign card_price_formatted = product.price | money
+  assign card_min_price_formatted = product.price_min | money
   assign card_compare_price_formatted = product.compare_at_price | money
 %}
 
@@ -63,7 +67,9 @@
           </div>
         {% endif %}
         
-        {% if show_badge and is_new %}
+        {% if product.available == false %}
+          <span class="product-card__badge badge badge--sold-out">{{ 'products.sold_out' | t | default: 'Sold out' }}</span>
+        {% elsif show_badge and is_new %}
           <span class="product-card__badge badge badge--new">{{ 'products.badge.new' | t | default: 'New' }}</span>
         {% elsif show_badge and is_on_sale %}
           <span class="product-card__badge badge">{{ 'products.badge.sale' | t | default: 'Sale' }}</span>
@@ -71,9 +77,15 @@
         
         {% if show_quick_add %}
           <div class="product-card__actions">
-            <button type="button" class="product-card__add-button btn btn-primary btn-small" aria-label="{{ 'products.quick_add' | t: title: product.title | default: 'Add to Bag' }}" data-quick-add>
-              {{ 'products.add_to_cart' | t | default: 'Add to Bag' }}
-            </button>
+            {% if product.available %}
+              <button type="button" class="product-card__add-button btn btn-primary btn-small" aria-label="{{ 'products.quick_add' | t: title: product.title | default: 'Add to Bag' }}" data-quick-add>
+                {{ 'products.add_to_cart' | t | default: 'Add to Bag' }}
+              </button>
+            {% else %}
+              <button type="button" class="product-card__add-button btn btn-primary btn-small" disabled aria-disabled="true">
+                {{ 'products.sold_out' | t | default: 'Sold out' }}
+              </button>
+            {% endif %}
             <span class="product-card__view-button btn btn-secondary btn-small" aria-hidden="true">
               {{ 'products.view' | t | default: 'View' }}
             </span>
@@ -83,17 +95,41 @@
     </a>
     
     <div class="product-card__info">
+      {%- if show_family -%}
+        {%- assign scent_family = product.metafields.custom.scent_family.value | default: product.metafields.custom.scent_family -%}
+        {%- if scent_family != blank -%}
+          <p class="product-card__family">{{ scent_family | escape }}</p>
+        {%- endif -%}
+      {%- endif -%}
       <h3 id="ProductTitle-{{ product.id }}" class="product-card__title">
         <a href="{{ product.url }}" class="product-card__title-link">{{ product.title }}</a>
       </h3>
       <div class="product-card__price" aria-label="{% if is_on_sale %}{{ 'products.price.sale_price' | t: price: card_price_formatted, original: card_compare_price_formatted }}{% else %}{{ 'products.price.regular_price' | t: price: card_price_formatted }}{% endif %}">
-        {% if is_on_sale %}
+        {% if product.price_varies %}
+          <span class="product-card__price--regular">{{ 'products.price.from' | t: price: card_min_price_formatted }}</span>
+        {% elsif is_on_sale %}
           <span class="product-card__price--sale">{{ card_price_formatted }}</span>
           <s class="product-card__price--compare" aria-hidden="true">{{ card_compare_price_formatted }}</s>
         {% else %}
           <span class="product-card__price--regular">{{ card_price_formatted }}</span>
         {% endif %}
       </div>
+      {%- if show_notes -%}
+        {%- assign top_notes = product.metafields.custom.top_notes.value | default: product.metafields.custom.top_notes -%}
+        {%- if top_notes != blank -%}
+          {%- capture notes_display -%}
+            {%- if top_notes.first -%}
+              {{ top_notes[0] }}{% if top_notes.size > 1 %}, {{ top_notes[1] }}{% endif %}
+            {%- else -%}
+              {{ top_notes }}
+            {%- endif -%}
+          {%- endcapture -%}
+          {%- assign notes_display = notes_display | strip -%}
+          {%- if notes_display != blank -%}
+            <p class="product-card__notes">{{ notes_display }}</p>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
     </div>
   </div>
 </article>
@@ -238,6 +274,24 @@
     gap: 8px;
   }
   
+  .product-card__family {
+    font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-harvest-gold);
+    margin: 0;
+  }
+
+  .product-card__notes {
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: var(--line-height-normal, 1.2);
+    color: var(--color-dim-grey);
+    margin: 0;
+  }
+
   .product-card__price--regular,
   .product-card__price--sale {
     color: var(--color-harvest-gold);
@@ -247,6 +301,11 @@
     font-size: 16px;
     color: var(--color-dim-grey);
     text-decoration: line-through;
+  }
+
+  .badge--sold-out {
+    background-color: var(--color-dim-grey);
+    color: var(--color-white);
   }
   
   /* Mobile Adjustments */

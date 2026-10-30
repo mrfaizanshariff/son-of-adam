@@ -1,4 +1,7 @@
 {
+  "set_credit": {
+    "note": "Buy the discovery set and get {{ amount }} off your first full bottle within {{ days }} days."
+  },
   "accessibility": {
     "skip_to_content": "Skip to main content",
     "main_navigation": "Main navigation",
@@ -40,7 +43,8 @@
     },
     "price": {
       "regular_price": "Regular price: {{ price }}",
-      "sale_price": "Sale price: {{ price }}, Original price: {{ original }}"
+      "sale_price": "Sale price: {{ price }}, Original price: {{ original }}",
+      "from": "From {{ price }}"
     },
     "product": {
       "variant": "Variant",
@@ -52,7 +56,12 @@
       "out_of_stock": "Out of stock",
       "max_quantity": "Cannot add that amount. You have {{ cart_quantity }} in cart and only {{ available }} more available.",
       "the_ritual": "The ritual",
-      "you_may_also_like": "You may also like"
+      "you_may_also_like": "You may also like",
+      "notes": {
+        "top": "Top notes",
+        "heart": "Heart notes",
+        "base": "Base notes"
+      }
     },
     "reviews": {
       "title": "Customer reviews",

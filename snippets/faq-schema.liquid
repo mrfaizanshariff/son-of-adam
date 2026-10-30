@@ -1,0 +1,46 @@
+{% doc %}
+  Generates FAQPage JSON-LD structured data.
+
+  @param {object} [items] - Collection of FAQ items with question and answer properties
+
+  @example
+  {% render 'faq-schema', items: faq_items %}
+{% enddoc %}
+
+{%- liquid
+  assign faq_items = items
+  assign has_items = false
+  if faq_items != blank and faq_items.size > 0
+    assign has_items = true
+  endif
+-%}
+
+{%- if has_items -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {%- assign item_rendered = false -%}
+      {%- for item in faq_items -%}
+        {%- liquid
+          assign q = item.question | default: item.settings.question | default: item.title | default: item.settings.title | strip_html | strip
+          assign a = item.answer | default: item.settings.answer | default: item.content | default: item.settings.content | strip_html | strip
+        -%}
+        {%- if q != blank and a != blank -%}
+          {%- if item_rendered -%},{%- endif -%}
+          {
+            "@type": "Question",
+            "name": {{ q | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ a | json }}
+            }
+          }
+          {%- assign item_rendered = true -%}
+        {%- endif -%}
+      {%- endfor -%}
+    ]
+  }
+  </script>
+{%- endif -%}

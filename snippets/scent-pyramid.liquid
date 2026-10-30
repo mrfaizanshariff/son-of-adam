@@ -1,0 +1,118 @@
+{% doc %}
+  Renders the olfactory scent pyramid for a fragrance product.
+
+  @param {object} [product] - The product object
+
+  @example
+  {% render 'scent-pyramid', product: product %}
+{% enddoc %}
+
+{%- liquid
+  assign top_notes = product.metafields.custom.top_notes.value | default: product.metafields.custom.top_notes
+  assign heart_notes = product.metafields.custom.heart_notes.value | default: product.metafields.custom.heart_notes
+  assign base_notes = product.metafields.custom.base_notes.value | default: product.metafields.custom.base_notes
+
+  assign top_notes_str = ''
+  if top_notes != blank
+    if top_notes.first
+      assign top_notes_str = top_notes | join: ', '
+    else
+      assign top_notes_str = top_notes
+    endif
+  endif
+
+  assign heart_notes_str = ''
+  if heart_notes != blank
+    if heart_notes.first
+      assign heart_notes_str = heart_notes | join: ', '
+    else
+      assign heart_notes_str = heart_notes
+    endif
+  endif
+
+  assign base_notes_str = ''
+  if base_notes != blank
+    if base_notes.first
+      assign base_notes_str = base_notes | join: ', '
+    else
+      assign base_notes_str = base_notes
+    endif
+  endif
+-%}
+
+{%- if top_notes_str != blank or heart_notes_str != blank or base_notes_str != blank -%}
+  <dl class="scent-pyramid">
+    {%- if top_notes_str != blank -%}
+      <div class="scent-pyramid__row">
+        <dt class="scent-pyramid__label">{{ 'products.product.notes.top' | t }}</dt>
+        <dd class="scent-pyramid__notes">{{ top_notes_str }}</dd>
+      </div>
+    {%- endif -%}
+
+    {%- if heart_notes_str != blank -%}
+      <div class="scent-pyramid__row">
+        <dt class="scent-pyramid__label">{{ 'products.product.notes.heart' | t }}</dt>
+        <dd class="scent-pyramid__notes">{{ heart_notes_str }}</dd>
+      </div>
+    {%- endif -%}
+
+    {%- if base_notes_str != blank -%}
+      <div class="scent-pyramid__row">
+        <dt class="scent-pyramid__label">{{ 'products.product.notes.base' | t }}</dt>
+        <dd class="scent-pyramid__notes">{{ base_notes_str }}</dd>
+      </div>
+    {%- endif -%}
+  </dl>
+{%- endif -%}
+
+{% stylesheet %}
+  .scent-pyramid {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+  }
+
+  .scent-pyramid__row {
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--spacing-sm, 16px);
+    border-bottom: 1px solid var(--color-harvest-gold);
+  }
+
+  .scent-pyramid__row:last-child {
+    border-bottom: none;
+  }
+
+  .scent-pyramid__label {
+    font-family: var(--font-header);
+    font-size: var(--font-size-caption, 12px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-harvest-gold);
+    margin-bottom: var(--spacing-xs, 8px);
+  }
+
+  .scent-pyramid__notes {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body, 16px);
+    line-height: var(--line-height-relaxed, 1.4);
+    color: var(--color-oxford-blue);
+    margin-inline-start: 0;
+  }
+
+  @media (min-width: 768px) {
+    .scent-pyramid__row {
+      flex-direction: row;
+      align-items: baseline;
+      gap: var(--spacing-md, 24px);
+    }
+
+    .scent-pyramid__label {
+      width: 120px;
+      flex-shrink: 0;
+      margin-bottom: 0;
+    }
+  }
+{% endstylesheet %}
