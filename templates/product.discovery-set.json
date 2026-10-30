@@ -1,0 +1,100 @@
+{
+  "sections": {
+    "set": {
+      "type": "discovery-set",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "icon": "flask",
+            "title": "Order the set",
+            "text": "Six vials, one for each scent."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "icon": "leaf",
+            "title": "Wear each for a day",
+            "text": "Find the one that fits you."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "icon": "document",
+            "title": "Get credit on a full bottle"
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "heading": "Try all six before you choose",
+        "product": "discovery-set",
+        "credit_amount": 500,
+        "credit_days": 60
+      }
+    },
+    "main": {
+      "type": "product",
+      "blocks": {
+        "trust_line_1": {
+          "type": "trust_line",
+          "settings": {
+            "icon": "shield",
+            "text": "Secure payment"
+          }
+        },
+        "trust_line_2": {
+          "type": "trust_line",
+          "settings": {
+            "icon": "truck",
+            "text": "Ships from Bengaluru"
+          }
+        },
+        "trust_line_3": {
+          "type": "trust_line",
+          "settings": {
+            "icon": "return",
+            "text": "Sealed bottles can be returned"
+          }
+        }
+      },
+      "block_order": [
+        "trust_line_1",
+        "trust_line_2",
+        "trust_line_3"
+      ],
+      "settings": {
+        "show_rating": true,
+        "show_dynamic_checkout": true,
+        "show_gift_options": false,
+        "set_credit": 500,
+        "set_credit_days": 60,
+        "hide_try_first": true,
+        "how_to_wear": "<p>Apply on pulse points: wrists, inner elbows, and neck. Allow the fragrance to settle on your skin without rubbing.</p>",
+        "shipping_returns": "<p>Complimentary shipping across India. Unopened, sealed bottles may be returned within 7 days of delivery.</p>",
+        "show_brand_section": true,
+        "ritual_heading": "THE RITUAL",
+        "brand_title": "CRAFTED FOR THE DISCERNING FEW.",
+        "brand_description": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.",
+        "brand_button_text": "EXPLORE OUR PHILOSOPHY",
+        "brand_button_url": "/pages/about",
+        "show_related_products": false,
+        "related_heading": "YOU MAY ALSO LIKE",
+        "related_products_collection": "",
+        "show_reviews": false,
+        "show_review_form": false,
+        "allow_review_submission": false
+      }
+    }
+  },
+  "order": [
+    "set",
+    "main"
+  ]
+}

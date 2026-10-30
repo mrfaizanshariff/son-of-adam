@@ -308,7 +308,7 @@
 
         {%- comment -%} Try First Discovery Set Row {%- endcomment -%}
         {% assign set_credit_val = section.settings.set_credit | default: 0 %}
-        {% if set_credit_val > 0 and product.handle != 'discovery-set' %}
+        {% if set_credit_val > 0 and product.handle != 'discovery-set' and section.settings.hide_try_first == false %}
           <div class="product-try-first">
             <div class="product-try-first__header">
               <a href="/products/discovery-set" class="product-try-first__link">
@@ -1533,6 +1533,12 @@
       "id": "set_credit_days",
       "label": "Credit Validity Days",
       "default": 60
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_try_first",
+      "label": "Hide Try First row",
+      "default": false
     },
     {
       "type": "header",
