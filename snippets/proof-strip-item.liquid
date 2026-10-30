@@ -1,0 +1,22 @@
+{% doc %}
+  Renders one claim list item for the proof strip.
+
+  @param {object} block - The claim block
+
+  @example
+  {% render 'proof-strip-item', block: block %}
+{% enddoc %}
+
+<li class="proof-strip__item" {{ block.shopify_attributes }}>
+  <span class="proof-strip__icon">{% render 'claim-icon', icon: block.settings.icon %}</span>
+  <h3 class="proof-strip__heading">
+    {%- if block.settings.link != blank -%}
+      <a class="proof-strip__link" href="{{ block.settings.link }}">{{ block.settings.heading | escape }}</a>
+    {%- else -%}
+      {{ block.settings.heading | escape }}
+    {%- endif -%}
+  </h3>
+  {%- if block.settings.text != blank -%}
+    <p class="proof-strip__text">{{ block.settings.text | escape }}</p>
+  {%- endif -%}
+</li>
