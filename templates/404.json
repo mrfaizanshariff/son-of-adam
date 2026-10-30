@@ -7,14 +7,57 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
- {
+{
   "sections": {
     "main": {
       "type": "404",
       "settings": {}
+    },
+    "discovery_set_jTm4kD": {
+      "type": "discovery-set",
+      "blocks": {
+        "step_kHhV9F": {
+          "type": "step",
+          "settings": {
+            "icon": "flask",
+            "title": "Order the set",
+            "text": "Six vials, one for each scent."
+          }
+        },
+        "step_CgeKcR": {
+          "type": "step",
+          "settings": {
+            "icon": "leaf",
+            "title": "Wear each for a day",
+            "text": "Find the one that fits you."
+          }
+        },
+        "step_rmjEj3": {
+          "type": "step",
+          "settings": {
+            "icon": "document",
+            "title": "Get credit on a full bottle",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "step_kHhV9F",
+        "step_CgeKcR",
+        "step_rmjEj3"
+      ],
+      "name": "Discovery set",
+      "settings": {
+        "image": "shopify://shop_images/Conqueror1.png",
+        "heading": "Try all six before you choose",
+        "product": "conqueror-eau-de-parfum",
+        "credit_amount": 500,
+        "credit_days": 60
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "discovery_set_jTm4kD"
   ]
 }
