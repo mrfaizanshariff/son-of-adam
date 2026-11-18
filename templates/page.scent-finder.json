@@ -22,7 +22,7 @@
           "settings": {
             "text": "When will you wear it most?",
             "label_1": "Office and daytime",
-            "tags_1": "scent-1, scent-2",
+            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
             "label_2": "Evenings out",
             "tags_2": "scent-4, scent-5",
             "label_3": "Weekends and casual",
@@ -36,7 +36,7 @@
           "settings": {
             "text": "Which describes you best?",
             "label_1": "Fresh and clean",
-            "tags_1": "scent-1, scent-3",
+            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
             "label_2": "Warm and spicy",
             "tags_2": "scent-4, scent-6",
             "label_3": "Woody and earthy",
@@ -50,7 +50,7 @@
           "settings": {
             "text": "How strong do you like it?",
             "label_1": "Subtle",
-            "tags_1": "scent-1, scent-3",
+            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
             "label_2": "Noticeable but soft",
             "tags_2": "scent-2, scent-3",
             "label_3": "Bold",
