@@ -12,7 +12,7 @@
 
 {%- if set_product != blank -%}
   <section class="discovery-set full-width section-spacing" aria-labelledby="discovery-set-heading-{{ section.id }}">
-    <div class="discovery-set__container">
+    <div class="discovery-set__container" style="--media-order: {{ section.settings.image_position }};">
       <div class="discovery-set__media">
         {%- if section.settings.image != blank -%}
           <img
@@ -53,10 +53,16 @@
                   <div class="discovery-set__step-body">
                     <h3 class="discovery-set__step-title">{{ block.settings.title | escape }}</h3>
                     {%- if forloop.index == 3 -%}
-                      {% render 'set-credit-note',
-                        credit_amount: section.settings.credit_amount,
-                        days: section.settings.credit_days
-                      %}
+                      {%- if section.settings.offer_type == 'coupon' -%}
+                        {%- if section.settings.coupon_text != blank -%}
+                          <p class="discovery-set__step-text">{{ section.settings.coupon_text | escape }}</p>
+                        {%- endif -%}
+                      {%- else -%}
+                        {% render 'set-credit-note',
+                          credit_amount: section.settings.credit_amount,
+                          days: section.settings.credit_days
+                        %}
+                      {%- endif -%}
                     {%- elsif block.settings.text != blank -%}
                       <p class="discovery-set__step-text">{{ block.settings.text | escape }}</p>
                     {%- endif -%}
@@ -198,6 +204,7 @@
     .discovery-set__media {
       block-size: 100%;
       min-block-size: 500px;
+      order: var(--media-order, 0);
     }
   }
 {% endstylesheet %}
@@ -213,6 +220,16 @@
       "label": "Image"
     },
     {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "0", "label": "Left" },
+        { "value": "1", "label": "Right" }
+      ],
+      "default": "0"
+    },
+    {
       "type": "text",
       "id": "heading",
       "label": "Heading",
@@ -225,17 +242,36 @@
       "info": "The discovery set product. The first variant is added to the cart."
     },
     {
+      "type": "select",
+      "id": "offer_type",
+      "label": "Third step offer type",
+      "options": [
+        { "value": "credit", "label": "Credit amount" },
+        { "value": "coupon", "label": "Coupon code" }
+      ],
+      "default": "credit"
+    },
+    {
       "type": "number",
       "id": "credit_amount",
       "label": "Credit amount",
       "default": 500,
-      "info": "Credit in rupees, shown in the third step."
+      "info": "Credit in rupees, shown in the third step.",
+      "visible_if": "{{ section.settings.offer_type == 'credit' }}"
     },
     {
       "type": "number",
       "id": "credit_days",
       "label": "Credit validity days",
-      "default": 60
+      "default": 60,
+      "visible_if": "{{ section.settings.offer_type == 'credit' }}"
+    },
+    {
+      "type": "text",
+      "id": "coupon_text",
+      "label": "Coupon offer text",
+      "info": "The full sentence to display, e.g. \"Use code SAVE20 for 20% off your first full bottle.\"",
+      "visible_if": "{{ section.settings.offer_type == 'coupon' }}"
     }
   ],
   "blocks": [

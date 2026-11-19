@@ -207,7 +207,6 @@
                       value="Yes"
                       class="product-gift-options__checkbox"
                       data-gift-wrap-checkbox
-                      disabled
                     >
                     <span>{{ 'products.product.gift.wrap_label' | t }}</span>
                   </label>
@@ -223,7 +222,6 @@
                     class="product-gift-options__textarea"
                     placeholder="{{ 'products.product.gift.message_placeholder' | t }}"
                     data-gift-message-input
-                    disabled
                   ></textarea>
                   <div class="product-gift-options__counter" aria-live="polite">
                     <span data-gift-char-counter>200</span> {{ 'products.product.gift.characters_remaining' | t }}
@@ -790,40 +788,26 @@
     }
 
     // Gift Options functionality
-    const giftDetails = document.querySelector('[data-gift-details]');
     const giftWrapCheckbox = document.querySelector('[data-gift-wrap-checkbox]');
     const giftMessageInput = document.querySelector('[data-gift-message-input]');
     const giftCharCounter = document.querySelector('[data-gift-char-counter]');
 
-    if (giftWrapCheckbox) {
-      giftWrapCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-          this.removeAttribute('disabled');
-        } else {
-          this.setAttribute('disabled', '');
-        }
+    if (giftMessageInput && giftCharCounter) {
+      giftMessageInput.addEventListener('input', function() {
+        giftCharCounter.textContent = Math.max(0, 200 - this.value.length);
       });
     }
 
-    if (giftMessageInput && giftCharCounter) {
-      giftMessageInput.addEventListener('input', function() {
-        const remaining = 200 - this.value.length;
-        giftCharCounter.textContent = Math.max(0, remaining);
-        if (this.value.trim().length > 0) {
-          this.removeAttribute('disabled');
-        } else {
-          this.setAttribute('disabled', '');
+    // Before submit: disable empty gift fields so they are not sent as cart properties
+    if (productForm) {
+      productForm.addEventListener('submit', function() {
+        if (giftWrapCheckbox && !giftWrapCheckbox.checked) {
+          giftWrapCheckbox.disabled = true;
         }
-      });
-      // Enable input interaction on focus
-      giftMessageInput.addEventListener('focus', function() {
-        this.removeAttribute('disabled');
-      });
-      giftMessageInput.addEventListener('blur', function() {
-        if (this.value.trim().length === 0) {
-          this.setAttribute('disabled', '');
+        if (giftMessageInput && giftMessageInput.value.trim() === '') {
+          giftMessageInput.disabled = true;
         }
-      });
+      }, true);
     }
     
     // Form submission validation
