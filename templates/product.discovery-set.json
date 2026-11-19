@@ -1,0 +1,164 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "scent_finder_3wwFiz": {
+      "type": "scent-finder",
+      "blocks": {
+        "question_Qzy86d": {
+          "type": "question",
+          "settings": {
+            "text": "When will you wear it most?",
+            "label_1": "Office and daytime",
+            "tags_1": "scent-1, scent-2",
+            "label_2": "Evenings out",
+            "tags_2": "scent-4, scent-5",
+            "label_3": "Weekends and casual",
+            "tags_3": "scent-3, scent-1",
+            "label_4": "Special occasions",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        "question_qkraG9": {
+          "type": "question",
+          "settings": {
+            "text": "Which describes you best?",
+            "label_1": "Fresh and clean",
+            "tags_1": "scent-1, scent-3",
+            "label_2": "Warm and spicy",
+            "tags_2": "scent-4, scent-6",
+            "label_3": "Woody and earthy",
+            "tags_3": "scent-2, scent-5",
+            "label_4": "Smooth and sweet",
+            "tags_4": "scent-3, scent-6"
+          }
+        },
+        "question_fEHQnW": {
+          "type": "question",
+          "settings": {
+            "text": "How strong do you like it?",
+            "label_1": "Subtle",
+            "tags_1": "scent-1, scent-3",
+            "label_2": "Noticeable but soft",
+            "tags_2": "scent-2, scent-3",
+            "label_3": "Bold",
+            "tags_3": "scent-4, scent-5",
+            "label_4": "A statement",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        "scent_KJ8g3J": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Fresh and easy, made for daytime."
+          }
+        },
+        "scent_zYjFLY": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Light woods that stay quiet and clean."
+          }
+        },
+        "scent_feBLM8": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Smooth and soft, an easy everyday wear."
+          }
+        },
+        "scent_NU9QtB": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Warm spice that suits an evening out."
+          }
+        },
+        "scent_M9DaNi": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Deep woods with a bold, lasting trail."
+          }
+        },
+        "scent_wxqaBh": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Rich and sweet, made for special occasions."
+          }
+        }
+      },
+      "block_order": [
+        "question_Qzy86d",
+        "question_qkraG9",
+        "question_fEHQnW",
+        "scent_KJ8g3J",
+        "scent_zYjFLY",
+        "scent_feBLM8",
+        "scent_NU9QtB",
+        "scent_M9DaNi",
+        "scent_wxqaBh"
+      ],
+      "disabled": true,
+      "name": "Scent finder",
+      "settings": {
+        "heading": "Find your scent"
+      }
+    },
+    "discovery_set_FdNa98": {
+      "type": "discovery-set",
+      "blocks": {
+        "step_eypL63": {
+          "type": "step",
+          "settings": {
+            "icon": "flask",
+            "title": "Order the set",
+            "text": "Six vials, one for each scent."
+          }
+        },
+        "step_NLWrrf": {
+          "type": "step",
+          "settings": {
+            "icon": "leaf",
+            "title": "Wear each for a day",
+            "text": "Find the one that fits you."
+          }
+        },
+        "step_EGfEej": {
+          "type": "step",
+          "settings": {
+            "icon": "document",
+            "title": "Get discount on full bottle",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "step_eypL63",
+        "step_NLWrrf",
+        "step_EGfEej"
+      ],
+      "name": "Discovery set",
+      "settings": {
+        "image": "shopify://shop_images/son-of-adam-discovery-set.png",
+        "heading": "Try all six before you choose",
+        "product": "discovery-set",
+        "credit_amount": 500,
+        "credit_days": 60
+      }
+    }
+  },
+  "order": [
+    "scent_finder_3wwFiz",
+    "discovery_set_FdNa98"
+  ]
+}

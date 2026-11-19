@@ -34,6 +34,9 @@
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
     {{ content_for_header }}
+    {%- if template.name == 'index' -%}
+      {%- render 'schema-organization' -%}
+    {%- endif -%}
   </head>
 
   <body>
@@ -45,5 +48,6 @@
     </main>
 
     {% sections 'footer-group' %}
+    {%- render 'analytics-events' -%}
   </body>
 </html>

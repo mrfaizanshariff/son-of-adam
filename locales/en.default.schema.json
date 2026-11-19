@@ -51,6 +51,7 @@
     "foreground": "Foreground",
     "grid_gap": "Grid spacing",
     "grid_item_width": "Grid item width",
+    "heading": "Heading",
     "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
     "menu": "Menu",
@@ -64,6 +65,51 @@
     "logo_image": "Logo image",
     "logo_width": "Logo width",
     "text": "Text"
+  },
+  "sections": {
+    "document_list": {
+      "name": "Document list",
+      "blocks": {
+        "document": {
+          "name": "Document",
+          "settings": {
+            "product_name": "Product name",
+            "batch": "Batch",
+            "document_type": "Document type",
+            "date": "Date",
+            "file": "File (PDF link or uploaded file URL)",
+            "label": "Link label (optional)",
+            "label_info": "Overrides the document type as the link text. Leave blank to use the document type."
+          },
+          "options": {
+            "ifra": "IFRA certificate",
+            "gcms": "GC-MS report",
+            "skin_safety": "Skin-safety test",
+            "other": "Other"
+          }
+        }
+      },
+      "settings": {
+        "caption": "Table caption",
+        "caption_info": "Appears above the table. Useful for a brief description or date of last update.",
+        "empty_state": "Empty state message"
+      }
+    },
+    "faq": {
+      "name": "FAQ",
+      "blocks": {
+        "group": {
+          "name": "Group heading"
+        },
+        "question": {
+          "name": "Question",
+          "settings": {
+            "question": "Question",
+            "answer": "Answer"
+          }
+        }
+      }
+    }
   },
   "options": {
     "alignment": {

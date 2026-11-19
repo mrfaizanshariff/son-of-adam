@@ -1,16 +1,17 @@
-{% comment %}
+{% doc %}
   SON OF ADAM - Dynamic Product Reviews Section
   Supports Shopify native reviews and third-party app integration
-  
-  Parameters:
-  - product: Product object (required)
-  - show_form: Boolean to show review form (default: true)
-{% endcomment %}
+
+  @param {object} product - Product object (required)
+  @param {boolean} [show_form] - Boolean to show review form (default: true)
+  @param {boolean} [allow_review_submission] - Boolean to allow review submission (default: false)
+{% enddoc %}
 
 {%- liquid
-  assign show_form = show_form | default: true
-  assign reviews_count = product.metafields.reviews.rating_count | default: 0
-  assign average_rating = product.metafields.reviews.rating | default: 0
+  assign show_form = show_form | default: false
+  assign allow_review_submission = allow_review_submission | default: false
+  assign reviews_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0
+  assign average_rating = product.metafields.reviews.rating.value | default: product.metafields.reviews.rating | default: 0
 -%}
 {%- if reviews_count > 0 -%}
   <script type="application/ld+json">
@@ -36,7 +37,7 @@
     <div class="product-reviews__header">
       <h2 class="product-reviews__title">{{ 'products.reviews.title' | t }}</h2>
       
-      {%- if reviews_count > 0 -%}
+      {%- if product.metafields.reviews.rating_count != blank and reviews_count > 0 -%}
         <div class="product-reviews__summary">
           <div class="product-reviews__rating">
             {% render 'star-rating', rating: average_rating, count: reviews_count %}
@@ -47,7 +48,7 @@
         <p class="product-reviews__no-reviews">{{ 'products.reviews.no_reviews' | t }}</p>
       {%- endif -%}
       
-      {%- if show_form -%}
+      {%- if show_form and allow_review_submission -%}
         <button type="button" class="btn btn-secondary product-reviews__write-btn" aria-expanded="false" aria-controls="review-form" data-toggle-review-form>
           {{ 'products.reviews.write_button' | t }}
         </button>
@@ -55,7 +56,7 @@
     </div>
     
     {%- comment -%} Review Form {%- endcomment -%}
-    {%- if show_form -%}
+    {%- if show_form and allow_review_submission -%}
       <div class="product-reviews__form-wrapper" id="review-form" style="display: none;">
         <h3 class="product-reviews__form-title">{{ 'products.reviews.form_title' | t }}</h3>
         
@@ -124,7 +125,7 @@
           <div class="product-review">
             <div class="product-review__header">
               <div class="product-review__rating">
-                {% render 'star-rating', rating: review.rating, show_count: false, unique_id: forloop.index %}
+                {% render 'star-rating', rating: review.rating, count: 0, unique_id: forloop.index %}
               </div>
               <h4 class="product-review__title">{{ review.title | escape }}</h4>
             </div>

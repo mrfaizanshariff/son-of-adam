@@ -1,0 +1,58 @@
+{% doc %}
+  Renders Organization JSON-LD structured data for the home page.
+  Uses global theme settings for social URLs.
+  Only render this on the index template.
+
+  @example
+  {%- if template.name == 'index' -%}
+    {% render 'schema-organization' %}
+  {%- endif -%}
+{% enddoc %}
+
+{%- liquid
+  assign org_url = shop.url
+  assign org_name = shop.name
+
+  assign same_as_urls = ''
+  assign same_as_count = 0
+
+  if settings.social_instagram != blank
+    assign same_as_urls = same_as_urls | append: '"' | append: settings.social_instagram | append: '"'
+    assign same_as_count = same_as_count | plus: 1
+  endif
+  if settings.social_facebook != blank
+    if same_as_count > 0
+      assign same_as_urls = same_as_urls | append: ','
+    endif
+    assign same_as_urls = same_as_urls | append: '"' | append: settings.social_facebook | append: '"'
+    assign same_as_count = same_as_count | plus: 1
+  endif
+  if settings.social_twitter != blank
+    if same_as_count > 0
+      assign same_as_urls = same_as_urls | append: ','
+    endif
+    assign same_as_urls = same_as_urls | append: '"' | append: settings.social_twitter | append: '"'
+    assign same_as_count = same_as_count | plus: 1
+  endif
+  if settings.social_youtube != blank
+    if same_as_count > 0
+      assign same_as_urls = same_as_urls | append: ','
+    endif
+    assign same_as_urls = same_as_urls | append: '"' | append: settings.social_youtube | append: '"'
+    assign same_as_count = same_as_count | plus: 1
+  endif
+-%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ org_name | json }},
+  "url": {{ org_url | json }}
+  {%- if settings.logo != blank -%}
+  ,"logo": {{ settings.logo | image_url: width: 400 | prepend: 'https:' | json }}
+  {%- endif -%}
+  {%- if same_as_count > 0 -%}
+  ,"sameAs": [{{ same_as_urls }}]
+  {%- endif -%}
+}
+</script>

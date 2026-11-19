@@ -42,34 +42,34 @@ Quick reference guide for implementing the SON OF ADAM brand aesthetic.
 
 ## 📝 Typography
 
-### Font Families (Google Fonts)
+### Font Families (Custom Brand Fonts)
 
 ```css
 /* Display Font - for hero headlines */
---font-display: 'Cinzel', serif;
+--font-display: 'Old London', serif;
 
 /* Header Font - for navigation, section titles, product names */
---font-header: 'Oswald', sans-serif;
+--font-header: 'Flama Condensed', 'Arial Narrow', 'Helvetica Condensed', sans-serif;
 
 /* Body Font - for descriptions, labels, general content */
---font-body: 'Inter', sans-serif;
+--font-body: 'Mosvita', 'Helvetica Neue', Arial, sans-serif;
 ```
 
 ### Typography Scale
 
 | Element | Font | Size | Line Height | Transform | Letter Spacing |
 |---------|------|------|-------------|-----------|----------------|
-| Hero Title | Cinzel | 80px | 1.1 | - | - |
-| Hero Title (Mobile) | Cinzel | 48px | 1.1 | - | - |
-| Section Title | Oswald | 42px | 1.2 | UPPERCASE | - |
-| Section Title (Mobile) | Oswald | 32px | 1.2 | UPPERCASE | - |
-| Subheading | Oswald | 24px | 1.4 | - | - |
-| Navigation | Oswald | 16px | 1.4 | UPPERCASE | 0.05em |
-| Body Text | Inter | 16px | 1.6 | - | - |
-| Product Name | Oswald | 18px | 1.3 | - | - |
-| Price | Oswald | 20px | 1.2 | - | - |
-| Caption/Label | Inter | 12px | 1.4 | UPPERCASE | 0.05em |
-| Button Text | Oswald | 14px | 1.2 | UPPERCASE | 0.1em |
+| Hero Title | Old London | 80px | 1.1 | - | - |
+| Hero Title (Mobile) | Old London | 48px | 1.1 | - | - |
+| Section Title | Flama Condensed | 42px | 1.2 | UPPERCASE | - |
+| Section Title (Mobile) | Flama Condensed | 32px | 1.2 | UPPERCASE | - |
+| Subheading | Flama Condensed | 24px | 1.4 | - | - |
+| Navigation | Flama Condensed | 16px | 1.4 | UPPERCASE | 0.05em |
+| Body Text | Mosvita | 16px | 1.6 | - | - |
+| Product Name | Flama Condensed | 18px | 1.3 | - | - |
+| Price | Flama Condensed | 20px | 1.2 | - | - |
+| Caption/Label | Mosvita | 12px | 1.4 | UPPERCASE | 0.05em |
+| Button Text | Flama Condensed | 14px | 1.2 | UPPERCASE | 0.1em |
 
 ### CSS Classes
 
@@ -227,7 +227,7 @@ Quick reference guide for implementing the SON OF ADAM brand aesthetic.
 │                     │
 ├─────────────────────┤
 │ Product Name        │ 20% height
-│ $XX.XX              │ Oswald font
+│ $XX.XX              │ Flama Condensed font
 │ [Add to Bag]        │ Hover state
 └─────────────────────┘
 ```
@@ -235,8 +235,8 @@ Quick reference guide for implementing the SON OF ADAM brand aesthetic.
 **Specifications:**
 - Image aspect ratio: 3:4 (portrait)
 - Hover: Show "Add to Bag" button overlay
-- Product name: Oswald, 18px
-- Price: Harvest Gold, 20px, Oswald
+- Product name: Flama Condensed, 18px
+- Price: Harvest Gold, 20px, Flama Condensed
 - Minimal padding: 16px
 - No border, clean edges
 
@@ -396,9 +396,8 @@ transition: all 0.3s ease;
 - Max file size: 200KB per image
 
 ### Fonts
-- Preload critical fonts (Cinzel regular)
 - Use font-display: swap
-- Subset fonts to Latin characters only
+- Self-hosted brand fonts (WOFF2 / WOFF) loaded from assets
 - Load font weights on-demand
 
 ### CSS

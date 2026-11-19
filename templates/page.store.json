@@ -1,0 +1,25 @@
+{
+  "sections": {
+    "store": {
+      "type": "store-info",
+      "settings": {
+        "show_section": false
+      }
+    },
+    "details": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "right",
+        "background_color": "none",
+        "subheading": "Visit us",
+        "heading": "Come and try the scents in person.",
+        "text": "<p>Ask for the discovery set, or have us walk you through the range.</p>",
+        "button_text": ""
+      }
+    }
+  },
+  "order": [
+    "store",
+    "details"
+  ]
+}

@@ -1,0 +1,63 @@
+{% doc %}
+  Renders a credit note for the Discovery Set promotion.
+
+  @param {number} [credit_amount] - Credit amount in rupees
+  @param {number} [days] - Number of days the credit is valid
+  @param {string} [style] - Display style ('inline' or 'box')
+
+  @example
+  {% render 'set-credit-note', credit_amount: 500, days: 30, style: 'box' %}
+{% enddoc %}
+
+{%- liquid
+  assign credit_amount_num = credit_amount | default: 500
+  assign days_num = days | default: 30
+  assign style_val = style | default: 'inline'
+
+  if credit_amount_num < 10000
+    assign amount_cents = credit_amount_num | times: 100
+  else
+    assign amount_cents = credit_amount_num
+  endif
+
+  assign formatted_amount = amount_cents | money_without_trailing_zeros
+-%}
+
+{%- capture note_content -%}
+  {{ 'set_credit.note' | t: amount: formatted_amount, days: days_num }}
+{%- endcapture -%}
+
+{%- if style_val == 'box' -%}
+  <div class="set-credit-note set-credit-note--box">
+    <p class="set-credit-note__text">{{ note_content | strip }}</p>
+  </div>
+{%- else -%}
+  <p class="set-credit-note set-credit-note--inline">
+    {{ note_content | strip }}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  .set-credit-note {
+    font-family: var(--font-body);
+    font-size: var(--font-size-small, 14px);
+    line-height: var(--line-height-relaxed, 1.4);
+    color: var(--color-oxford-blue);
+    margin: 0;
+  }
+
+  .set-credit-note--box {
+    border: 1px solid var(--color-harvest-gold);
+    background-color: var(--color-sea-salt);
+    padding: var(--spacing-sm, 16px) var(--spacing-md, 24px);
+  }
+
+  .set-credit-note--box .set-credit-note__text {
+    margin: 0;
+    color: var(--color-oxford-blue);
+  }
+
+  .set-credit-note--inline {
+    color: var(--color-dim-grey);
+  }
+{% endstylesheet %}
