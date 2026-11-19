@@ -1,9 +1,123 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "set": {
+    "scent_finder_3wwFiz": {
+      "type": "scent-finder",
+      "blocks": {
+        "question_Qzy86d": {
+          "type": "question",
+          "settings": {
+            "text": "When will you wear it most?",
+            "label_1": "Office and daytime",
+            "tags_1": "scent-1, scent-2",
+            "label_2": "Evenings out",
+            "tags_2": "scent-4, scent-5",
+            "label_3": "Weekends and casual",
+            "tags_3": "scent-3, scent-1",
+            "label_4": "Special occasions",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        "question_qkraG9": {
+          "type": "question",
+          "settings": {
+            "text": "Which describes you best?",
+            "label_1": "Fresh and clean",
+            "tags_1": "scent-1, scent-3",
+            "label_2": "Warm and spicy",
+            "tags_2": "scent-4, scent-6",
+            "label_3": "Woody and earthy",
+            "tags_3": "scent-2, scent-5",
+            "label_4": "Smooth and sweet",
+            "tags_4": "scent-3, scent-6"
+          }
+        },
+        "question_fEHQnW": {
+          "type": "question",
+          "settings": {
+            "text": "How strong do you like it?",
+            "label_1": "Subtle",
+            "tags_1": "scent-1, scent-3",
+            "label_2": "Noticeable but soft",
+            "tags_2": "scent-2, scent-3",
+            "label_3": "Bold",
+            "tags_3": "scent-4, scent-5",
+            "label_4": "A statement",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        "scent_KJ8g3J": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Fresh and easy, made for daytime."
+          }
+        },
+        "scent_zYjFLY": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Light woods that stay quiet and clean."
+          }
+        },
+        "scent_feBLM8": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Smooth and soft, an easy everyday wear."
+          }
+        },
+        "scent_NU9QtB": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Warm spice that suits an evening out."
+          }
+        },
+        "scent_M9DaNi": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Deep woods with a bold, lasting trail."
+          }
+        },
+        "scent_wxqaBh": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Rich and sweet, made for special occasions."
+          }
+        }
+      },
+      "block_order": [
+        "question_Qzy86d",
+        "question_qkraG9",
+        "question_fEHQnW",
+        "scent_KJ8g3J",
+        "scent_zYjFLY",
+        "scent_feBLM8",
+        "scent_NU9QtB",
+        "scent_M9DaNi",
+        "scent_wxqaBh"
+      ],
+      "disabled": true,
+      "name": "Scent finder",
+      "settings": {
+        "heading": "Find your scent"
+      }
+    },
+    "discovery_set_FdNa98": {
       "type": "discovery-set",
       "blocks": {
-        "step_1": {
+        "step_eypL63": {
           "type": "step",
           "settings": {
             "icon": "flask",
@@ -11,7 +125,7 @@
             "text": "Six vials, one for each scent."
           }
         },
-        "step_2": {
+        "step_NLWrrf": {
           "type": "step",
           "settings": {
             "icon": "leaf",
@@ -19,82 +133,32 @@
             "text": "Find the one that fits you."
           }
         },
-        "step_3": {
+        "step_EGfEej": {
           "type": "step",
           "settings": {
             "icon": "document",
-            "title": "Get credit on a full bottle"
+            "title": "Get discount on full bottle",
+            "text": ""
           }
         }
       },
       "block_order": [
-        "step_1",
-        "step_2",
-        "step_3"
+        "step_eypL63",
+        "step_NLWrrf",
+        "step_EGfEej"
       ],
+      "name": "Discovery set",
       "settings": {
+        "image": "shopify://shop_images/son-of-adam-discovery-set.png",
         "heading": "Try all six before you choose",
         "product": "discovery-set",
         "credit_amount": 500,
         "credit_days": 60
       }
-    },
-    "main": {
-      "type": "product",
-      "blocks": {
-        "trust_line_1": {
-          "type": "trust_line",
-          "settings": {
-            "icon": "shield",
-            "text": "Secure payment"
-          }
-        },
-        "trust_line_2": {
-          "type": "trust_line",
-          "settings": {
-            "icon": "truck",
-            "text": "Ships from Bengaluru"
-          }
-        },
-        "trust_line_3": {
-          "type": "trust_line",
-          "settings": {
-            "icon": "return",
-            "text": "Sealed bottles can be returned"
-          }
-        }
-      },
-      "block_order": [
-        "trust_line_1",
-        "trust_line_2",
-        "trust_line_3"
-      ],
-      "settings": {
-        "show_rating": true,
-        "show_dynamic_checkout": true,
-        "show_gift_options": false,
-        "set_credit": 500,
-        "set_credit_days": 60,
-        "hide_try_first": true,
-        "how_to_wear": "<p>Apply on pulse points: wrists, inner elbows, and neck. Allow the fragrance to settle on your skin without rubbing.</p>",
-        "shipping_returns": "<p>Complimentary shipping across India. Unopened, sealed bottles may be returned within 7 days of delivery.</p>",
-        "show_brand_section": true,
-        "ritual_heading": "THE RITUAL",
-        "brand_title": "CRAFTED FOR THE DISCERNING FEW.",
-        "brand_description": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.",
-        "brand_button_text": "EXPLORE OUR PHILOSOPHY",
-        "brand_button_url": "/pages/about",
-        "show_related_products": false,
-        "related_heading": "YOU MAY ALSO LIKE",
-        "related_products_collection": "",
-        "show_reviews": false,
-        "show_review_form": false,
-        "allow_review_submission": false
-      }
     }
   },
   "order": [
-    "set",
-    "main"
+    "scent_finder_3wwFiz",
+    "discovery_set_FdNa98"
   ]
 }

@@ -37,7 +37,8 @@
             "icon": "leaf",
             "heading": "No synthetic fixatives",
             "text": "Natural fixatives only: sandalwood, labdanum, benzoin, vetiver.",
-            "enabled": true
+            "enabled": true,
+            "link": ""
           }
         },
         "claim_parabens": {
@@ -46,7 +47,8 @@
             "icon": "flask",
             "heading": "No parabens or phthalates",
             "text": "Full ingredient list on every product.",
-            "enabled": true
+            "enabled": true,
+            "link": ""
           }
         },
         "claim_docs": {
@@ -65,7 +67,8 @@
             "icon": "flag",
             "heading": "Crafted in India",
             "text": "Fragrance for men, made for Indian summers.",
-            "enabled": true
+            "enabled": true,
+            "link": ""
           }
         }
       },
@@ -112,7 +115,8 @@
           "type": "step",
           "settings": {
             "icon": "document",
-            "title": "Get credit on a full bottle"
+            "title": "Get credit on a full bottle",
+            "text": ""
           }
         }
       },
@@ -122,8 +126,9 @@
         "step_3"
       ],
       "settings": {
-        "product": "discovery-set",
+        "image": "shopify://shop_images/son-of-adam-discovery-set.png",
         "heading": "Try all six before you choose",
+        "product": "discovery-set",
         "credit_amount": 500,
         "credit_days": 60
       }
@@ -147,6 +152,7 @@
       "settings": {
         "image_position": "right",
         "background_color": "none",
+        "image": "shopify://shop_images/son-of-adam-luxury-perfume.png",
         "subheading": "Find your match",
         "heading": "Not sure where to start?",
         "text": "<p>Answer four short questions and we will point you toward the scent that suits you best.</p>",
@@ -172,7 +178,15 @@
     "store_info": {
       "type": "store-info",
       "settings": {
-        "show_section": false
+        "show_section": false,
+        "store_name": "",
+        "address": "",
+        "hours": "",
+        "phone": "",
+        "landmark": "",
+        "directions_url": "",
+        "latitude": "",
+        "longitude": ""
       }
     },
     "image_with_text_story": {

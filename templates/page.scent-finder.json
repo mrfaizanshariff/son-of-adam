@@ -100,6 +100,110 @@
     "discovery": {
       "type": "discovery-set",
       "settings": {}
+    },
+    "scent_finder_fBUrwr": {
+      "type": "scent-finder",
+      "blocks": {
+        "question_zJAF7t": {
+          "type": "question",
+          "settings": {
+            "text": "When will you wear it most?",
+            "label_1": "Office and daytime",
+            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
+            "label_2": "Evenings out",
+            "tags_2": "scent-4, scent-5",
+            "label_3": "Weekends and casual",
+            "tags_3": "scent-3, scent-1",
+            "label_4": "Special occasions",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        "question_8NdWbg": {
+          "type": "question",
+          "settings": {
+            "text": "Which describes you best?",
+            "label_1": "Fresh and clean",
+            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
+            "label_2": "Warm and spicy",
+            "tags_2": "scent-4, scent-6",
+            "label_3": "Woody and earthy",
+            "tags_3": "scent-2, scent-5",
+            "label_4": "Smooth and sweet",
+            "tags_4": "scent-3, scent-6"
+          }
+        },
+        "question_mwkWmN": {
+          "type": "question",
+          "settings": {
+            "text": "How strong do you like it?",
+            "label_1": "Subtle",
+            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
+            "label_2": "Noticeable but soft",
+            "tags_2": "scent-2, scent-3",
+            "label_3": "Bold",
+            "tags_3": "scent-4, scent-5",
+            "label_4": "A statement",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        "scent_8Q6HhL": {
+          "type": "scent",
+          "settings": {
+            "product": "azure-eau-de-parfum",
+            "reasoning": "Fresh and easy, made for daytime."
+          }
+        },
+        "scent_QNEMgj": {
+          "type": "scent",
+          "settings": {
+            "product": "cipher-eau-de-parfum",
+            "reasoning": "Light woods that stay quiet and clean."
+          }
+        },
+        "scent_kFfkde": {
+          "type": "scent",
+          "settings": {
+            "product": "monarch-eau-de-parfum",
+            "reasoning": "Smooth and soft, an easy everyday wear."
+          }
+        },
+        "scent_4mkzGg": {
+          "type": "scent",
+          "settings": {
+            "product": "conqueror-eau-de-parfum",
+            "reasoning": "Warm spice that suits an evening out."
+          }
+        },
+        "scent_kYMtMD": {
+          "type": "scent",
+          "settings": {
+            "product": "wildfire-eau-de-parfum",
+            "reasoning": "Deep woods with a bold, lasting trail."
+          }
+        },
+        "scent_8q3C7A": {
+          "type": "scent",
+          "settings": {
+            "product": "ember-eau-de-parfum",
+            "reasoning": "Rich and sweet, made for special occasions."
+          }
+        }
+      },
+      "block_order": [
+        "question_zJAF7t",
+        "question_8NdWbg",
+        "question_mwkWmN",
+        "scent_8Q6HhL",
+        "scent_QNEMgj",
+        "scent_kFfkde",
+        "scent_4mkzGg",
+        "scent_kYMtMD",
+        "scent_8q3C7A"
+      ],
+      "name": "Scent finder",
+      "settings": {
+        "heading": "Find your scent"
+      }
     }
   },
   "order": [
