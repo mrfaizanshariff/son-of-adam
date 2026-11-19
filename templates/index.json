@@ -127,10 +127,13 @@
       ],
       "settings": {
         "image": "shopify://shop_images/son-of-adam-discovery-set.png",
+        "image_position": "0",
         "heading": "Try all six before you choose",
         "product": "discovery-set",
+        "offer_type": "credit",
         "credit_amount": 500,
-        "credit_days": 60
+        "credit_days": 60,
+        "coupon_text": ""
       }
     },
     "image_with_text_ingredients": {
@@ -205,6 +208,7 @@
     "newsletter": {
       "type": "newsletter-signup",
       "settings": {
+        "padding_vertical": 20,
         "show_testimonial": false,
         "testimonial_text": "",
         "testimonial_author": "",
