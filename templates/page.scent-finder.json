@@ -111,14 +111,9 @@
       "settings": {
         "heading": "Find your scent"
       }
-    },
-    "discovery": {
-      "type": "discovery-set",
-      "settings": {}
     }
   },
   "order": [
-    "scent_finder_fBUrwr",
-    "discovery"
+    "scent_finder_fBUrwr"
   ]
 }
