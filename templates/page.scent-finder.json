@@ -17,13 +17,13 @@
           "settings": {
             "text": "When will you wear it most?",
             "label_1": "Office and daytime",
-            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
+            "tags_1": "azure-eau-de-parfum",
             "label_2": "Evenings out",
-            "tags_2": "scent-4, scent-5",
+            "tags_2": "cipher-eau-de-parfum",
             "label_3": "Weekends and casual",
-            "tags_3": "scent-3, scent-1",
+            "tags_3": "monarch-eau-de-parfum",
             "label_4": "Special occasions",
-            "tags_4": "scent-5, scent-6"
+            "tags_4": "conqueror-eau-de-parfum,  ember-eau-de-parfum"
           }
         },
         "question_8NdWbg": {
@@ -31,13 +31,13 @@
           "settings": {
             "text": "Which describes you best?",
             "label_1": "Fresh and clean",
-            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
+            "tags_1": "azure-eau-de-parfum",
             "label_2": "Warm and spicy",
-            "tags_2": "scent-4, scent-6",
+            "tags_2": "wildfire-eau-de-parfum",
             "label_3": "Woody and earthy",
-            "tags_3": "scent-2, scent-5",
+            "tags_3": "ember-eau-de-parfum",
             "label_4": "Smooth and sweet",
-            "tags_4": "scent-3, scent-6"
+            "tags_4": "cipher-eau-de-parfum"
           }
         },
         "question_mwkWmN": {
@@ -45,13 +45,13 @@
           "settings": {
             "text": "How strong do you like it?",
             "label_1": "Subtle",
-            "tags_1": "conqueror-eau-de-parfum,azure-eau-de-parfum",
+            "tags_1": "azure-eau-de-parfum",
             "label_2": "Noticeable but soft",
-            "tags_2": "scent-2, scent-3",
+            "tags_2": "ember-eau-de-parfum,  monarch-eau-de-parfum",
             "label_3": "Bold",
-            "tags_3": "scent-4, scent-5",
+            "tags_3": "conqueror-eau-de-parfum,  cipher-eau-de-parfum",
             "label_4": "A statement",
-            "tags_4": "scent-5, scent-6"
+            "tags_4": "wildfire-eau-de-parfum"
           }
         },
         "scent_8Q6HhL": {
