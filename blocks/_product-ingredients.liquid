@@ -1,0 +1,30 @@
+{% doc %}
+  Renders an accordion with the product ingredients from the custom.ingredients_inci metafield.
+  Renders nothing when the metafield is empty.
+{% enddoc %}
+
+{%- assign ingredients = product.metafields.custom.ingredients_inci.value | default: product.metafields.custom.ingredients_inci -%}
+
+{% if ingredients != blank %}
+  <div class="product-info__accordion" {{ block.shopify_attributes }}>
+    {% render 'product-accordion',
+      title: block.settings.title,
+      content: ingredients,
+      open: false
+    %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Ingredients accordion",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Ingredients"
+    }
+  ]
+}
+{% endschema %}

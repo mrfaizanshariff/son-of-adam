@@ -1,0 +1,37 @@
+{% doc %}
+  Renders a list of trust lines. Add Trust line blocks inside it.
+{% enddoc %}
+
+<div class="product-trust-lines" {{ block.shopify_attributes }}>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .product-trust-lines {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid rgba(13, 28, 49, 0.1);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Trust lines",
+  "blocks": [{ "type": "_product-trust-line" }],
+  "settings": [],
+  "presets": [
+    {
+      "name": "Trust lines",
+      "blocks": {
+        "trust_line_1": { "type": "_product-trust-line", "settings": { "icon": "shield", "text": "Secure payment" } },
+        "trust_line_2": { "type": "_product-trust-line", "settings": { "icon": "truck", "text": "Ships from Bengaluru" } },
+        "trust_line_3": { "type": "_product-trust-line", "settings": { "icon": "return", "text": "Sealed bottles can be returned" } }
+      },
+      "block_order": ["trust_line_1", "trust_line_2", "trust_line_3"]
+    }
+  ]
+}
+{% endschema %}

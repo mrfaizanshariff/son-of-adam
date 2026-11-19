@@ -1,0 +1,130 @@
+{% doc %}
+  Renders the sold-out restock notification form. Shown by the Buy box block
+  when the selected variant is unavailable.
+{% enddoc %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+-%}
+
+<div
+  class="product-restock-wrapper"
+  data-restock-wrapper
+  data-product-handle="{{ product.handle | escape }}"
+  {% if current_variant.available %}style="display: none;"{% endif %}
+  {{ block.shopify_attributes }}
+>
+  {% form 'customer', id: 'restock-form', class: 'product-restock-form' %}
+    <input type="hidden" name="contact[tags]" value="restock-{{ product.handle }}">
+
+    {% if form.posted_successfully? %}
+      <div class="product-restock__success" role="status" aria-live="polite">
+        {{ 'products.product.restock.success' | t }}
+      </div>
+    {% else %}
+      <div class="product-restock__content">
+        <label for="restock-email-{{ block.id }}" class="product-restock__label">
+          {{ 'products.product.restock.label' | t }}
+        </label>
+        <p class="product-restock__description">
+          {{ 'products.product.restock.description' | t }}
+        </p>
+        <div class="product-restock__input-row">
+          <input
+            type="email"
+            id="restock-email-{{ block.id }}"
+            name="contact[email]"
+            class="product-restock__input"
+            placeholder="{{ 'products.product.restock.placeholder' | t }}"
+            required
+            aria-required="true"
+          >
+          <button type="submit" class="btn btn-primary product-restock__button">
+            {{ 'products.product.restock.button' | t }}
+          </button>
+        </div>
+      </div>
+    {% endif %}
+  {% endform %}
+</div>
+
+{% stylesheet %}
+  .product-restock-wrapper {
+    background-color: var(--color-sea-salt);
+    border: 1px solid var(--color-dim-grey);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-md);
+  }
+
+  .product-restock__label {
+    display: block;
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-oxford-blue);
+    text-transform: uppercase;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .product-restock__description {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-dim-grey);
+    margin: var(--spacing-xs) 0 var(--spacing-sm);
+  }
+
+  .product-restock__input-row {
+    display: flex;
+    gap: var(--spacing-xs);
+  }
+
+  .product-restock__input {
+    flex: 1;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--color-oxford-blue);
+    border-radius: 0;
+    font-family: var(--font-body);
+    font-size: 14px;
+    background-color: var(--color-white);
+  }
+
+  .product-restock__input:focus {
+    outline: 2px solid var(--color-harvest-gold);
+    outline-offset: 1px;
+  }
+
+  .product-restock__button {
+    flex-shrink: 0;
+    white-space: nowrap;
+    min-height: 44px;
+    padding: 10px 20px;
+  }
+
+  .product-restock__success {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: var(--spacing-sm);
+  }
+
+  @media (max-width: 767px) {
+    .product-restock__input-row {
+      flex-direction: column;
+    }
+
+    .product-restock__button {
+      width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Restock notification",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,157 @@
+﻿{% comment %}
+  SON OF ADAM - Product brand section
+  Full-width dark band with a label, heading, description and optional button.
+{% endcomment %}
+
+<div
+  class="product-brand-section full-width"
+  style="--brand-padding-top: {{ section.settings.padding_top }}px; --brand-padding-bottom: {{ section.settings.padding_bottom }}px"
+>
+  <div class="product-brand-section__container">
+    <div class="product-brand-section__content">
+      {% if section.settings.ritual_heading != blank %}
+        <p class="product-brand-section__label">{{ section.settings.ritual_heading }}</p>
+      {% endif %}
+      {% if section.settings.brand_title != blank %}
+        <h2 class="product-brand-section__title">{{ section.settings.brand_title }}</h2>
+      {% endif %}
+      {% if section.settings.brand_description != blank %}
+        <p class="product-brand-section__description">{{ section.settings.brand_description }}</p>
+      {% endif %}
+      {% if section.settings.brand_button_text != blank and section.settings.brand_button_url != blank %}
+        <a href="{{ section.settings.brand_button_url }}" class="btn btn-secondary">
+          {{ section.settings.brand_button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-brand-section {
+    background-color: var(--color-oxford-blue);
+    color: var(--color-white);
+    padding-block: var(--brand-padding-top, var(--spacing-4xl)) var(--brand-padding-bottom, var(--spacing-4xl));
+  }
+
+  .product-brand-section__container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+  }
+
+  .product-brand-section__content {
+    text-align: center;
+  }
+
+  .product-brand-section__label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--color-harvest-gold);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .product-brand-section__title {
+    font-family: var(--font-header);
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: var(--line-height-tight);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .product-brand-section__title::first-letter {
+    font-family: var(--font-display);
+    font-size: 1.3em;
+  }
+
+  .product-brand-section__description {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .product-brand-section .btn-secondary {
+    color: var(--color-white);
+    border-color: var(--color-white);
+  }
+
+  .product-brand-section .btn-secondary:hover {
+    background-color: var(--color-white);
+    color: var(--color-oxford-blue);
+  }
+
+  @media (max-width: 767px) {
+    .product-brand-section__title {
+      font-size: 28px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product brand",
+  "settings": [
+    {
+      "type": "text",
+      "id": "ritual_heading",
+      "label": "Label",
+      "default": "THE RITUAL"
+    },
+    {
+      "type": "text",
+      "id": "brand_title",
+      "label": "Heading",
+      "default": "CRAFTED FOR THE DISCERNING FEW."
+    },
+    {
+      "type": "textarea",
+      "id": "brand_description",
+      "label": "Description",
+      "default": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine."
+    },
+    {
+      "type": "text",
+      "id": "brand_button_text",
+      "label": "Button text",
+      "default": "EXPLORE OUR PHILOSOPHY"
+    },
+    {
+      "type": "url",
+      "id": "brand_button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "default": 120
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product brand"
+    }
+  ]
+}
+{% endschema %}

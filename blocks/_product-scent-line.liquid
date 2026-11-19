@@ -1,0 +1,40 @@
+{% doc %}
+  Renders the scent family and concentration line from product metafields.
+{% enddoc %}
+
+{%- liquid
+  assign scent_family = product.metafields.custom.scent_family.value | default: product.metafields.custom.scent_family
+  assign concentration = product.metafields.custom.concentration.value | default: product.metafields.custom.concentration
+-%}
+
+{% if scent_family != blank or concentration != blank %}
+  <p class="product-main__scent-line" {{ block.shopify_attributes }}>
+    {% if scent_family != blank and concentration != blank %}
+      {{ scent_family }} &middot; {{ concentration }}
+    {% elsif scent_family != blank %}
+      {{ scent_family }}
+    {% else %}
+      {{ concentration }}
+    {% endif %}
+  </p>
+{% endif %}
+
+{% stylesheet %}
+  .product-main__scent-line {
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-harvest-gold);
+    margin-top: 0;
+    margin-bottom: var(--spacing-xs);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Scent line",
+  "settings": []
+}
+{% endschema %}

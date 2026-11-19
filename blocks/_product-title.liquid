@@ -1,0 +1,25 @@
+{% doc %}
+  Renders the product title as an h1.
+{% enddoc %}
+
+<h1 class="product-main__title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
+
+{% stylesheet %}
+  .product-main__title {
+    font-size: clamp(28px, 4vw, 36px);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  @media (max-width: 767px) {
+    .product-main__title {
+      font-size: 24px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Title",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,30 @@
+{% doc %}
+  Renders the product description.
+{% enddoc %}
+
+{% if product.description != blank %}
+  <div class="product-main__description" {{ block.shopify_attributes }}>
+    {{ product.description }}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-main__description {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-loose);
+    color: var(--color-dim-grey);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .product-main__description p {
+    margin-bottom: var(--spacing-sm);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Description",
+  "settings": []
+}
+{% endschema %}

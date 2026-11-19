@@ -1,0 +1,27 @@
+{% doc %}
+  Renders the star rating when the product has reviews metafields.
+{% enddoc %}
+
+{%- liquid
+  assign product_review_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 0 | plus: 0
+  assign product_review_rating = product.metafields.reviews.rating.value | default: product.metafields.reviews.rating | default: 0
+-%}
+
+{% if product.metafields.reviews.rating_count != blank and product_review_count > 0 %}
+  <div class="product-main__rating" {{ block.shopify_attributes }}>
+    {% render 'star-rating', rating: product_review_rating, count: product_review_count %}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-main__rating {
+    margin-bottom: var(--spacing-md);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Rating",
+  "settings": []
+}
+{% endschema %}

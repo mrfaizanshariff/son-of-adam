@@ -1,0 +1,202 @@
+{% doc %}
+  Renders the variant picker: radio chips when the product has a "Size" option,
+  otherwise a select of all variants. Must be nested inside the Buy box block.
+{% enddoc %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+-%}
+
+{% unless product.has_only_default_variant %}
+  {%- liquid
+    assign size_option = null
+    assign size_option_index = 0
+    for opt in product.options_with_values
+      assign opt_name_down = opt.name | downcase
+      if opt_name_down == 'size'
+        assign size_option = opt
+        assign size_option_index = forloop.index0
+        break
+      endif
+    endfor
+  -%}
+
+  {% if size_option != blank %}
+    <fieldset class="product-form__fieldset product-form__variants" data-variant-fieldset {{ block.shopify_attributes }}>
+      <legend class="product-form__legend product-form__label">
+        {{ size_option.name }}
+      </legend>
+      <div class="product-form__radio-group" role="radiogroup" aria-label="{{ size_option.name }}">
+        {% for value in size_option.values %}
+          {% assign variant_for_value = null %}
+          {% for v in product.variants %}
+            {% if v.options[size_option_index] == value %}
+              {% assign variant_for_value = v %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+          {% assign is_selected = false %}
+          {% if current_variant.id == variant_for_value.id %}
+            {% assign is_selected = true %}
+          {% endif %}
+          {% assign is_available = variant_for_value.available %}
+          {% assign variant_price_formatted = variant_for_value.price | money_without_trailing_zeros %}
+
+          <label
+            class="product-form__radio-chip{% if is_selected %} is-selected{% endif %}{% unless is_available %} is-unavailable{% endunless %}"
+            for="variant-radio-{{ variant_for_value.id }}"
+            {% unless is_available %}aria-disabled="true"{% endunless %}
+          >
+            <input
+              type="radio"
+              id="variant-radio-{{ variant_for_value.id }}"
+              name="options[{{ size_option.name }}]"
+              value="{{ value | escape }}"
+              class="product-form__radio-input"
+              data-variant-radio
+              data-variant-id="{{ variant_for_value.id }}"
+              data-price="{{ variant_for_value.price }}"
+              data-compare-price="{{ variant_for_value.compare_at_price | default: 0 }}"
+              data-price-formatted="{{ variant_for_value.price | money }}"
+              data-compare-price-formatted="{{ variant_for_value.compare_at_price | money }}"
+              data-inventory="{{ variant_for_value.inventory_quantity }}"
+              data-available="{{ variant_for_value.available }}"
+              data-inventory-management="{{ variant_for_value.inventory_management }}"
+              {% if is_selected %}checked{% endif %}
+            >
+            <span class="product-form__radio-chip-text{% unless is_available %} is-struck{% endunless %}">
+              {{ value }} &middot; {{ variant_price_formatted }}
+            </span>
+          </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+  {% else %}
+    {% assign fallback_option = product.options_with_values.first %}
+    <div class="product-form__variants" {{ block.shopify_attributes }}>
+      <label for="variant-selector-{{ block.id }}" class="product-form__label">
+        {{ fallback_option.name }}
+      </label>
+      <select
+        id="variant-selector-{{ block.id }}"
+        class="product-form__select"
+        aria-label="{{ fallback_option.name }}"
+        data-variant-select
+      >
+        {% for variant in product.variants %}
+          <option
+            value="{{ variant.id }}"
+            {% if variant == current_variant %}selected{% endif %}
+            {% unless variant.available %}disabled{% endunless %}
+            data-inventory="{{ variant.inventory_quantity }}"
+            data-available="{{ variant.available }}"
+            data-price="{{ variant.price }}"
+            data-compare-price="{{ variant.compare_at_price | default: 0 }}"
+            data-price-formatted="{{ variant.price | money }}"
+            data-compare-price-formatted="{{ variant.compare_at_price | money }}"
+          >
+            {{ variant.title }}
+            {% unless variant.available %} - {{ 'products.product.sold_out' | t }}{% endunless %}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+{% endunless %}
+
+{% stylesheet %}
+  .product-form__fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .product-form__legend {
+    padding: 0;
+  }
+
+  .product-form__radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+  }
+
+  .product-form__radio-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 18px;
+    border: 1px solid var(--color-oxford-blue);
+    background-color: transparent;
+    color: var(--color-oxford-blue);
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .product-form__radio-chip:hover {
+    border-color: var(--color-harvest-gold);
+    color: var(--color-harvest-gold);
+  }
+
+  .product-form__radio-chip.is-selected {
+    background-color: var(--color-oxford-blue);
+    color: var(--color-harvest-gold);
+    border-color: var(--color-oxford-blue);
+  }
+
+  .product-form__radio-chip:focus-within {
+    outline: 2px solid var(--color-harvest-gold);
+    outline-offset: 2px;
+  }
+
+  .product-form__radio-chip.is-unavailable {
+    opacity: 0.6;
+    border-color: var(--color-dim-grey);
+    color: var(--color-dim-grey);
+    cursor: not-allowed;
+  }
+
+  .product-form__radio-chip-text.is-struck {
+    text-decoration: line-through;
+  }
+
+  .product-form__radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .product-form__select {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-oxford-blue);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-dim-grey);
+    border-radius: 0;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 5L6 8L9 5' stroke='%230D1C31' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Variant picker",
+  "settings": []
+}
+{% endschema %}

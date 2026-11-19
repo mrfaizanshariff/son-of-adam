@@ -1,0 +1,36 @@
+﻿{% comment %}
+  SON OF ADAM - Product reviews section
+  Wraps the product-reviews snippet so it can be placed anywhere on the product template.
+{% endcomment %}
+
+{% render 'product-reviews',
+  product: product,
+  show_form: section.settings.show_review_form,
+  allow_review_submission: section.settings.allow_review_submission
+%}
+
+{% schema %}
+{
+  "name": "Product reviews",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_review_form",
+      "label": "Show review form",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_review_submission",
+      "label": "Allow review submission",
+      "default": false,
+      "info": "Allow customers to submit reviews."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product reviews"
+    }
+  ]
+}
+{% endschema %}

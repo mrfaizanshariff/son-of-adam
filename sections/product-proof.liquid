@@ -1,7 +1,7 @@
 {% comment %}
   SON OF ADAM - Product Proof Section
   Spec list, scent pyramid, certificates and wear expectations for the current product.
-  Renders nothing when the product has no relevant metafields.
+  Renders nothing when the product has no relevant metafields and no expectations note is set.
 {% endcomment %}
 
 {%- liquid
@@ -73,7 +73,7 @@
   endcapture
 
   assign has_content = false
-  if has_pyramid or has_specs or accord_note != blank or docs_html != blank
+  if has_pyramid or has_specs or accord_note != blank or docs_html != blank or section.settings.expectations != blank
     assign has_content = true
   endif
 

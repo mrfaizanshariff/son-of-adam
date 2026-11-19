@@ -1,0 +1,145 @@
+{% doc %}
+  Renders the collapsible gift wrap and gift message fields.
+  Must be nested inside the Buy box block so the fields submit with the form.
+{% enddoc %}
+
+<details class="product-gift-options" data-gift-details {{ block.shopify_attributes }}>
+  <summary class="product-gift-options__summary">
+    <span class="product-gift-options__title">{{ 'products.product.gift.title' | t }}</span>
+    <svg class="product-gift-options__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </summary>
+  <div class="product-gift-options__content">
+    <div class="product-gift-options__field">
+      <label class="product-gift-options__checkbox-label" for="gift-wrap-{{ block.id }}">
+        <input
+          type="checkbox"
+          id="gift-wrap-{{ block.id }}"
+          name="properties[Gift wrap]"
+          value="Yes"
+          class="product-gift-options__checkbox"
+          data-gift-wrap-checkbox
+        >
+        <span>{{ 'products.product.gift.wrap_label' | t }}</span>
+      </label>
+    </div>
+    <div class="product-gift-options__field">
+      <label for="gift-message-{{ block.id }}" class="product-gift-options__label">
+        {{ 'products.product.gift.message_label' | t }}
+      </label>
+      <textarea
+        id="gift-message-{{ block.id }}"
+        name="properties[Gift message]"
+        maxlength="200"
+        class="product-gift-options__textarea"
+        placeholder="{{ 'products.product.gift.message_placeholder' | t }}"
+        data-gift-message-input
+      ></textarea>
+      <div class="product-gift-options__counter" aria-live="polite">
+        <span data-gift-char-counter>200</span> {{ 'products.product.gift.characters_remaining' | t }}
+      </div>
+    </div>
+  </div>
+</details>
+
+{% stylesheet %}
+  .product-gift-options {
+    border: 1px solid var(--color-dim-grey);
+    padding: var(--spacing-sm);
+    background-color: var(--color-white);
+  }
+
+  .product-gift-options__summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-family: var(--font-header);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-oxford-blue);
+    list-style: none;
+  }
+
+  .product-gift-options__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .product-gift-options__icon {
+    transition: transform var(--transition-fast);
+  }
+
+  .product-gift-options[open] .product-gift-options__icon {
+    transform: rotate(180deg);
+  }
+
+  .product-gift-options__content {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid rgba(13, 28, 49, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .product-gift-options__checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-oxford-blue);
+    cursor: pointer;
+  }
+
+  .product-gift-options__checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-harvest-gold);
+    cursor: pointer;
+  }
+
+  .product-gift-options__label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-dim-grey);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .product-gift-options__textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    border: 1px solid var(--color-dim-grey);
+    border-radius: 0;
+    resize: vertical;
+    background-color: var(--color-sea-salt);
+  }
+
+  .product-gift-options__textarea:focus {
+    outline: 2px solid var(--color-harvest-gold);
+    outline-offset: 1px;
+    background-color: var(--color-white);
+  }
+
+  .product-gift-options__counter {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-dim-grey);
+    text-align: right;
+    margin-top: 4px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Gift options",
+  "settings": []
+}
+{% endschema %}

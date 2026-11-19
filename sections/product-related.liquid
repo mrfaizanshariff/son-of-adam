@@ -1,0 +1,88 @@
+﻿{% comment %}
+  SON OF ADAM - Product related section
+  Grid of up to 4 product cards from a chosen collection, or the product's first collection.
+{% endcomment %}
+
+<div class="product-related full-width section-spacing">
+  <div class="product-related__container">
+    {% if section.settings.related_heading != blank %}
+      <h2 class="product-related__title">{{ section.settings.related_heading }}</h2>
+    {% endif %}
+
+    <div class="product-related__grid">
+      {%- liquid
+        if section.settings.related_products_collection != blank
+          assign related_collection = collections[section.settings.related_products_collection]
+        else
+          assign related_collection = product.collections.first
+        endif
+      -%}
+      {% for related_product in related_collection.products limit: 4 %}
+        {% unless related_product.id == product.id %}
+          {% render 'product-card', product: related_product %}
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-related {
+    background-color: var(--color-background);
+  }
+
+  .product-related__container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--page-margin);
+  }
+
+  .product-related__title {
+    text-align: center;
+    font-size: var(--font-size-section-title);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .product-related__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--grid-gutter);
+  }
+
+  @media (max-width: 1023px) {
+    .product-related__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .product-related__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Related products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "related_heading",
+      "label": "Heading",
+      "default": "YOU MAY ALSO LIKE"
+    },
+    {
+      "type": "collection",
+      "id": "related_products_collection",
+      "label": "Collection",
+      "info": "Leave empty to show products from the same collection."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related products"
+    }
+  ]
+}
+{% endschema %}

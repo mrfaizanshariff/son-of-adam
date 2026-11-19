@@ -1,0 +1,51 @@
+{% doc %}
+  Renders a "Questions" accordion that links to the FAQ page.
+{% enddoc %}
+
+{%- liquid
+  assign faq_url = block.settings.faq_url | default: '/pages/faq'
+-%}
+
+{% capture questions_content %}
+  <p>{{ 'products.product.faq_note' | t }} <a href="{{ faq_url }}" class="product-accordion__faq-link">{{ 'products.product.faq_link_text' | t }} &rarr;</a></p>
+{% endcapture %}
+
+<div class="product-info__accordion" {{ block.shopify_attributes }}>
+  {% render 'product-accordion',
+    title: block.settings.title,
+    content: questions_content,
+    open: false
+  %}
+</div>
+
+{% stylesheet %}
+  .product-accordion__faq-link {
+    color: var(--color-harvest-gold);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .product-accordion__faq-link:hover {
+    color: var(--color-oxford-blue);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Questions accordion",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Questions"
+    },
+    {
+      "type": "url",
+      "id": "faq_url",
+      "label": "FAQ link",
+      "info": "Leave empty to link to /pages/faq."
+    }
+  ]
+}
+{% endschema %}

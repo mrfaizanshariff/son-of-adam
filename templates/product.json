@@ -12,58 +12,146 @@
     "product": {
       "type": "product",
       "blocks": {
-        "trust_line_1": {
-          "type": "trust_line",
+        "title": {
+          "type": "_product-title",
+          "settings": {}
+        },
+        "scent_line": {
+          "type": "_product-scent-line",
+          "settings": {}
+        },
+        "tagline": {
+          "type": "_product-tagline",
+          "settings": {}
+        },
+        "rating": {
+          "type": "_product-rating",
+          "settings": {}
+        },
+        "price": {
+          "type": "_product-price",
+          "settings": {}
+        },
+        "description": {
+          "type": "_product-description",
+          "settings": {}
+        },
+        "buy_box": {
+          "type": "_product-buy-box",
+          "blocks": {
+            "variant_picker": {
+              "type": "_product-variant-picker",
+              "settings": {}
+            },
+            "gift_options": {
+              "type": "_product-gift-options",
+              "settings": {}
+            },
+            "quantity_add_to_cart": {
+              "type": "_product-quantity-add-to-cart",
+              "settings": {}
+            }
+          },
+          "block_order": [
+            "variant_picker",
+            "gift_options",
+            "quantity_add_to_cart"
+          ],
           "settings": {
-            "icon": "shield",
-            "text": "Secure payment",
-            "link": ""
+            "show_dynamic_checkout": true
           }
         },
-        "trust_line_2": {
-          "type": "trust_line",
+        "restock": {
+          "type": "_product-restock",
+          "settings": {}
+        },
+        "try_first": {
+          "type": "_product-try-first",
           "settings": {
-            "icon": "truck",
-            "text": "Ships from Bengaluru",
-            "link": ""
+            "set_credit": 500,
+            "set_credit_days": 60
+          },
+          "disabled": true
+        },
+        "trust_lines": {
+          "type": "_product-trust-lines",
+          "blocks": {
+            "trust_line_1": {
+              "type": "_product-trust-line",
+              "settings": {
+                "icon": "shield",
+                "text": "Secure payment",
+                "link": ""
+              }
+            },
+            "trust_line_2": {
+              "type": "_product-trust-line",
+              "settings": {
+                "icon": "truck",
+                "text": "Ships from Bengaluru",
+                "link": ""
+              }
+            },
+            "trust_line_3": {
+              "type": "_product-trust-line",
+              "settings": {
+                "icon": "return",
+                "text": "Sealed bottles can be returned",
+                "link": ""
+              }
+            }
+          },
+          "block_order": [
+            "trust_line_1",
+            "trust_line_2",
+            "trust_line_3"
+          ],
+          "settings": {}
+        },
+        "ingredients": {
+          "type": "_product-ingredients",
+          "settings": {
+            "title": "Ingredients"
           }
         },
-        "trust_line_3": {
-          "type": "trust_line",
+        "how_to_wear": {
+          "type": "_product-accordion",
           "settings": {
-            "icon": "return",
-            "text": "Sealed bottles can be returned",
-            "link": ""
+            "title": "How to wear",
+            "content": "<p>Apply on pulse points: wrists, inner elbows, and neck. Allow the fragrance to settle on your skin without rubbing.</p>"
+          }
+        },
+        "shipping_returns": {
+          "type": "_product-accordion",
+          "settings": {
+            "title": "Shipping and returns",
+            "content": "<p>Complimentary shipping across India. Unopened, sealed bottles may be returned within 7 days of delivery.</p>"
+          }
+        },
+        "questions": {
+          "type": "_product-questions",
+          "settings": {
+            "title": "Questions"
           }
         }
       },
       "block_order": [
-        "trust_line_1",
-        "trust_line_2",
-        "trust_line_3"
+        "title",
+        "scent_line",
+        "tagline",
+        "rating",
+        "price",
+        "description",
+        "buy_box",
+        "restock",
+        "try_first",
+        "trust_lines",
+        "ingredients",
+        "how_to_wear",
+        "shipping_returns",
+        "questions"
       ],
-      "settings": {
-        "show_rating": true,
-        "show_dynamic_checkout": true,
-        "show_gift_options": true,
-        "set_credit": 500,
-        "set_credit_days": 60,
-        "hide_try_first": true,
-        "how_to_wear": "<p>Apply on pulse points: wrists, inner elbows, and neck. Allow the fragrance to settle on your skin without rubbing.</p>",
-        "shipping_returns": "<p>Complimentary shipping across India. Unopened, sealed bottles may be returned within 7 days of delivery.</p>",
-        "show_brand_section": true,
-        "ritual_heading": "THE RITUAL",
-        "brand_title": "CRAFTED FOR THE DISCERNING FEW.",
-        "brand_description": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.",
-        "brand_button_text": "EXPLORE OUR PHILOSOPHY",
-        "brand_button_url": "/pages/about",
-        "show_related_products": true,
-        "related_heading": "YOU MAY ALSO LIKE",
-        "related_products_collection": "",
-        "show_reviews": false,
-        "show_review_form": false,
-        "allow_review_submission": false
-      }
+      "settings": {}
     },
     "product_proof": {
       "type": "product-proof",
@@ -73,10 +161,29 @@
         "background_color": "white",
         "padding": 64
       }
+    },
+    "product_brand": {
+      "type": "product-brand",
+      "settings": {
+        "ritual_heading": "THE RITUAL",
+        "brand_title": "CRAFTED FOR THE DISCERNING FEW.",
+        "brand_description": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.",
+        "brand_button_text": "EXPLORE OUR PHILOSOPHY",
+        "brand_button_url": "/pages/about"
+      }
+    },
+    "product_related": {
+      "type": "product-related",
+      "settings": {
+        "related_heading": "YOU MAY ALSO LIKE",
+        "related_products_collection": ""
+      }
     }
   },
   "order": [
     "product",
-    "product_proof"
+    "product_proof",
+    "product_brand",
+    "product_related"
   ]
 }

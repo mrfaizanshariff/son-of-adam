@@ -1,0 +1,63 @@
+{% doc %}
+  Renders the selected variant price and compare-at price.
+  The price elements are updated by the buy box block when the variant changes.
+{% enddoc %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_price_formatted = current_variant.price | money
+  assign product_compare_price_formatted = current_variant.compare_at_price | money
+-%}
+
+<div
+  class="product-main__price"
+  aria-label="{% if current_variant.compare_at_price > current_variant.price %}{{ 'products.price.sale_price' | t: price: product_price_formatted, original: product_compare_price_formatted }}{% else %}{{ 'products.price.regular_price' | t: price: product_price_formatted }}{% endif %}"
+  {{ block.shopify_attributes }}
+>
+  <span class="product-main__price-amount" data-product-price>
+    {{ product_price_formatted }}
+  </span>
+  {% if current_variant.compare_at_price > current_variant.price %}
+    <s class="product-main__price-compare" data-product-compare-price aria-hidden="true">
+      {{ product_compare_price_formatted }}
+    </s>
+  {% else %}
+    <s class="product-main__price-compare" data-product-compare-price aria-hidden="true" style="display: none;"></s>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .product-main__price {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .product-main__price-amount {
+    font-family: var(--font-header);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-oxford-blue);
+  }
+
+  .product-main__price-compare {
+    font-family: var(--font-body);
+    font-size: 20px;
+    color: var(--color-dim-grey);
+    text-decoration: line-through;
+  }
+
+  @media (max-width: 767px) {
+    .product-main__price-amount {
+      font-size: 24px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Price",
+  "settings": []
+}
+{% endschema %}

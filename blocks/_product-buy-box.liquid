@@ -1,0 +1,381 @@
+{% doc %}
+  Renders the product form (<form>) that owns variant, gift options, quantity and add to cart.
+  Nested blocks are rendered inside the form so they all submit together.
+  Also drives price, availability and cart-quantity validation via the <product-buy-box> element.
+{% enddoc %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'product-form-' | append: block.id
+-%}
+
+<product-buy-box class="product-buy-box" {{ block.shopify_attributes }}>
+  {% form 'product', product, id: product_form_id, class: 'product-form', data-inventory: current_variant.inventory_quantity, data-available: current_variant.available %}
+    <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+    {% content_for 'blocks' %}
+
+    {% if block.settings.show_dynamic_checkout %}
+      <div class="product-form__dynamic-checkout" data-buy-wrapper {% unless current_variant.available %}style="display: none;"{% endunless %}>
+        {{ form | payment_button }}
+      </div>
+    {% endif %}
+  {% endform %}
+</product-buy-box>
+
+{% stylesheet %}
+  .product-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .product-form__label {
+    display: block;
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-oxford-blue);
+    text-transform: uppercase;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .product-form__dynamic-checkout .shopify-payment-button {
+    margin-top: var(--spacing-sm);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    class ProductBuyBox extends HTMLElement {
+      connectedCallback() {
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => this.init(), { once: true });
+        } else {
+          this.init();
+        }
+      }
+
+      init() {
+        if (this.initialized) return;
+        this.initialized = true;
+
+        this.cartState = null;
+        this.currentVariantId = this.variantIdInput ? this.variantIdInput.value : null;
+
+        this.addEventListener('change', (event) => this.onChange(event));
+        this.addEventListener('input', (event) => this.onInput(event));
+        this.addEventListener('quantity:limit', (event) => this.onQuantityLimit(event));
+        // Capture phase: disable empty gift fields before the form is validated and submitted
+        this.addEventListener('submit', (event) => this.onSubmitCapture(event), true);
+        this.addEventListener('submit', (event) => this.validateBeforeSubmit(event));
+
+        // Refresh when the cart changes in another tab
+        window.addEventListener('storage', (event) => {
+          if (event.key === 'cart_updated') {
+            this.fetchCart().then(() => this.refreshFromCurrentSelection());
+          }
+        });
+
+        this.fetchCart().then(() => this.refreshFromCurrentSelection());
+      }
+
+      get productForm() { return this.querySelector('.product-form'); }
+      get variantIdInput() { return this.querySelector('input[name="id"]'); }
+      get quantityInput() { return this.querySelector('[data-quantity-input]'); }
+      get submitButton() { return this.querySelector('.product-form__submit'); }
+      get variantSelect() { return this.querySelector('[data-variant-select]'); }
+      get variantRadios() { return this.querySelectorAll('[data-variant-radio]'); }
+      get root() { return this.closest('[data-product-root]') || document; }
+
+      async fetchCart() {
+        try {
+          const response = await fetch('/cart.js');
+          if (!response.ok) throw new Error('Failed to fetch cart');
+          this.cartState = await response.json();
+          return this.cartState;
+        } catch (error) {
+          console.error('Error fetching cart:', error);
+          return null;
+        }
+      }
+
+      getCartQuantityForVariant(variantId) {
+        if (!this.cartState || !this.cartState.items) return 0;
+        const cartItem = this.cartState.items.find((item) => item.variant_id == variantId);
+        return cartItem ? cartItem.quantity : 0;
+      }
+
+      getAvailableQuantity(inventory, variantId) {
+        return Math.max(0, inventory - this.getCartQuantityForVariant(variantId));
+      }
+
+      setBuyWrappersVisible(visible) {
+        this.querySelectorAll('[data-buy-wrapper]').forEach((wrapper) => {
+          wrapper.style.display = visible ? '' : 'none';
+        });
+        const restockWrapper = this.root.querySelector('[data-restock-wrapper]');
+        if (restockWrapper) restockWrapper.style.display = visible ? 'none' : 'block';
+      }
+
+      updateAvailabilityUI(variantId, inventory, available) {
+        const submitButton = this.submitButton;
+        const quantityInput = this.quantityInput;
+        const cartQuantity = this.getCartQuantityForVariant(variantId);
+        const availableToAdd = this.getAvailableQuantity(inventory, variantId);
+
+        this.setBuyWrappersVisible(available);
+        if (!available) return;
+
+        let availabilityMsg = this.querySelector('.product-availability-message');
+        if (!availabilityMsg && submitButton) {
+          availabilityMsg = document.createElement('p');
+          availabilityMsg.className = 'product-availability-message';
+          submitButton.parentNode.insertBefore(availabilityMsg, submitButton);
+        }
+
+        if (quantityInput) {
+          quantityInput.setAttribute('max', availableToAdd);
+          if (parseInt(quantityInput.value) > availableToAdd) {
+            quantityInput.value = Math.max(1, availableToAdd);
+          }
+        }
+
+        if (inventory === 0) {
+          if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'SOLD OUT';
+          }
+          if (availabilityMsg) {
+            availabilityMsg.textContent = '';
+            availabilityMsg.style.display = 'none';
+          }
+        } else if (cartQuantity >= inventory) {
+          if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'MAXIMUM IN CART';
+          }
+          if (availabilityMsg) {
+            availabilityMsg.textContent = `You already have ${cartQuantity} in your cart (maximum available)`;
+            availabilityMsg.style.display = 'block';
+            availabilityMsg.className = 'product-availability-message product-availability-message--warning';
+          }
+        } else if (availableToAdd <= 5 && availableToAdd > 0) {
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'ADD TO CART';
+          }
+          if (availabilityMsg) {
+            if (cartQuantity > 0) {
+              availabilityMsg.textContent = `${cartQuantity} in cart, only ${availableToAdd} more available`;
+            } else {
+              availabilityMsg.textContent = `Only ${availableToAdd} available`;
+            }
+            availabilityMsg.style.display = 'block';
+            availabilityMsg.className = 'product-availability-message product-availability-message--low';
+          }
+        } else {
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'ADD TO CART';
+          }
+          if (availabilityMsg) {
+            if (cartQuantity > 0) {
+              availabilityMsg.textContent = `${cartQuantity} already in cart`;
+              availabilityMsg.style.display = 'block';
+              availabilityMsg.className = 'product-availability-message product-availability-message--info';
+            } else {
+              availabilityMsg.textContent = '';
+              availabilityMsg.style.display = 'none';
+            }
+          }
+        }
+      }
+
+      refreshFromCurrentSelection() {
+        const radios = this.variantRadios;
+        const variantSelect = this.variantSelect;
+        const productForm = this.productForm;
+
+        if (radios.length > 0) {
+          const checkedRadio = this.querySelector('[data-variant-radio]:checked') || radios[0];
+          const inventory = parseInt(checkedRadio.dataset.inventory) || 999;
+          const available = checkedRadio.dataset.available === 'true';
+          this.updateAvailabilityUI(this.currentVariantId, inventory, available);
+        } else if (variantSelect) {
+          const selectedOption = variantSelect.options[variantSelect.selectedIndex];
+          const inventory = parseInt(selectedOption.dataset.inventory) || 999;
+          const available = selectedOption.dataset.available === 'true';
+          this.updateAvailabilityUI(this.currentVariantId, inventory, available);
+        } else if (productForm && this.currentVariantId) {
+          const inventory = parseInt(productForm.dataset.inventory) || 999;
+          const available = productForm.dataset.available === 'true';
+          this.updateAvailabilityUI(this.currentVariantId, inventory, available);
+        }
+      }
+
+      updatePriceDisplay(priceFormatted, comparePriceFormatted, hasCompare) {
+        const priceAmountEl = this.root.querySelector('[data-product-price]');
+        const priceCompareEl = this.root.querySelector('[data-product-compare-price]');
+        if (priceAmountEl && priceFormatted) {
+          priceAmountEl.textContent = priceFormatted;
+        }
+        if (priceCompareEl) {
+          if (hasCompare && comparePriceFormatted) {
+            priceCompareEl.textContent = comparePriceFormatted;
+            priceCompareEl.style.display = '';
+          } else {
+            priceCompareEl.style.display = 'none';
+          }
+        }
+      }
+
+      async applyVariant(dataSource) {
+        const variantId = dataSource.variantId || dataSource.value;
+        const inventory = parseInt(dataSource.inventory) || 999;
+        const available = dataSource.available === 'true';
+        const price = parseInt(dataSource.price) || 0;
+        const comparePrice = parseInt(dataSource.comparePrice) || 0;
+
+        this.currentVariantId = variantId;
+
+        const messageEl = this.querySelector('.product__message');
+        if (messageEl) messageEl.textContent = '';
+
+        if (this.variantIdInput) this.variantIdInput.value = variantId;
+
+        this.updatePriceDisplay(dataSource.priceFormatted, dataSource.comparePriceFormatted, comparePrice > price);
+
+        await this.fetchCart();
+        this.updateAvailabilityUI(variantId, inventory, available);
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('variant', variantId);
+        window.history.replaceState({}, '', url);
+      }
+
+      onChange(event) {
+        const radio = event.target.closest('[data-variant-radio]');
+        if (radio) {
+          this.querySelectorAll('.product-form__radio-chip').forEach((chip) => chip.classList.remove('is-selected'));
+          const parentLabel = radio.closest('.product-form__radio-chip');
+          if (parentLabel) parentLabel.classList.add('is-selected');
+          this.applyVariant(radio.dataset);
+          return;
+        }
+
+        const select = event.target.closest('[data-variant-select]');
+        if (select) {
+          const selectedOption = select.options[select.selectedIndex];
+          this.applyVariant({ ...selectedOption.dataset, value: selectedOption.value });
+        }
+      }
+
+      onInput(event) {
+        const giftMessageInput = event.target.closest('[data-gift-message-input]');
+        if (!giftMessageInput) return;
+        const counter = this.querySelector('[data-gift-char-counter]');
+        if (counter) counter.textContent = Math.max(0, 200 - giftMessageInput.value.length);
+      }
+
+      onQuantityLimit(event) {
+        if (event.detail.type !== 'max') return;
+        const quantityInput = this.quantityInput;
+        const max = parseInt(quantityInput && quantityInput.getAttribute('max')) || 999;
+        const availabilityMsg = this.querySelector('.product-availability-message');
+        if (availabilityMsg) {
+          availabilityMsg.textContent = 'Maximum available quantity reached';
+          availabilityMsg.className = 'product-availability-message product-availability-message--warning';
+          setTimeout(() => {
+            this.updateAvailabilityUI(this.currentVariantId, max + this.getCartQuantityForVariant(this.currentVariantId), true);
+          }, 2000);
+        }
+      }
+
+      onSubmitCapture() {
+        const giftWrapCheckbox = this.querySelector('[data-gift-wrap-checkbox]');
+        const giftMessageInput = this.querySelector('[data-gift-message-input]');
+        if (giftWrapCheckbox && !giftWrapCheckbox.checked) giftWrapCheckbox.disabled = true;
+        if (giftMessageInput && giftMessageInput.value.trim() === '') giftMessageInput.disabled = true;
+      }
+
+      async validateBeforeSubmit(event) {
+        event.preventDefault();
+
+        const productForm = this.productForm;
+        const variantIdInput = this.variantIdInput;
+        const quantityInput = this.quantityInput;
+
+        if (!variantIdInput || !quantityInput || !productForm) {
+          console.error('Required form elements not found');
+          return false;
+        }
+
+        const variantId = variantIdInput.value;
+        const requestedQuantity = parseInt(quantityInput.value) || 1;
+
+        await this.fetchCart();
+
+        let inventory = 999;
+        const radios = this.variantRadios;
+        const variantSelect = this.variantSelect;
+        if (radios.length > 0) {
+          const checkedRadio = this.querySelector('[data-variant-radio]:checked');
+          if (checkedRadio && checkedRadio.dataset.inventory) {
+            inventory = parseInt(checkedRadio.dataset.inventory);
+          }
+        } else if (variantSelect) {
+          const selectedOption = variantSelect.querySelector(`option[value="${variantId}"]`);
+          if (selectedOption && selectedOption.dataset.inventory) {
+            inventory = parseInt(selectedOption.dataset.inventory);
+          }
+        } else if (productForm.dataset.inventory) {
+          inventory = parseInt(productForm.dataset.inventory);
+        }
+
+        const cartQuantity = this.getCartQuantityForVariant(variantId);
+        const totalQuantity = cartQuantity + requestedQuantity;
+
+        if (totalQuantity > inventory) {
+          const availableToAdd = Math.max(0, inventory - cartQuantity);
+          const messageEl = this.querySelector('.product__message');
+          if (messageEl) {
+            const template = messageEl.dataset.messageTemplate || 'Cannot add that amount. Maximum available quantity reached.';
+            messageEl.textContent = template
+              .replace('[cart_quantity]', cartQuantity)
+              .replace('[available]', availableToAdd);
+          }
+          quantityInput.value = availableToAdd;
+          return false;
+        }
+
+        productForm.submit();
+      }
+    }
+
+    if (!customElements.get('product-buy-box')) {
+      customElements.define('product-buy-box', ProductBuyBox);
+    }
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Buy box",
+  "blocks": [
+    { "type": "_product-variant-picker" },
+    { "type": "_product-gift-options" },
+    { "type": "_product-quantity-add-to-cart" }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout buttons",
+      "default": true,
+      "info": "Shows Buy Now buttons for Apple Pay, Google Pay, etc."
+    }
+  ]
+}
+{% endschema %}

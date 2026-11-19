@@ -1,0 +1,33 @@
+{% doc %}
+  Renders a generic accordion with a title and rich text content.
+{% enddoc %}
+
+{% if block.settings.content != blank %}
+  <div class="product-info__accordion" {{ block.shopify_attributes }}>
+    {% render 'product-accordion',
+      title: block.settings.title,
+      content: block.settings.content,
+      open: false
+    %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Accordion",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Custom panel"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content",
+      "default": "<p>Add your custom content here. This will appear in an expansion panel.</p>"
+    }
+  ]
+}
+{% endschema %}

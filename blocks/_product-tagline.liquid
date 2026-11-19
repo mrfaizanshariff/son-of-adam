@@ -1,0 +1,29 @@
+{% doc %}
+  Renders the product tagline from the custom.tagline metafield.
+{% enddoc %}
+
+{%- liquid
+  assign tagline = product.metafields.custom.tagline.value | default: product.metafields.custom.tagline
+-%}
+
+{% if tagline != blank %}
+  <p class="product-main__tagline" {{ block.shopify_attributes }}>{{ tagline }}</p>
+{% endif %}
+
+{% stylesheet %}
+  .product-main__tagline {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-style: italic;
+    color: var(--color-dim-grey);
+    margin-top: 0;
+    margin-bottom: var(--spacing-sm);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Tagline",
+  "settings": []
+}
+{% endschema %}

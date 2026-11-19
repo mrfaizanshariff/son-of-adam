@@ -1,0 +1,74 @@
+{% doc %}
+  Renders the "Try our Discovery Set first" link with the set credit note.
+  Renders nothing on the discovery set product or when the credit amount is 0.
+{% enddoc %}
+
+{%- liquid
+  assign set_credit_val = block.settings.set_credit | default: settings.set_credit | default: 0
+  assign set_credit_days_val = block.settings.set_credit_days | default: settings.set_credit_days | default: 60
+-%}
+
+{% if set_credit_val > 0 and product.handle != 'discovery-set' %}
+  <div class="product-try-first" {{ block.shopify_attributes }}>
+    <div class="product-try-first__header">
+      <a href="/products/discovery-set" class="product-try-first__link">
+        {{ 'products.product.try_first' | t }} &rarr;
+      </a>
+    </div>
+    {% render 'set-credit-note',
+      credit_amount: set_credit_val,
+      days: set_credit_days_val,
+      style: 'box'
+    %}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-try-first {
+    margin-top: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .product-try-first__header {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .product-try-first__link {
+    font-family: var(--font-header);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-harvest-gold);
+    text-decoration: underline;
+  }
+
+  .product-try-first__link:hover {
+    color: var(--color-oxford-blue);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Try first (discovery set)",
+  "settings": [
+    {
+      "type": "number",
+      "id": "set_credit",
+      "label": "Credit amount override (₹)",
+      "default": 0,
+      "info": "Leave at 0 to use the global value set in Theme settings › Cart & Promotions."
+    },
+    {
+      "type": "number",
+      "id": "set_credit_days",
+      "label": "Credit validity override (days)",
+      "default": 0,
+      "info": "Leave at 0 to use the global value set in Theme settings › Cart & Promotions."
+    }
+  ]
+}
+{% endschema %}
