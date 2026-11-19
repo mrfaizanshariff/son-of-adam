@@ -4,7 +4,7 @@
 {% endcomment %}
 
 <section class="newsletter-signup full-width section-spacing bg-oxford-blue">
-  <div class="newsletter-signup__container">
+  <div class="newsletter-signup__container" style="--nl-padding-v: {{ section.settings.padding_vertical }}px;">
     {% if section.settings.show_testimonial and section.settings.testimonial_text != blank %}
       <div class="newsletter-signup__testimonial">
         <div class="newsletter-signup__quote-icon">
@@ -89,7 +89,7 @@
   .newsletter-signup__container {
     max-width: 900px;
     margin: 0 auto;
-    padding: var(--spacing-4xl) var(--page-margin);
+    padding: var(--nl-padding-v, 80px) var(--page-margin);
     text-align: center;
   }
   
@@ -228,7 +228,7 @@
   /* Responsive */
   @media (max-width: 767px) {
     .newsletter-signup__container {
-      padding: var(--spacing-3xl) var(--page-margin);
+      padding: calc(var(--nl-padding-v, 80px) * 0.75) var(--page-margin);
     }
     
     .newsletter-signup__testimonial {
@@ -250,6 +250,16 @@
 {
   "name": "Newsletter Signup",
   "settings": [
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
     {
       "type": "header",
       "content": "Testimonial (Optional)"

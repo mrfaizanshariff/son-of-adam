@@ -3,7 +3,7 @@
   Oxford Blue background with multi-column layout
 {% endcomment %}
 
-<footer class="footer full-width bg-oxford-blue" role="contentinfo">
+<footer class="footer full-width bg-oxford-blue" role="contentinfo" style="--footer-padding-v: {{ section.settings.padding_vertical }}px;">
   <div class="footer__container">
     <div class="footer__grid">
       {%- comment -%} Brand Column {%- endcomment -%}
@@ -134,7 +134,7 @@
   .footer {
     background-color: var(--color-oxford-blue);
     color: var(--color-white);
-    padding: var(--spacing-4xl) 0 var(--spacing-xl) 0;
+    padding: var(--footer-padding-v, 80px) 0 calc(var(--footer-padding-v, 80px) * 0.4) 0;
   }
   
   .footer__container {
@@ -285,7 +285,7 @@
   
   @media (max-width: 767px) {
     .footer {
-      padding: var(--spacing-3xl) 0 var(--spacing-lg) 0;
+      padding: calc(var(--footer-padding-v, 80px) * 0.75) 0 calc(var(--footer-padding-v, 80px) * 0.3) 0;
     }
     
     .footer__grid {
@@ -310,6 +310,16 @@
 {
   "name": "Footer",
   "settings": [
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
     {
       "type": "header",
       "content": "Brand"
