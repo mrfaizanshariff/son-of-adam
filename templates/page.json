@@ -12,9 +12,114 @@
     "main": {
       "type": "page",
       "settings": {}
+    },
+    "scent_finder_RyNKTr": {
+      "type": "scent-finder",
+      "blocks": {
+        "question_qwaFpX": {
+          "type": "question",
+          "settings": {
+            "text": "When will you wear it most?",
+            "label_1": "Office and daytime",
+            "tags_1": "scent-1, scent-2",
+            "label_2": "Evenings out",
+            "tags_2": "scent-4, scent-5",
+            "label_3": "Weekends and casual",
+            "tags_3": "scent-3, scent-1",
+            "label_4": "Special occasions",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        "question_MnDkYy": {
+          "type": "question",
+          "settings": {
+            "text": "Which describes you best?",
+            "label_1": "Fresh and clean",
+            "tags_1": "scent-1, scent-3",
+            "label_2": "Warm and spicy",
+            "tags_2": "scent-4, scent-6",
+            "label_3": "Woody and earthy",
+            "tags_3": "scent-2, scent-5",
+            "label_4": "Smooth and sweet",
+            "tags_4": "scent-3, scent-6"
+          }
+        },
+        "question_w4jM69": {
+          "type": "question",
+          "settings": {
+            "text": "How strong do you like it?",
+            "label_1": "Subtle",
+            "tags_1": "scent-1, scent-3",
+            "label_2": "Noticeable but soft",
+            "tags_2": "scent-2, scent-3",
+            "label_3": "Bold",
+            "tags_3": "scent-4, scent-5",
+            "label_4": "A statement",
+            "tags_4": "scent-5, scent-6"
+          }
+        },
+        "scent_iGJ3Cw": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Fresh and easy, made for daytime."
+          }
+        },
+        "scent_kpa3tk": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Light woods that stay quiet and clean."
+          }
+        },
+        "scent_V9triA": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Smooth and soft, an easy everyday wear."
+          }
+        },
+        "scent_i6hirn": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Warm spice that suits an evening out."
+          }
+        },
+        "scent_RVUkzG": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Deep woods with a bold, lasting trail."
+          }
+        },
+        "scent_cngWM8": {
+          "type": "scent",
+          "settings": {
+            "product": "",
+            "reasoning": "Rich and sweet, made for special occasions."
+          }
+        }
+      },
+      "block_order": [
+        "question_qwaFpX",
+        "question_MnDkYy",
+        "question_w4jM69",
+        "scent_iGJ3Cw",
+        "scent_kpa3tk",
+        "scent_V9triA",
+        "scent_i6hirn",
+        "scent_RVUkzG",
+        "scent_cngWM8"
+      ],
+      "name": "Scent finder",
+      "settings": {
+        "heading": "Find your scent"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "scent_finder_RyNKTr"
   ]
 }
