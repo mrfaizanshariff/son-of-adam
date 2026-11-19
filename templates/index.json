@@ -115,7 +115,7 @@
           "type": "step",
           "settings": {
             "icon": "document",
-            "title": "Get credit on a full bottle",
+            "title": "Get discount on a full bottle",
             "text": ""
           }
         }
@@ -127,13 +127,13 @@
       ],
       "settings": {
         "image": "shopify://shop_images/son-of-adam-discovery-set.png",
-        "image_position": "0",
+        "image_position": "1",
         "heading": "Try all six before you choose",
         "product": "discovery-set",
-        "offer_type": "credit",
+        "offer_type": "coupon",
         "credit_amount": 500,
         "credit_days": 60,
-        "coupon_text": ""
+        "coupon_text": "You'll receive a coupon code worth 20% on your next purchase"
       }
     },
     "image_with_text_ingredients": {
