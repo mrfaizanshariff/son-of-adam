@@ -9,63 +9,6 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "product",
-      "blocks": {
-        "trust_line_1": {
-          "type": "trust_line",
-          "settings": {
-            "icon": "shield",
-            "text": "Secure payment",
-            "link": ""
-          }
-        },
-        "trust_line_2": {
-          "type": "trust_line",
-          "settings": {
-            "icon": "truck",
-            "text": "Ships from Bengaluru",
-            "link": ""
-          }
-        },
-        "trust_line_3": {
-          "type": "trust_line",
-          "settings": {
-            "icon": "return",
-            "text": "Sealed bottles can be returned",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "trust_line_1",
-        "trust_line_2",
-        "trust_line_3"
-      ],
-      "disabled": true,
-      "settings": {
-        "show_rating": true,
-        "show_dynamic_checkout": true,
-        "show_gift_options": false,
-        "set_credit": 500,
-        "set_credit_days": 60,
-        "hide_try_first": true,
-        "how_to_wear": "<p>Apply on pulse points: wrists, inner elbows, and neck. Allow the fragrance to settle on your skin without rubbing.</p>",
-        "shipping_returns": "<p>Complimentary shipping across India. Unopened, sealed bottles may be returned within 7 days of delivery.</p>",
-        "show_brand_section": true,
-        "ritual_heading": "THE RITUAL",
-        "brand_title": "CRAFTED FOR THE DISCERNING FEW.",
-        "brand_description": "Every drop is a testament to the pursuit of excellence. We don't just create products; we create experiences for the Son of Adam who demands more from his routine.",
-        "brand_button_text": "EXPLORE OUR PHILOSOPHY",
-        "brand_button_url": "/pages/about",
-        "show_related_products": false,
-        "related_heading": "YOU MAY ALSO LIKE",
-        "related_products_collection": "",
-        "show_reviews": false,
-        "show_review_form": false,
-        "allow_review_submission": false
-      }
-    },
     "scent_finder_3wwFiz": {
       "type": "scent-finder",
       "blocks": {
@@ -165,14 +108,57 @@
         "scent_M9DaNi",
         "scent_wxqaBh"
       ],
+      "disabled": true,
       "name": "Scent finder",
       "settings": {
         "heading": "Find your scent"
       }
+    },
+    "discovery_set_FdNa98": {
+      "type": "discovery-set",
+      "blocks": {
+        "step_eypL63": {
+          "type": "step",
+          "settings": {
+            "icon": "flask",
+            "title": "Order the set",
+            "text": "Six vials, one for each scent."
+          }
+        },
+        "step_NLWrrf": {
+          "type": "step",
+          "settings": {
+            "icon": "leaf",
+            "title": "Wear each for a day",
+            "text": "Find the one that fits you."
+          }
+        },
+        "step_EGfEej": {
+          "type": "step",
+          "settings": {
+            "icon": "document",
+            "title": "Get discount on full bottle",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "step_eypL63",
+        "step_NLWrrf",
+        "step_EGfEej"
+      ],
+      "name": "Discovery set",
+      "settings": {
+        "image": "shopify://shop_images/son-of-adam-discovery-set.png",
+        "heading": "Try all six before you choose",
+        "product": "discovery-set",
+        "credit_amount": 500,
+        "credit_days": 60
+      }
     }
   },
   "order": [
-    "main",
-    "scent_finder_3wwFiz"
+    "scent_finder_3wwFiz",
+    "discovery_set_FdNa98"
   ]
 }
